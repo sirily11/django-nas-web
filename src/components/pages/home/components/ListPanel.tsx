@@ -126,7 +126,14 @@ export default function ListPanel() {
         {/*Render documents*/}
         {nas.currentFolder &&
           nas.currentFolder.documents.map((f, i) => (
-            <ListItem button key={`folder-${f.id}`}>
+            <ListItem
+              button
+              key={`folder-${f.id}`}
+              onClick={async () => {
+                let document = await nas.getDocument(f.id);
+                setSelectedDocument(document);
+              }}
+            >
               <ListItemAvatar>
                 <Icon circular name="file pdf" size="large" color="red"></Icon>
               </ListItemAvatar>

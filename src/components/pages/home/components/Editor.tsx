@@ -15,6 +15,7 @@ interface Props {
 export default function Editor(props: Props) {
   const [editor, setEditor] = useState<EditorJS | undefined>();
   const [name, setName] = useState<string | undefined>();
+  const [isChanged, setIsChanged] = useState(false);
   const { document } = props;
   const { nas, update } = useContext(HomePageContext);
 
@@ -36,6 +37,9 @@ export default function Editor(props: Props) {
       </Modal.Header>
       <Modal.Content>
         <EditorJs
+          onChange={() => {
+            setIsChanged(true);
+          }}
           data={document && document.content}
           instanceRef={instance => setEditor(instance)}
         />
@@ -43,10 +47,14 @@ export default function Editor(props: Props) {
       <Modal.Actions>
         <Button
           onClick={() => {
-            let confirm = window.confirm(
-              "Are you sure you want to exit? You will lose unsave data."
-            );
-            if (confirm) {
+            if (isChanged) {
+              let confirm = window.confirm(
+                "Are you sure you want to exit? You will lose unsave data."
+              );
+              if (confirm) {
+                props.setOpen(false);
+              }
+            } else {
               props.setOpen(false);
             }
           }}

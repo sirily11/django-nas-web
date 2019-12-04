@@ -19,7 +19,10 @@ export class SystemProvider extends Component<SystemProps, SystemContext> {
 
   async componentDidMount() {
     let info = await this.fetchSystemInfo();
-    this.setState({ systemInfo: info });
+    console.log(info);
+    if (info) {
+      this.setState({ systemInfo: info });
+    }
   }
 
   fetchSystemInfo = async (): Promise<SystemInfo> => {

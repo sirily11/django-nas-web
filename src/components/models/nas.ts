@@ -2,11 +2,9 @@ import Axios from "axios"
 import { Folder, Parent, File as NasFile, Document as NasDocument } from './Folder';
 import { number } from "@lingui/core";
 import { OutputData } from "@editorjs/editorjs";
+import { systemURL, url, documentURL, fileURL } from "./urls"
 
 
-const url = "http://127.0.0.1:8000/api/folder/"
-const fileURL = "http://127.0.0.1:8000/api/file/"
-const documentURL = "http://127.0.0.1:8000/api/document/"
 
 type UploadProgressCallback = (index: number, progress: number) => void
 

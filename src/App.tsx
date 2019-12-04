@@ -44,12 +44,7 @@ export default function App() {
             <IconButton onClick={() => setVisible(!visible)}>
               <MenuIcon />
             </IconButton>
-            <AnimatedSwitch
-              atEnter={{ opacity: 0 }}
-              atLeave={{ opacity: 0 }}
-              atActive={{ opacity: 1 }}
-              className="switch-wrapper"
-            >
+            <div>
               <Route exact path="/" component={() => <Redirect to="/home" />} />
               <Route
                 exact
@@ -65,7 +60,7 @@ export default function App() {
                 path="/info"
                 component={(props: any) => <SystemInfoPage />}
               />
-            </AnimatedSwitch>
+            </div>
           </Sidebar.Pusher>
         </Sidebar.Pushable>
       </Router>
