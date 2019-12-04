@@ -4,6 +4,7 @@ import { Modal, Button } from "semantic-ui-react";
 import { TextField } from "@material-ui/core";
 import { Document as NasDocument } from "../../../models/Folder";
 import { HomePageContext } from "../../../models/HomeContext";
+import EditorJS from "@editorjs/editorjs";
 
 interface Props {
   open: boolean;
@@ -12,28 +13,72 @@ interface Props {
 }
 
 export default function Editor(props: Props) {
+  const [editor, setEditor] = useState<EditorJS | undefined>();
+  const [name, setName] = useState<string | undefined>();
   const { document } = props;
-  const {} = useContext(HomePageContext);
+  const { nas, update } = useContext(HomePageContext);
+
+  if (name === undefined) {
+    setName(document ? document.name : "");
+  }
 
   return (
     <Modal open={props.open} centered={false}>
       <Modal.Header>
         <TextField
-          defaultValue={document && document.name}
+          value={name}
           label="You Document Title"
+          onChange={e => {
+            setName(e.target.value);
+          }}
           fullWidth
         />
       </Modal.Header>
       <Modal.Content>
-        <EditorJs></EditorJs>
+        <EditorJs
+          data={document && document.content}
+          instanceRef={instance => setEditor(instance)}
+        />
       </Modal.Content>
       <Modal.Actions>
         <Button
           onClick={() => {
-            props.setOpen(false);
+            let confirm = window.confirm(
+              "Are you sure you want to exit? You will lose unsave data."
+            );
+            if (confirm) {
+              props.setOpen(false);
+            }
           }}
         >
-          OK
+          close
+        </Button>
+        <Button
+          color="blue"
+          onClick={async () => {
+            try {
+              if (editor && name) {
+                let data = await editor.save();
+                if (document) {
+                  // update current document
+                  await nas.updateDocument(document.id, name, data);
+                } else {
+                  if (name !== "") {
+                    await nas.createNewDocument(name, data);
+                  } else {
+                    throw "Name should not be empty";
+                  }
+                }
+                update();
+                setName(undefined);
+                props.setOpen(false);
+              }
+            } catch (err) {
+              alert(err.toString());
+            }
+          }}
+        >
+          Save
         </Button>
       </Modal.Actions>
     </Modal>

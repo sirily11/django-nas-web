@@ -25,8 +25,9 @@ import { HomePageContext } from "../../../models/HomeContext";
 import moment from "moment";
 import path from "path";
 import "video-react/dist/video-react.css";
-import { Folder } from "../../../models/Folder";
+import { Folder, Document as NasDocument } from "../../../models/Folder";
 import UpdateFolderDialog from "./UpdateFolderDialog";
+import Editor from "./Editor";
 
 const { Player } = require("video-react");
 
@@ -35,6 +36,9 @@ const videoExt = [".mov", ".mp4", ".avi", ".m4v"];
 
 export default function ListPanel() {
   const { nas, isLoading, update } = useContext(HomePageContext);
+  const [selectedDocument, setSelectedDocument] = useState<
+    NasDocument | undefined
+  >();
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [videoSrc, setVideoSrc] = useState<string | undefined>(undefined);
   const [selectedFolder, setSelectedFolder] = useState<Folder | undefined>(
@@ -81,7 +85,7 @@ export default function ListPanel() {
               button
               key={`folder-${f.id}`}
               onClick={() => {
-                window.location.href = `#/${f.id}`;
+                window.location.href = `#/home/${f.id}`;
               }}
             >
               <ListItemAvatar>
@@ -122,13 +126,7 @@ export default function ListPanel() {
         {/*Render documents*/}
         {nas.currentFolder &&
           nas.currentFolder.documents.map((f, i) => (
-            <ListItem
-              button
-              key={`folder-${f.id}`}
-              onClick={() => {
-                window.location.href = `#/${f.id}`;
-              }}
-            >
+            <ListItem button key={`folder-${f.id}`}>
               <ListItemAvatar>
                 <Icon circular name="file pdf" size="large" color="red"></Icon>
               </ListItemAvatar>
@@ -139,14 +137,22 @@ export default function ListPanel() {
 
               <ListItemSecondaryAction>
                 <Button.Group>
-                  <Button icon color="blue" edge="end" onClick={async () => {}}>
+                  <Button
+                    icon
+                    color="blue"
+                    edge="end"
+                    onClick={async () => {
+                      let document = await nas.getDocument(f.id);
+                      setSelectedDocument(document);
+                    }}
+                  >
                     <Icon name="edit"></Icon>
                   </Button>
                   <Button
                     icon
                     edge="end"
                     onClick={async () => {
-                      await nas.deleteFolder(f.id);
+                      await nas.deleteDocument(f.id);
                       update();
                     }}
                   >
@@ -237,7 +243,15 @@ export default function ListPanel() {
           }}
         />
       )}
-
+      {selectedDocument && (
+        <Editor
+          open={selectedDocument !== undefined}
+          setOpen={v => {
+            !v && setSelectedDocument(undefined);
+          }}
+          document={selectedDocument}
+        ></Editor>
+      )}
       <Modal
         open={imageSrc !== undefined}
         onClose={() => setImageSrc(undefined)}

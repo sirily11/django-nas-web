@@ -45,4 +45,16 @@ export interface Document {
     size: null;
     modified_at: Date;
     parent: null;
+    content: any
+}
+
+export interface SystemInfo {
+    cpu: number;
+    disk: Info;
+    memory: Info;
+}
+
+export interface Info {
+    used: number;
+    total: number;
 }
