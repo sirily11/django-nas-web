@@ -3,6 +3,7 @@ import { Folder, Parent, File as NasFile, Document as NasDocument } from './Fold
 import { number } from "@lingui/core";
 import { OutputData } from "@editorjs/editorjs";
 import { systemURL, url, documentURL, fileURL } from "./urls"
+import { DeltaStatic } from "quill";
 
 
 
@@ -124,15 +125,12 @@ export class Nas {
      * 
      * We will Call this function when user want to edit the file
      */
-    getDocument = async (id: number) => {
-        if (this.currentFolder) {
-            let res = await Axios.get<NasDocument>(`${documentURL}${id}/`)
-            /// Need to parse the content into js object
-            return Promise.resolve({ ...res.data, content: JSON.parse(res.data.content) })
-        } else {
-            alert("Create new folder error: empty parent folder")
-            return Promise.reject()
-        }
+    getDocument = async (id: string | number) => {
+
+        let res = await Axios.get<NasDocument>(`${documentURL}${id}/`)
+        /// Need to parse the content into js object
+        return Promise.resolve({ ...res.data, content: JSON.parse(res.data.content) })
+
     }
 
     /**
@@ -140,18 +138,15 @@ export class Nas {
      * @param name: Name of the document
      * @param data: EditorJS object
      */
-    createNewDocument = async (name: string, data: OutputData) => {
-        if (this.currentFolder) {
-            let res = await Axios.
-                post<NasDocument>(documentURL,
-                    {
-                        name: name, parent: this.currentFolder.id ? this.currentFolder.id : null,
-                        content: JSON.stringify(data)
-                    })
-            this.currentFolder.documents.push(res.data)
-        } else {
-            alert("Create new Document error: empty parent folder")
-        }
+    createNewDocument = async (name: string, data: DeltaStatic) => {
+        let res = await Axios.
+            post<NasDocument>(documentURL,
+                {
+                    name: name, parent: this.currentFolder && this.currentFolder.id ? this.currentFolder.id : null,
+                    content: JSON.stringify(data.ops)
+                })
+        this.currentFolder && this.currentFolder.documents.push(res.data)
+
     }
 
     /**
@@ -159,16 +154,17 @@ export class Nas {
      * @param id: document's id
      * @param data: EditorJS object
      */
-    updateDocument = async (id: number, name: string, data: OutputData) => {
+    updateDocument = async (id: number, name: string, data: DeltaStatic) => {
+
+        let res = await Axios.patch<NasDocument>(`${documentURL}${id}/`, { name, content: JSON.stringify(data.ops) })
         if (this.currentFolder) {
-            let res = await Axios.patch<NasDocument>(`${documentURL}${id}/`, { name, content: JSON.stringify(data), parent: this.currentFolder.id ? this.currentFolder.id : null })
             let index = this.currentFolder.documents.findIndex((f) => f.id === id)
             if (index > -1) {
                 this.currentFolder.documents[index] = res.data
             }
-        } else {
-            alert("Update new document error: empty parent folder")
+
         }
+
     }
 
     /**

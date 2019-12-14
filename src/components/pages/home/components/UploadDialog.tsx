@@ -29,7 +29,7 @@ export default function UploadDialog(props: Props) {
 
   return (
     <Modal open={props.open}>
-      <Modal.Header>Select files</Modal.Header>
+      <Modal.Header>Select Files</Modal.Header>
       <Modal.Content>
         <Grid.Row>
           <input
@@ -71,11 +71,12 @@ export default function UploadDialog(props: Props) {
       </Modal.Content>
       <Modal.Actions>
         <Button basic color="red" onClick={() => props.setOpen(false)}>
-          <Icon name="remove" /> No
+          <Icon name="remove" /> {uploadInfo ? "Minimize" : "Close"}
         </Button>
         <Button
           disabled={files === undefined}
           color="green"
+          loading={uploadInfo !== undefined}
           inverted
           onClick={async () => {
             if (files) {
@@ -96,7 +97,7 @@ export default function UploadDialog(props: Props) {
             }
           }}
         >
-          <Icon name="checkmark" /> Yes
+          <Icon name="checkmark" /> Upload
         </Button>
       </Modal.Actions>
     </Modal>

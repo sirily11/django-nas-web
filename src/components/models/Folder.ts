@@ -23,7 +23,9 @@ export interface File {
     modified_at: Date;
     file: string;
     object_type: string;
+    transcode_filepath: string;
     filename: string;
+    cover: string;
 
 }
 
@@ -52,6 +54,9 @@ export interface SystemInfo {
     cpu: number;
     disk: Info;
     memory: Info;
+    temperature?: number;
+    humidity?: number;
+    pressure?: number;
 }
 
 export interface Info {

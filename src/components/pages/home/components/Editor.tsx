@@ -5,6 +5,8 @@ import { TextField } from "@material-ui/core";
 import { Document as NasDocument } from "../../../models/Folder";
 import { HomePageContext } from "../../../models/HomeContext";
 import EditorJS from "@editorjs/editorjs";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill, { Quill } from "react-quill";
 
 interface Props {
   open: boolean;
@@ -13,7 +15,7 @@ interface Props {
 }
 
 export default function Editor(props: Props) {
-  const [editor, setEditor] = useState<EditorJS | undefined>();
+  const [editor, setEditor] = useState<ReactQuill | undefined>();
   const [name, setName] = useState<string | undefined>();
   const [isChanged, setIsChanged] = useState(false);
   const { document } = props;
@@ -36,12 +38,9 @@ export default function Editor(props: Props) {
         />
       </Modal.Header>
       <Modal.Content>
-        <EditorJs
-          onChange={() => {
-            setIsChanged(true);
-          }}
-          data={document && document.content}
-          instanceRef={instance => setEditor(instance)}
+        <ReactQuill
+          ref={instance => setEditor(instance != null ? instance : undefined)}
+          defaultValue={document && document.content}
         />
       </Modal.Content>
       <Modal.Actions>
@@ -66,7 +65,7 @@ export default function Editor(props: Props) {
           onClick={async () => {
             try {
               if (editor && name) {
-                let data = await editor.save();
+                let data = editor.getEditor().getContents();
                 if (document) {
                   // update current document
                   await nas.updateDocument(document.id, name, data);

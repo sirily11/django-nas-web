@@ -38,6 +38,7 @@
     "react-editor-js": "^1.4.1",
     "react-infinite-scroller": "^1.2.4",
     "react-jsonschema-form": "^1.8.0",
+    "react-quill": "^1.3.3",
     "react-router-dom": "^5.0.1",
     "react-router-transition": "^1.3.0",
     "react-scripts": "^3.0.1",
@@ -96,5 +97,5 @@
     "./build/*"
   ],
   "homepage": "./",
-  "proxy": "http://0.0.0.0:8000"
+  "proxy": "http://192.168.1.114"
 }
