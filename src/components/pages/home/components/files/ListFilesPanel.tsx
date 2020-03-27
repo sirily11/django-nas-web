@@ -29,17 +29,15 @@ import {
   Document as NasDocument,
   File as NasFile
 } from "../../../../models/Folder";
-import UpdateFolderDialog from "../folders/UpdateFolderDialog";
 import Editor from "../documents/Editor";
 import { downloadURL } from "../../../../models/urls";
-import Axios from "axios";
-import FilesActions from "./FilesActions";
 import { Grid } from "semantic-ui-react";
+import FilesActions from "./FilesActions";
 
 const { Player } = require("video-react");
 
 const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif"];
-const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV"];
+const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
 
 export default function ListFilesPanel() {
   const {
@@ -85,7 +83,7 @@ export default function ListFilesPanel() {
 
   return (
     <Grid style={{ height: "100%", overflow: "auto", overflowX: "hidden" }}>
-      <Grid.Row style={{ height: "100%%" }}>
+      <Grid.Row style={{ height: "auto" }}>
         <FilesActions />
       </Grid.Row>
       <Grid.Row style={{ overflow: "auto", overflowX: "hidden" }}>
@@ -110,6 +108,7 @@ export default function ListFilesPanel() {
                 {nas.currentFolder.files.map((f, i) => (
                   <TableRow hover>
                     <TableCell
+                      style={{ cursor: "grab" }}
                       onClick={() => {
                         if (isImage(f.file)) {
                           setImageSrc(f.file);

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { TextField, ListItem } from "@material-ui/core";
+import { TextField, ListItem, CircularProgress } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 
 import * as path from "path";
@@ -16,14 +16,19 @@ export default function FilesActions() {
   const [shadow, setShadow] = useState<number>();
 
   return (
-    <Grid style={{ paddingLeft: 30, paddingRight: 30 }}>
+    <Grid style={{ paddingLeft: 30, paddingRight: 30, width: "100%" }}>
       <Grid.Row>
         <Autocomplete
           id="combo-box-demo"
           loading={isLoading}
           options={nas.searchedFiles ? nas.searchedFiles : []}
           getOptionLabel={option => path.basename(option.filename)}
-          style={{ width: "100%", paddingTop: "10px", paddingBottom: "10px" }}
+          style={{
+            width: "100%",
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            height: "100%"
+          }}
           onChange={(e: any, v: NasFile | null, r: any) => {
             if (v) {
               window.location.href = `#/home/${v.parent}`;
@@ -38,6 +43,15 @@ export default function FilesActions() {
               {...params}
               label="Search File"
               variant="filled"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {isLoading ? <CircularProgress size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                )
+              }}
               onChange={async e => {
                 let keyword = e.target.value;
                 if (keyword.length > 1) {
