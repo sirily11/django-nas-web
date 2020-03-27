@@ -7,14 +7,14 @@ import {
   Button,
   Icon
 } from "semantic-ui-react";
-import { HomePageContext } from "../../../models/HomeContext";
+import { HomePageContext } from "../../../../models/HomeContext";
 
 interface Props {
   open: boolean;
   setOpen(open: boolean): void;
 }
 
-interface UploadInfo {
+export interface UploadInfo {
   currentName: string;
   progress: number;
   total: number;
@@ -24,10 +24,14 @@ interface UploadInfo {
 }
 
 export default function UploadDialog(props: Props) {
-  const { nas, update } = useContext(HomePageContext);
-
-  const [files, setFiles] = useState<File[]>();
-  const [uploadInfo, setUploadInfo] = useState<UploadInfo>();
+  const {
+    nas,
+    update,
+    uploadInfo,
+    setUploadInfo,
+    uploadFiles,
+    updateUploadInfo
+  } = useContext(HomePageContext);
 
   function calculateSize(size: number): string {
     if (size < 1024 * 1024) {
@@ -62,7 +66,8 @@ export default function UploadDialog(props: Props) {
                 for (var i = 0; i < uploadFiles.length; i++) {
                   l.push(uploadFiles[i]);
                 }
-                setFiles(l);
+
+                setUploadInfo(l);
               }
             }}
           ></input>
@@ -93,24 +98,26 @@ export default function UploadDialog(props: Props) {
           <Icon name="remove" /> {uploadInfo ? "Minimize" : "Close"}
         </Button>
         <Button
-          disabled={files === undefined}
+          disabled={uploadFiles === undefined}
           color="green"
           loading={uploadInfo !== undefined}
           inverted
           onClick={async () => {
-            if (files) {
+            if (uploadFiles) {
               await nas.uploadFile(
-                files,
+                uploadFiles,
                 (
                   index: number,
                   progress: number,
                   current: number,
                   total: number
                 ) => {
-                  setUploadInfo({
-                    total: files.length,
+                  updateUploadInfo({
+                    total: uploadFiles.length,
                     currentIndex: index,
-                    currentName: files[index] ? files[index].name : "Finished",
+                    currentName: uploadFiles[index]
+                      ? uploadFiles[index].name
+                      : "Finished",
                     progress: progress,
                     uploadedDataSize: current,
                     totalDataSize: total
@@ -120,8 +127,8 @@ export default function UploadDialog(props: Props) {
               update();
               setTimeout(() => {
                 props.setOpen(false);
-                setFiles(undefined);
                 setUploadInfo(undefined);
+                updateUploadInfo(undefined);
               }, 300);
             }
           }}

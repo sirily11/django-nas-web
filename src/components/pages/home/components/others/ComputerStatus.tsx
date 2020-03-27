@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Progress, Message } from "semantic-ui-react";
-import { SystemContext } from "../../../models/SystemContext";
+import { SystemContext } from "../../../../models/SystemContext";
 
 export default function ComputerStatus() {
   const { systemInfo } = useContext(SystemContext);

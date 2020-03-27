@@ -2,7 +2,7 @@ import Axios from "axios"
 import { Folder, Parent, File as NasFile, Document as NasDocument } from './Folder';
 import { number } from "@lingui/core";
 import { OutputData } from "@editorjs/editorjs";
-import { systemURL, url, documentURL, fileURL } from "./urls"
+import { systemURL, url, documentURL, fileURL, searchFileURL } from "./urls"
 import { DeltaStatic } from "quill";
 import { Sidebar } from 'semantic-ui-react';
 
@@ -14,11 +14,23 @@ type UploadProgressCallback = (index: number, progress: number) => void
 export class Nas {
     menus: Parent[]
     currentFolder?: Folder
+    searchedFiles: NasFile[];
     errorMsg?: string
-
+    
+    
     constructor() {
         this.menus = []
+        this.searchedFiles = [];
+    }
 
+    search = async (keyword: String) => {
+        try {
+            let url = `${searchFileURL}${keyword}`
+            let response = await Axios.get<NasFile[]>(url);
+            this.searchedFiles = response.data;
+        } catch (err) {
+            this.errorMsg = err
+        }
     }
 
     getContent = async (id?: number | string) => {

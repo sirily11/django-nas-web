@@ -7,11 +7,13 @@ import {
   Button,
   Icon
 } from "semantic-ui-react";
-import { HomePageContext } from "../../../models/HomeContext";
-import { SchemaList, Schema, Widget } from "../JSONSchema/model/Schema";
-import { JSONSchema } from "../JSONSchema";
+import { HomePageContext } from "../../../../models/HomeContext";
+import { SchemaList, Schema, Widget } from "../../JSONSchema/model/Schema";
+import { JSONSchema } from "../../JSONSchema";
+import { Folder } from "../../../../models/Folder";
 
 interface Props {
+  selectedFolder: Folder;
   open: boolean;
   setOpen(open: boolean): void;
 }
@@ -33,19 +35,20 @@ const schema: Schema[] = [
   }
 ];
 
-export default function NewFolderDialog(props: Props) {
+export default function UpdateFolderDialog(props: Props) {
   const { nas, update } = useContext(HomePageContext);
 
   return (
     <Modal open={props.open}>
-      <Modal.Header>New Folder</Modal.Header>
+      <Modal.Header>Select files</Modal.Header>
       <Modal.Content>
         <JSONSchema
           schemas={schema}
           url=""
+          values={{ name: props.selectedFolder.name }}
           onSubmit={async data => {
             try {
-              await nas.createNewFolder(data);
+              await nas.renameFolder(props.selectedFolder.id, data);
               update();
               setTimeout(() => {
                 props.setOpen(false);

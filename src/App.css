@@ -8,3 +8,7 @@ html {
 #second-root {
   height: 100%;
 }
+
+.react-contextmenu-wrapper {
+  height: 100%;
+}
