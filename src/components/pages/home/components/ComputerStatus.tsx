@@ -21,7 +21,7 @@ export default function ComputerStatus() {
         percent={((systemInfo.disk.used / systemInfo.disk.total) * 100).toFixed(
           2
         )}
-        progress
+        size="tiny"
         color="green"
       />
     </div>

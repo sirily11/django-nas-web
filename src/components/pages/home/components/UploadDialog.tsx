@@ -19,6 +19,8 @@ interface UploadInfo {
   progress: number;
   total: number;
   currentIndex: number;
+  uploadedDataSize: number;
+  totalDataSize: number;
 }
 
 export default function UploadDialog(props: Props) {
@@ -26,6 +28,23 @@ export default function UploadDialog(props: Props) {
 
   const [files, setFiles] = useState<File[]>();
   const [uploadInfo, setUploadInfo] = useState<UploadInfo>();
+
+  function calculateSize(size: number): string {
+    if (size < 1024 * 1024) {
+      return `${size / 1024} kb`;
+    } else if (size >= 1024 * 1024 && size < 1024 * 1024 * 1024) {
+      return `${size / 1024 / 1024} mb`;
+    } else if (size >= 1024 * 1024 * 1024 && size < 1024 * 1024 * 1024 * 1024) {
+      return `${size / 1024 / 1024 / 1024} gb`;
+    } else if (
+      size >= 1024 * 1024 * 1024 * 1024 &&
+      size < 1024 * 1024 * 1024 * 1024 * 1024
+    ) {
+      return `${size / 1024 / 1024 / 1024 / 1024} tb`;
+    }
+
+    return `${size} bytes`;
+  }
 
   return (
     <Modal open={props.open}>
@@ -57,8 +76,8 @@ export default function UploadDialog(props: Props) {
                 color="green"
                 active
               />
-              {uploadInfo.currentName} {uploadInfo.currentIndex} /{" "}
-              {uploadInfo.total}
+              {uploadInfo.currentName} {uploadInfo.currentIndex}/
+              {uploadInfo.total} --- {uploadInfo.progress} %
               <Progress
                 percent={(uploadInfo.currentIndex / uploadInfo.total) * 100}
                 attached="bottom"
@@ -80,14 +99,24 @@ export default function UploadDialog(props: Props) {
           inverted
           onClick={async () => {
             if (files) {
-              await nas.uploadFile(files, (index: number, progress: number) => {
-                setUploadInfo({
-                  total: files.length,
-                  currentIndex: index,
-                  currentName: files[index] ? files[index].name : "Finished",
-                  progress: progress
-                });
-              });
+              await nas.uploadFile(
+                files,
+                (
+                  index: number,
+                  progress: number,
+                  current: number,
+                  total: number
+                ) => {
+                  setUploadInfo({
+                    total: files.length,
+                    currentIndex: index,
+                    currentName: files[index] ? files[index].name : "Finished",
+                    progress: progress,
+                    uploadedDataSize: current,
+                    totalDataSize: total
+                  });
+                }
+              );
               update();
               setTimeout(() => {
                 props.setOpen(false);

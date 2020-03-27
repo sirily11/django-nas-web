@@ -22,61 +22,30 @@ export default function App() {
   return (
     <SystemProvider>
       <Router>
-        <Sidebar.Pushable style={{ margin: 0 }}>
-          <Sidebar
-            style={{ boxShadow: "none", border: "none" }}
-            as={Menu}
-            animation="push"
-            icon="labeled"
-            onHide={() => setVisible(false)}
-            vertical
-            visible={visible}
-            width="thin"
-          >
-            <Menu.Item as="a" href="#/home">
-              <Icon name="home" />
-              Home
-            </Menu.Item>
-            <Menu.Item as="a" href="#/info">
-              <Icon name="info" />
-              System Info
-            </Menu.Item>
-          </Sidebar>
-          <Sidebar.Pusher>
-            {showMenu && (
-              <IconButton
-                onClick={() => setVisible(!visible)}
-                style={{ position: "absolute" }}
-              >
-                <MenuIcon />
-              </IconButton>
-            )}
-            <div style={{ height: "100%" }}>
-              <Route exact path="/" component={() => <Redirect to="/home" />} />
-              <Route
-                exact
-                path="/home/:id?"
-                component={(props: any) => {
-                  setShowMenu(true);
-                  return (
-                    <HomePageProvider {...props}>
-                      <HomePage></HomePage>
-                    </HomePageProvider>
-                  );
-                }}
-              />
+        <div style={{ height: "100%" }}>
+          <Route exact path="/" component={() => <Redirect to="/home" />} />
+          <Route
+            exact
+            path="/home/:id?"
+            component={(props: any) => {
+              setShowMenu(true);
+              return (
+                <HomePageProvider {...props}>
+                  <HomePage></HomePage>
+                </HomePageProvider>
+              );
+            }}
+          />
 
-              <Route
-                exact
-                path="/info"
-                component={(props: any) => {
-                  setShowMenu(true);
-                  return <SystemInfoPage />;
-                }}
-              />
-            </div>
-          </Sidebar.Pusher>
-        </Sidebar.Pushable>
+          <Route
+            exact
+            path="/info"
+            component={(props: any) => {
+              setShowMenu(true);
+              return <SystemInfoPage />;
+            }}
+          />
+        </div>
       </Router>
     </SystemProvider>
   );

@@ -4,6 +4,7 @@ import { number } from "@lingui/core";
 import { OutputData } from "@editorjs/editorjs";
 import { systemURL, url, documentURL, fileURL } from "./urls"
 import { DeltaStatic } from "quill";
+import { Sidebar } from 'semantic-ui-react';
 
 
 
@@ -40,22 +41,23 @@ export class Nas {
      * @param files: List of files
      * @param onUpload: callback function
      */
-    uploadFile = async (files: File[], onUpload: (index: number, progress: number) => void) => {
+    uploadFile = async (files: File[], onUpload: (index: number, progress: number, current: number, total: number) => void) => {
         try {
 
             let index = 0;
             for (let f of files) {
                 if (this.currentFolder) {
-                    onUpload(index, 0);
+                    onUpload(index, 0, 0, f.size);
                     let formData = new FormData()
                     formData.append("file", f)
                     this.currentFolder.id && formData.append("parent", this.currentFolder.id.toString())
                     let res = await Axios.post<NasFile>(fileURL, formData,
                         {
                             headers: { 'Content-Type': 'multipart/form-data' },
+                            // eslint-disable-next-line no-loop-func
                             onUploadProgress: (progress) => {
                                 let p = Math.round((progress.loaded * 100) / progress.total);
-                                onUpload(index, p)
+                                onUpload(index, p, f.size * progress.loaded, progress.total)
 
                             }
 
@@ -67,7 +69,7 @@ export class Nas {
                 }
                 index += 1
             }
-            onUpload(index, 100);
+            onUpload(index, 100, 0, 0);
         } catch (err) {
             alert("Upload Failed: " + err.toString())
         }
