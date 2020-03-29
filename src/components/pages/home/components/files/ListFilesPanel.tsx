@@ -6,7 +6,8 @@ import {
   Icon,
   Modal,
   Image,
-  SemanticICONS
+  SemanticICONS,
+  Dropdown
 } from "semantic-ui-react";
 import {
   TableContainer,
@@ -33,6 +34,8 @@ import Editor from "../documents/Editor";
 import { downloadURL } from "../../../../models/urls";
 import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
+import MoveDialog from "./MoveDialog";
+import RenameDialog from "./RenameDialog";
 
 const { Player } = require("video-react");
 
@@ -48,6 +51,8 @@ export default function ListFilesPanel() {
     selectDocument
   } = useContext(HomePageContext);
   const [selectedFile, setselectedFile] = useState<NasFile>();
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [showMoveToDialog, setShowMoveToDialog] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [videoSrc, setVideoSrc] = useState<
     { src: string; cover: string } | undefined
@@ -82,134 +87,169 @@ export default function ListFilesPanel() {
   }
 
   return (
-    <Grid style={{ height: "100%", overflow: "auto", overflowX: "hidden" }}>
-      <Grid.Row style={{ height: "auto" }}>
+    <div id="file-list">
+      <Grid>
         <FilesActions />
-      </Grid.Row>
-      <Grid.Row style={{ overflow: "auto", overflowX: "hidden" }}>
-        {nas.errorMsg && (
-          <Message error>
-            <MessageHeader>Network Error</MessageHeader>
-            <div>{nas.errorMsg.toString()}</div>
-          </Message>
-        )}
-        {/** Render files */}
-        {nas.currentFolder && nas.currentFolder.files.length > 0 && (
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Last Modify</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {nas.currentFolder.files.map((f, i) => (
-                  <TableRow hover>
-                    <TableCell
-                      style={{ cursor: "grab" }}
-                      onClick={() => {
-                        if (isImage(f.file)) {
-                          setImageSrc(f.file);
-                        } else if (isVideo(f.file)) {
-                          setVideoSrc({ src: f.file, cover: f.cover });
-                        }
-                      }}
-                    >
-                      <Icon name={getIcon(f.file)} size="large" color="teal" />
-                      {path.basename(f.filename)}
-                    </TableCell>
-                    <TableCell>
-                      {" "}
-                      {moment(f.modified_at).format("MMM DD, YYYY")}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={e => {
-                          setselectedFile(f);
-                          handleClick(e);
+        <Grid.Row style={{ overflow: "auto", overflowX: "hidden" }}>
+          {nas.errorMsg && (
+            <Message error>
+              <MessageHeader>Network Error</MessageHeader>
+              <div>{nas.errorMsg.toString()}</div>
+            </Message>
+          )}
+          {/** Render files */}
+          {nas.currentFolder && nas.currentFolder.files.length > 0 && (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Last Modify</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {nas.currentFolder.files.map((f, i) => (
+                    <TableRow hover>
+                      <TableCell
+                        style={{ cursor: "grab" }}
+                        onClick={() => {
+                          if (isImage(f.file)) {
+                            setImageSrc(f.file);
+                          } else if (isVideo(f.file)) {
+                            setVideoSrc({ src: f.file, cover: f.cover });
+                          }
                         }}
                       >
-                        <MoreHorizIcon></MoreHorizIcon>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-        {/** End Render files */}
-      </Grid.Row>
+                        <Icon
+                          name={getIcon(f.file)}
+                          size="large"
+                          color="teal"
+                        />
+                        {path.basename(f.filename)}
+                      </TableCell>
+                      <TableCell>
+                        {" "}
+                        {moment(f.modified_at).format("MMM DD, YYYY")}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={e => {
+                            setselectedFile(f);
+                            handleClick(e);
+                          }}
+                        >
+                          <MoreHorizIcon></MoreHorizIcon>
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+          {/** End Render files */}
+        </Grid.Row>
 
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem
-          onClick={() => {
-            /// Download from link
-            if (selectedFile) {
-              const link = document.createElement("a");
-              link.href = `${selectedFile.file}`;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }
-            handleClose();
-          }}
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
         >
-          Download
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            if (selectedFile) {
-            }
-          }}
-        >
-          Rename
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            if (selectedFile) {
-              await nas.deleteFile(selectedFile.id);
+          <MenuItem
+            onClick={() => {
+              /// Download from link
+              if (selectedFile) {
+                const link = document.createElement("a");
+                link.href = `${selectedFile.file}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
               handleClose();
-              update();
-            }
-          }}
-        >
-          Delete
-        </MenuItem>
-        <MenuItem onClick={handleClose}>Move To</MenuItem>
-      </Menu>
+            }}
+          >
+            Download
+          </MenuItem>
+          <MenuItem
+            onClick={async () => {
+              if (selectedFile) {
+                handleClose();
+                setShowRenameDialog(true);
+              }
+            }}
+          >
+            Rename
+          </MenuItem>
+          <MenuItem
+            onClick={async () => {
+              if (selectedFile) {
+                await nas.deleteFile(selectedFile.id);
+                handleClose();
+                update();
+              }
+            }}
+          >
+            Delete
+          </MenuItem>
+          <MenuItem
+            onClick={async () => {
+              if (selectedFile) {
+                handleClose();
+                setShowMoveToDialog(true);
+              }
+            }}
+          >
+            Move To
+          </MenuItem>
+        </Menu>
 
-      {selectedDocument && (
-        <Editor
-          open={selectedDocument !== undefined}
-          setOpen={v => {
-            !v && selectDocument(undefined);
-          }}
-          document={selectedDocument}
-        ></Editor>
-      )}
-      <Modal
-        open={imageSrc !== undefined}
-        onClose={() => setImageSrc(undefined)}
-      >
-        <Image src={imageSrc} fluid></Image>
-      </Modal>
-      <Modal
-        open={videoSrc !== undefined}
-        onClose={() => setVideoSrc(undefined)}
-      >
-        <Player poster={videoSrc && videoSrc.cover}>
-          <source src={videoSrc && videoSrc.src} />
-        </Player>
-      </Modal>
-    </Grid>
+        {selectedDocument && (
+          <Editor
+            open={selectedDocument !== undefined}
+            setOpen={v => {
+              !v && selectDocument(undefined);
+            }}
+            document={selectedDocument}
+          ></Editor>
+        )}
+        <Modal
+          open={imageSrc !== undefined}
+          onClose={() => setImageSrc(undefined)}
+        >
+          <Image src={imageSrc} fluid></Image>
+        </Modal>
+        <Modal
+          open={videoSrc !== undefined}
+          onClose={() => setVideoSrc(undefined)}
+        >
+          <Player poster={videoSrc && videoSrc.cover}>
+            <source src={videoSrc && videoSrc.src} />
+          </Player>
+        </Modal>
+        {selectedFile && (
+          <MoveDialog
+            type="file"
+            open={showMoveToDialog}
+            selectedFile={selectedFile}
+            onClose={() => {
+              setShowMoveToDialog(false);
+            }}
+          />
+        )}
+        {selectedFile && (
+          <RenameDialog
+            type="file"
+            open={showRenameDialog}
+            selectedFile={selectedFile}
+            onClose={() => {
+              setShowRenameDialog(false);
+            }}
+          />
+        )}
+      </Grid>
+    </div>
   );
 }

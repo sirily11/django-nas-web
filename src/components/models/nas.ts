@@ -16,11 +16,53 @@ export class Nas {
     currentFolder?: Folder
     searchedFiles: NasFile[];
     errorMsg?: string
-    
-    
+
+
     constructor() {
         this.menus = []
         this.searchedFiles = [];
+    }
+
+    moveFileTo = async (fileId: number, dest: number) => {
+        try {
+            if (this.currentFolder) {
+                let url = `${fileURL}${fileId}/`
+                let response = await Axios.patch(url, { "parent": dest })
+                await this.getContent(this.currentFolder.id)
+            }
+
+        } catch (err) {
+            this.errorMsg = err;
+        }
+    }
+
+    moveFolderTo = async (folderId: number, dest: number) => {
+        try {
+            if (this.currentFolder) {
+                let u = `${url}${folderId}/`
+                let response = await Axios.patch(u, { "parent": dest })
+                await this.getContent(this.currentFolder.id)
+            }
+
+        } catch (err) {
+            this.errorMsg = err;
+        }
+    }
+
+    /**
+     * Rename file
+     */
+    rename = async (fileId: number, newName: string) => {
+        try {
+            if (this.currentFolder) {
+                let url = `${fileURL}${fileId}/`
+                let response = await Axios.patch(url, { "filename": newName })
+                await this.getContent(this.currentFolder.id)
+            }
+
+        } catch (err) {
+            this.errorMsg = err;
+        }
     }
 
     search = async (keyword: String) => {
@@ -120,9 +162,9 @@ export class Nas {
         }
     }
 
-    renameFolder = async (id: number, data: any) => {
+    renameFolder = async (id: number, newName: string) => {
         if (this.currentFolder) {
-            let res = await Axios.patch<Folder>(`${url}${id}/`, { ...data, parent: this.currentFolder.id ? this.currentFolder.id : null })
+            let res = await Axios.patch<Folder>(`${url}${id}/`, { "name": newName })
             let index = this.currentFolder.folders.findIndex((f) => f.id === id)
             if (index > -1) {
                 this.currentFolder.folders[index] = res.data

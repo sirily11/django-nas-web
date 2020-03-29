@@ -30,18 +30,15 @@ import moment from "moment";
 import path from "path";
 import "video-react/dist/video-react.css";
 import { Folder, Document as NasDocument } from "../../../../models/Folder";
-import UpdateFolderDialog from "./UpdateFolderDialog";
 
 import { NavLink } from "react-router-dom";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-
-const { Player } = require("video-react");
-
-const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif"];
-const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV"];
+import MoveDialog from "../files/MoveDialog";
+import RenameDialog from "../files/RenameDialog";
 
 export default function ListPanel() {
   const { nas, isLoading, update } = useContext(HomePageContext);
+  const [showMoveToDialog, setShowMoveToDialog] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<Folder | undefined>(
     undefined
   );
@@ -69,11 +66,11 @@ export default function ListPanel() {
           <Grid.Row verticalAlign="middle">
             <Grid.Column width={5}>
               {nas.currentFolder && nas.currentFolder.parent ? (
-                <IconButton>
-                  <NavLink to={`/home/${nas.currentFolder.parent}`}>
+                <NavLink to={`/home/${nas.currentFolder.parent}`}>
+                  <IconButton>
                     <ArrowBackIosIcon />
-                  </NavLink>
-                </IconButton>
+                  </IconButton>
+                </NavLink>
               ) : (
                 <IconButton>
                   <NavLink to={`/home`}>
@@ -140,7 +137,15 @@ export default function ListPanel() {
                 >
                   Delete
                 </MenuItem>
-                <MenuItem onClick={handleClose}>Move To</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    setShowMoveToDialog(true);
+                    setSelectedFolder(f);
+                  }}
+                >
+                  Move To
+                </MenuItem>
               </Menu>
               {/** end folder menu button */}
             </ListItem>
@@ -148,12 +153,23 @@ export default function ListPanel() {
         {/*End Render Folders*/}
       </List>
 
-      {selectedFolder && (
-        <UpdateFolderDialog
-          selectedFolder={selectedFolder}
+      {selectedFolder && !showMoveToDialog && (
+        <RenameDialog
+          type="folder"
+          selectedFile={selectedFolder}
           open={selectedFolder !== undefined}
-          setOpen={(value: boolean) => {
-            !value && setSelectedFolder(undefined);
+          onClose={() => setSelectedFolder(undefined)}
+        />
+      )}
+
+      {selectedFolder && (
+        <MoveDialog
+          type="folder"
+          selectedFile={selectedFolder}
+          open={showMoveToDialog}
+          onClose={() => {
+            setShowMoveToDialog(false);
+            setSelectedFolder(undefined);
           }}
         />
       )}

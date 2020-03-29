@@ -12,3 +12,12 @@ html {
 .react-contextmenu-wrapper {
   height: 100%;
 }
+
+#file-list {
+  height: 95%;
+  margin-bottom: 40px;
+  padding-right: 10px;
+  overflow: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
