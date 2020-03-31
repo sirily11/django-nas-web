@@ -27,7 +27,6 @@ import {
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import moment from "moment";
-import path from "path";
 import "video-react/dist/video-react.css";
 import { Folder, Document as NasDocument } from "../../../../models/Folder";
 

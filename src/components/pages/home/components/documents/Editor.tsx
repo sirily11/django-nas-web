@@ -18,6 +18,7 @@ export default function Editor(props: Props) {
   const [editor, setEditor] = useState<ReactQuill | undefined>();
   const [name, setName] = useState<string | undefined>();
   const [isChanged, setIsChanged] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
   const { document } = props;
   const { nas, update } = useContext(HomePageContext);
 
@@ -61,9 +62,11 @@ export default function Editor(props: Props) {
           close
         </Button>
         <Button
+          loading={isLoading}
           color="blue"
           onClick={async () => {
             try {
+              setIsloading(true);
               if (editor && name) {
                 let data = editor.getEditor().getContents();
                 if (document) {
@@ -79,9 +82,11 @@ export default function Editor(props: Props) {
                 update();
                 setName(undefined);
                 props.setOpen(false);
+                setIsloading(false);
               }
             } catch (err) {
               alert(err.toString());
+              setIsloading(false);
             }
           }}
         >

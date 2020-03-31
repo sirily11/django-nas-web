@@ -7,7 +7,8 @@ import {
   Modal,
   Image,
   SemanticICONS,
-  Dropdown
+  Dropdown,
+  CardContent
 } from "semantic-ui-react";
 import {
   TableContainer,
@@ -18,7 +19,12 @@ import {
   Menu,
   MenuItem,
   TableBody,
-  IconButton
+  IconButton,
+  Popper,
+  Paper,
+  CardMedia,
+  Card,
+  CardActionArea
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
@@ -36,6 +42,7 @@ import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
 import MoveDialog from "./MoveDialog";
 import RenameDialog from "./RenameDialog";
+import { formatBytes } from "./utils";
 
 const { Player } = require("video-react");
 
@@ -50,6 +57,10 @@ export default function ListFilesPanel() {
     selectedDocument,
     selectDocument
   } = useContext(HomePageContext);
+  const [previewAnchor, setPreviewAnchor] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [onHoverFile, setOnHoverFile] = useState<NasFile>();
   const [selectedFile, setselectedFile] = useState<NasFile>();
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [showMoveToDialog, setShowMoveToDialog] = useState(false);
@@ -66,6 +77,10 @@ export default function ListFilesPanel() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClosePreview = () => {
+    setPreviewAnchor(null);
   };
 
   function isImage(filepath: string): boolean {
@@ -105,6 +120,7 @@ export default function ListFilesPanel() {
                   <TableRow>
                     <TableCell>Name</TableCell>
                     <TableCell>Last Modify</TableCell>
+                    <TableCell>Size</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -113,6 +129,14 @@ export default function ListFilesPanel() {
                     <TableRow hover>
                       <TableCell
                         style={{ cursor: "grab" }}
+                        onMouseOver={e => {
+                          setPreviewAnchor(e.currentTarget);
+                          setOnHoverFile(f);
+                        }}
+                        onMouseLeave={() => {
+                          handleClosePreview();
+                          setOnHoverFile(undefined);
+                        }}
                         onClick={() => {
                           if (isImage(f.file)) {
                             setImageSrc(f.file);
@@ -129,9 +153,9 @@ export default function ListFilesPanel() {
                         {path.basename(f.filename)}
                       </TableCell>
                       <TableCell>
-                        {" "}
                         {moment(f.modified_at).format("MMM DD, YYYY")}
                       </TableCell>
+                      <TableCell>{formatBytes(f.size)}</TableCell>
                       <TableCell>
                         <IconButton
                           onClick={e => {
@@ -150,7 +174,7 @@ export default function ListFilesPanel() {
           )}
           {/** End Render files */}
         </Grid.Row>
-
+        {/** File Action Menu */}
         <Menu
           id="simple-menu"
           anchorEl={anchorEl}
@@ -205,7 +229,7 @@ export default function ListFilesPanel() {
             Move To
           </MenuItem>
         </Menu>
-
+        {/** end file action menu */}
         {selectedDocument && (
           <Editor
             open={selectedDocument !== undefined}
@@ -250,6 +274,34 @@ export default function ListFilesPanel() {
           />
         )}
       </Grid>
+      {/** Preview */}
+      <Popper open={Boolean(previewAnchor)} anchorEl={previewAnchor}>
+        {onHoverFile && (
+          <Card style={{ padding: 10 }}>
+            {isImage(onHoverFile.filename) && (
+              <CardMedia
+                style={{ height: 140, width: 140 }}
+                image={onHoverFile.file}
+              />
+            )}
+            {isVideo(onHoverFile.filename) &&
+              (onHoverFile.cover ? (
+                <CardActionArea>
+                  <CardMedia
+                    style={{ height: 140, width: 140 }}
+                    image={onHoverFile.cover}
+                  />
+                  <CardContent> {formatBytes(onHoverFile.size)}</CardContent>
+                </CardActionArea>
+              ) : (
+                <div>
+                  {onHoverFile.filename} - {formatBytes(onHoverFile.size)}
+                </div>
+              ))}
+          </Card>
+        )}
+      </Popper>
+      {/** end preview */}
     </div>
   );
 }

@@ -230,10 +230,15 @@ export class Nas {
      */
     deleteDocument = async (id: number) => {
         if (this.currentFolder) {
-            console.log("delte document")
-            let res = await Axios.delete<NasDocument>(`${documentURL}${id}/`)
-            await this.getContent(this.currentFolder.id)
-            return Promise.resolve(res.data)
+            let confirm = window.confirm("Do you want to delete this document?")
+            if (confirm) {
+                let res = await Axios.delete<NasDocument>(`${documentURL}${id}/`)
+                await this.getContent(this.currentFolder.id)
+                return Promise.resolve(res.data)
+            } else {
+
+            }
+
         } else {
             alert("Create new folder error: empty parent folder")
             return Promise.reject()
