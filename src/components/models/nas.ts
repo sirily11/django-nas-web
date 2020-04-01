@@ -1,10 +1,8 @@
-import Axios, { AxiosError } from "axios"
+import Axios from "axios"
 import { Folder, Parent, File as NasFile, Document as NasDocument } from './Folder';
-import { number } from "@lingui/core";
-import { OutputData } from "@editorjs/editorjs";
-import { systemURL, url, documentURL, fileURL, searchFileURL } from "./urls"
+
+import { url, documentURL, fileURL, searchFileURL } from "./urls"
 import { DeltaStatic } from "quill";
-import { Sidebar } from 'semantic-ui-react';
 import * as path from 'path';
 
 
@@ -28,7 +26,7 @@ export class Nas {
         try {
             if (this.currentFolder) {
                 let url = `${fileURL}${fileId}/`
-                let response = await Axios.patch(url, { "parent": dest })
+                await Axios.patch(url, { "parent": dest })
                 await this.getContent(this.currentFolder.id)
             }
 
@@ -41,7 +39,7 @@ export class Nas {
         try {
             if (this.currentFolder) {
                 let u = `${url}${folderId}/`
-                let response = await Axios.patch(u, { "parent": dest })
+                await Axios.patch(u, { "parent": dest })
                 await this.getContent(this.currentFolder.id)
             }
 
@@ -57,7 +55,7 @@ export class Nas {
         try {
             if (this.currentFolder) {
                 let url = `${fileURL}${fileId}/`
-                let response = await Axios.patch(url, { "filename": newName })
+                await Axios.patch(url, { "filename": newName })
                 await this.getContent(this.currentFolder.id)
             }
 
@@ -66,6 +64,10 @@ export class Nas {
         }
     }
 
+    /**
+     * Search by keyword
+     * @param keyword Keyword
+     */
     search = async (keyword: String) => {
         try {
             let url = `${searchFileURL}${keyword}`
@@ -76,6 +78,9 @@ export class Nas {
         }
     }
 
+    /**
+     * Get content by id
+     */
     getContent = async (id?: number | string) => {
         try {
             let u = id ? `${url}${id}/` : url
@@ -110,7 +115,7 @@ export class Nas {
                             await this.getUploadFileAndCreateFolder(f) :
                             this.getSingleUploadFile(f)
 
-                    let res = await Axios.post<NasFile>(fileURL, formData,
+                    await Axios.post<NasFile>(fileURL, formData,
                         {
                             headers: { 'Content-Type': 'multipart/form-data' },
                             // eslint-disable-next-line no-loop-func
@@ -147,6 +152,11 @@ export class Nas {
 
     }
 
+    /**
+     * Create folder for file. And then return the file
+     * For example file with path a/a.jpg will create a folder
+     * @param file Upload file
+     */
     async getUploadFileAndCreateFolder(file: File): Promise<FormData | undefined> {
         if (this.currentFolder) {
             //@ts-ignore
@@ -169,11 +179,14 @@ export class Nas {
 
     }
 
+    /** 
+     * Delete file by id
+     */
     deleteFile = async (id: number) => {
         try {
             let confirm = window.confirm("Are you sure you want to delete this file?")
             if (confirm && this.currentFolder) {
-                let res = await Axios.delete<Nas>(`${fileURL}${id}/`)
+                await Axios.delete<Nas>(`${fileURL}${id}/`)
                 await this.getContent(this.currentFolder.id)
             }
         } catch (err) {
@@ -181,11 +194,14 @@ export class Nas {
         }
     }
 
+    /**
+     * Delete folder by id
+     */
     deleteFolder = async (id: number) => {
         try {
             let confirm = window.confirm("Are you sure you want to delete this folder?")
             if (confirm && this.currentFolder) {
-                let res = await Axios.delete<Nas>(`${url}${id}/`)
+                await Axios.delete<Nas>(`${url}${id}/`)
                 await this.getContent(this.currentFolder.id)
             }
         } catch (err) {
@@ -193,6 +209,10 @@ export class Nas {
         }
     }
 
+    /**
+     * Create folder with name
+     * @param name
+     */
     createNewFolder = async (name: string) => {
         if (this.currentFolder) {
             let res = await Axios.post<Folder>(url, { name: name, parent: this.currentFolder.id ? this.currentFolder.id : null })
@@ -202,6 +222,11 @@ export class Nas {
         }
     }
 
+    /**
+     * Rename the folder 
+     * @param id folder id
+     * @param newName new name
+     */
     renameFolder = async (id: number, newName: string) => {
         if (this.currentFolder) {
             let res = await Axios.patch<Folder>(`${url}${id}/`, { "name": newName })
@@ -235,12 +260,11 @@ export class Nas {
      * @param data: EditorJS object
      */
     createNewDocument = async (name: string, data: DeltaStatic) => {
-        let res = await Axios.
-            post<NasDocument>(documentURL,
-                {
-                    name: name, parent: this.currentFolder && this.currentFolder.id ? this.currentFolder.id : null,
-                    content: JSON.stringify(data.ops)
-                })
+        let res = await Axios.post<NasDocument>(documentURL,
+            {
+                name: name, parent: this.currentFolder && this.currentFolder.id ? this.currentFolder.id : null,
+                content: JSON.stringify(data.ops)
+            })
         this.currentFolder && this.currentFolder.documents.push(res.data)
 
     }
