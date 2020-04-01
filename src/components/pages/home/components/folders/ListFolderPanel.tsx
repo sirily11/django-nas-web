@@ -38,6 +38,7 @@ import RenameDialog from "../files/RenameDialog";
 export default function ListPanel() {
   const { nas, isLoading, update } = useContext(HomePageContext);
   const [showMoveToDialog, setShowMoveToDialog] = useState(false);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<Folder | undefined>(
     undefined
   );
@@ -108,60 +109,72 @@ export default function ListPanel() {
               />
               {/** folder menu button */}
               <ListItemSecondaryAction>
-                <IconButton onClick={handleClick}>
+                <IconButton
+                  onClick={e => {
+                    handleClick(e);
+                    setSelectedFolder(f);
+                  }}
+                >
                   <MoreHorizIcon />
                 </IconButton>
               </ListItemSecondaryAction>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem
-                  onClick={() => {
-                    setSelectedFolder(f);
-                    handleClose();
-                  }}
-                >
-                  Rename
-                </MenuItem>
-                <MenuItem
-                  onClick={async () => {
-                    await nas.deleteFolder(f.id);
-                    handleClose();
-                    update();
-                  }}
-                >
-                  Delete
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleClose();
-                    setShowMoveToDialog(true);
-                    setSelectedFolder(f);
-                  }}
-                >
-                  Move To
-                </MenuItem>
-              </Menu>
+
               {/** end folder menu button */}
             </ListItem>
           ))}
         {/*End Render Folders*/}
       </List>
 
-      {selectedFolder && !showMoveToDialog && (
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem
+          onClick={() => {
+            setShowRenameDialog(true);
+            handleClose();
+          }}
+        >
+          Rename
+        </MenuItem>
+        <MenuItem
+          onClick={async () => {
+            if (selectedFolder) {
+              await nas.deleteFolder(selectedFolder.id);
+              handleClose();
+              update();
+              setSelectedFolder(undefined);
+            }
+          }}
+        >
+          Delete
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            setShowMoveToDialog(true);
+          }}
+        >
+          Move To
+        </MenuItem>
+      </Menu>
+
+      {selectedFolder && showRenameDialog && (
         <RenameDialog
           type="folder"
           selectedFile={selectedFolder}
-          open={selectedFolder !== undefined}
-          onClose={() => setSelectedFolder(undefined)}
+          open={showRenameDialog}
+          onClose={() => {
+            setSelectedFolder(undefined);
+            setShowRenameDialog(false);
+          }}
         />
       )}
 
-      {selectedFolder && (
+      {selectedFolder && showMoveToDialog && (
         <MoveDialog
           type="folder"
           selectedFile={selectedFolder}

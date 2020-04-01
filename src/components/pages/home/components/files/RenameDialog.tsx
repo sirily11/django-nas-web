@@ -44,12 +44,13 @@ export default function RenameDialog(props: Props) {
   const { nas } = useContext(HomePageContext);
 
   const [name, setName] = useState<string>(getDefaultName());
-
+  console.log(props.selectedFile);
   return (
     <Dialog open={props.open} fullWidth>
       <DialogTitle>Rename</DialogTitle>
       <DialogContent>
         <TextField
+          color="secondary"
           fullWidth
           value={name}
           onChange={e => {

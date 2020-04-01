@@ -267,6 +267,7 @@ export default function ListFilesPanel() {
             selectedFile={selectedFile}
             onClose={() => {
               setShowRenameDialog(false);
+              setselectedFile(undefined);
             }}
           />
         )}

@@ -5,7 +5,7 @@ import {
   Document as NasDocument
 } from "../../../../models/Folder";
 import { HomePageContext } from "../../../../models/HomeContext";
-import * as path from 'path';
+import * as path from "path";
 import {
   Dialog,
   DialogTitle,
@@ -29,7 +29,8 @@ interface Props {
 export default function MoveDialog(props: Props) {
   const { nas } = useContext(HomePageContext);
 
-  const [selection, setSelection] = useState<number>();
+  const [selection, setSelection] = useState<number>(-1);
+  console.log(selection);
   return (
     <Dialog open={props.open} fullWidth>
       <DialogTitle>Move File To</DialogTitle>
@@ -37,16 +38,16 @@ export default function MoveDialog(props: Props) {
         <FormControl fullWidth>
           <InputLabel>Destnation</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            color="secondary"
             value={selection}
             onChange={e => {
-              setSelection(e.target.value as number);
+              let selection = e.target.value as number;
+              setSelection(selection);
             }}
             fullWidth
           >
             {nas.currentFolder && (
-              <MenuItem value={nas.currentFolder.parent}>
+              <MenuItem value={nas.currentFolder.parent ?? -1}>
                 Parent Folder
               </MenuItem>
             )}
@@ -57,14 +58,18 @@ export default function MoveDialog(props: Props) {
                     ? props.selectedFile.id !== f.id
                     : true
                 )
-                .map(f => <MenuItem value={f.id}>{f.name}</MenuItem>)}
+                .map(f => (
+                  <MenuItem key={f.id} value={f.id}>
+                    {f.name}
+                  </MenuItem>
+                ))}
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setSelection(undefined);
+            setSelection(-1);
             props.onClose();
           }}
         >
@@ -73,15 +78,16 @@ export default function MoveDialog(props: Props) {
         <Button
           onClick={async () => {
             if (selection) {
+              let s = selection === -1 ? null : selection;
               switch (props.type) {
                 case "file":
-                  await nas.moveFileTo(props.selectedFile.id, selection);
+                  await nas.moveFileTo(props.selectedFile.id, s);
                   break;
                 case "folder":
-                  await nas.moveFolderTo(props.selectedFile.id, selection);
+                  await nas.moveFolderTo(props.selectedFile.id, s);
               }
             }
-            setSelection(undefined);
+            setSelection(-1);
             props.onClose();
           }}
         >

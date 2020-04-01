@@ -22,7 +22,7 @@ export class Nas {
         this.searchedFiles = [];
     }
 
-    moveFileTo = async (fileId: number, dest: number) => {
+    moveFileTo = async (fileId: number, dest: number | null) => {
         try {
             if (this.currentFolder) {
                 let url = `${fileURL}${fileId}/`
@@ -35,7 +35,7 @@ export class Nas {
         }
     }
 
-    moveFolderTo = async (folderId: number, dest: number) => {
+    moveFolderTo = async (folderId: number, dest: number | null) => {
         try {
             if (this.currentFolder) {
                 let u = `${url}${folderId}/`
