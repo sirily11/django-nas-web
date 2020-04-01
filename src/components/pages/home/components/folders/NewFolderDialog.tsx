@@ -9,7 +9,13 @@ import {
 } from "semantic-ui-react";
 import { HomePageContext } from "../../../../models/HomeContext";
 import { SchemaList, Schema, Widget } from "../../JSONSchema/model/Schema";
-import { JSONSchema } from "../../JSONSchema";
+import { DialogContent } from "@material-ui/core";
+import {
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogTitle
+} from "@material-ui/core";
 
 interface Props {
   open: boolean;
@@ -35,32 +41,43 @@ const schema: Schema[] = [
 
 export default function NewFolderDialog(props: Props) {
   const { nas, update } = useContext(HomePageContext);
+  const [folderName, setFolderName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <Modal open={props.open}>
-      <Modal.Header>New Folder</Modal.Header>
-      <Modal.Content>
-        <JSONSchema
-          schemas={schema}
-          url=""
-          onSubmit={async data => {
-            try {
-              await nas.createNewFolder(data);
-              update();
-              setTimeout(() => {
-                props.setOpen(false);
-              }, 300);
-            } catch (err) {
-              throw err;
-            }
+    <Dialog open={props.open} fullWidth>
+      <DialogTitle>New Folder</DialogTitle>
+      <DialogContent>
+        <TextField
+          onChange={e => {
+            setFolderName(e.target.value);
           }}
+          value={folderName}
+          color="secondary"
+          fullWidth
+          label="Folder Name"
+          required
         />
-      </Modal.Content>
-      <Modal.Actions>
+      </DialogContent>
+      <DialogActions>
         <Button basic color="red" onClick={() => props.setOpen(false)}>
           <Icon name="remove" /> No
         </Button>
-      </Modal.Actions>
-    </Modal>
+        <Button
+          basic
+          color="green"
+          onClick={async () => {
+            setIsLoading(true);
+            await nas.createNewFolder(folderName);
+            update();
+            setIsLoading(false);
+            props.setOpen(false);
+          }}
+          loading={isLoading}
+        >
+          <Icon name="add" /> Create
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

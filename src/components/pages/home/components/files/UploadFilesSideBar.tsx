@@ -21,21 +21,22 @@ export default function UploadFilesSideBar() {
     <List>
       {systemInfo && (
         <Grid style={{ height: "100%", marginTop: 10 }}>
-          <Grid.Row>
+          <Grid.Row style={{ height: 40 }}>
             <Grid.Column width={8}>
-              <Typography component="legend">CPU</Typography>
-              <Rating
-                name="read-only"
-                value={(5 * systemInfo.cpu) / 100}
-                readOnly
+              <div>CPU</div>
+              <LinearProgress
+                color="secondary"
+                variant="determinate"
+                value={systemInfo.cpu}
               />
             </Grid.Column>
             <Grid.Column width={8}>
-              <Typography component="legend">Memory</Typography>
-              <Rating
-                name="read-only"
-                value={(5 * systemInfo.memory.used) / systemInfo.memory.total}
-                readOnly
+              <div>Memory</div>
+              <LinearProgress
+                title="Memory"
+                color="secondary"
+                variant="determinate"
+                value={(systemInfo.memory.used / systemInfo.memory.total) * 100}
               />
             </Grid.Column>
           </Grid.Row>
@@ -52,6 +53,7 @@ export default function UploadFilesSideBar() {
               primary={f.name}
               secondary={
                 <LinearProgress
+                  color="secondary"
                   variant={
                     uploadInfo && uploadInfo.currentIndex === i
                       ? "determinate"

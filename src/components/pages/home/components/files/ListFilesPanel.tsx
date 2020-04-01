@@ -46,7 +46,7 @@ import { formatBytes } from "./utils";
 
 const { Player } = require("video-react");
 
-const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif"];
+const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif", ".jpeg", ".JPEG"];
 const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
 
 export default function ListFilesPanel() {
@@ -106,12 +106,6 @@ export default function ListFilesPanel() {
       <Grid>
         <FilesActions />
         <Grid.Row style={{ overflow: "auto", overflowX: "hidden" }}>
-          {nas.errorMsg && (
-            <Message error>
-              <MessageHeader>Network Error</MessageHeader>
-              <div>{nas.errorMsg.toString()}</div>
-            </Message>
-          )}
           {/** Render files */}
           {nas.currentFolder && nas.currentFolder.files.length > 0 && (
             <TableContainer>
@@ -141,7 +135,10 @@ export default function ListFilesPanel() {
                           if (isImage(f.file)) {
                             setImageSrc(f.file);
                           } else if (isVideo(f.file)) {
-                            setVideoSrc({ src: f.file, cover: f.cover });
+                            setVideoSrc({
+                              src: f.transcode_filepath ?? f.file,
+                              cover: f.cover
+                            });
                           }
                         }}
                       >

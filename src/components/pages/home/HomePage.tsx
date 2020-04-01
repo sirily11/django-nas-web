@@ -160,7 +160,7 @@ export function HomePage() {
                   style={{ height: "100%", backgroundColor: "#fcfcfc" }}
                 >
                   <ContextMenuTrigger id="folder">
-                    <Grid.Row style={{ height: "93%" }}>
+                    <Grid.Row style={{ height: "92%" }}>
                       <ListPanel />
                     </Grid.Row>
                     <Grid.Row>
@@ -184,7 +184,10 @@ export function HomePage() {
               <Hidden smDown implementation="js">
                 <Grid.Column
                   computer={3}
-                  style={{ height: "100%", backgroundColor: "#fcfcfc" }}
+                  style={{
+                    height: "100%",
+                    backgroundColor: "#fcfcfc"
+                  }}
                 >
                   <UploadFilesSideBar />
                 </Grid.Column>

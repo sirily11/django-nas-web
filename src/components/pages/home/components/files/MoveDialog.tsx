@@ -5,6 +5,7 @@ import {
   Document as NasDocument
 } from "../../../../models/Folder";
 import { HomePageContext } from "../../../../models/HomeContext";
+import * as path from 'path';
 import {
   Dialog,
   DialogTitle,
@@ -27,8 +28,8 @@ interface Props {
 
 export default function MoveDialog(props: Props) {
   const { nas } = useContext(HomePageContext);
-  const [selection, setSelection] = useState<number>();
 
+  const [selection, setSelection] = useState<number>();
   return (
     <Dialog open={props.open} fullWidth>
       <DialogTitle>Move File To</DialogTitle>

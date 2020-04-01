@@ -1,10 +1,11 @@
-import Axios from "axios"
+import Axios, { AxiosError } from "axios"
 import { Folder, Parent, File as NasFile, Document as NasDocument } from './Folder';
 import { number } from "@lingui/core";
 import { OutputData } from "@editorjs/editorjs";
 import { systemURL, url, documentURL, fileURL, searchFileURL } from "./urls"
 import { DeltaStatic } from "quill";
 import { Sidebar } from 'semantic-ui-react';
+import * as path from 'path';
 
 
 
@@ -89,22 +90,26 @@ export class Nas {
         }
     }
 
+
     /**
      * Upload file to server.
      * If upload fail, will show alert dialog
      * @param files: List of files
      * @param onUpload: callback function
+     * @param isDir: Whether upload directory
      */
-    uploadFile = async (files: File[], onUpload: (index: number, progress: number, current: number, total: number) => void) => {
+    uploadFile = async (files: File[], isDir: boolean, onUpload: (index: number, progress: number, current: number, total: number) => void) => {
         try {
-
             let index = 0;
             for (let f of files) {
                 if (this.currentFolder) {
                     onUpload(index, 0, 0, f.size);
-                    let formData = new FormData()
-                    formData.append("file", f)
-                    this.currentFolder.id && formData.append("parent", this.currentFolder.id.toString())
+
+                    let formData =
+                        isDir ?
+                            await this.getUploadFileAndCreateFolder(f) :
+                            this.getSingleUploadFile(f)
+
                     let res = await Axios.post<NasFile>(fileURL, formData,
                         {
                             headers: { 'Content-Type': 'multipart/form-data' },
@@ -116,17 +121,52 @@ export class Nas {
                             }
 
                         })
-                    this.currentFolder.files.push(res.data)
-                    this.currentFolder.total_size += res.data.size
-
+                    await this.getContent(this.currentFolder.id)
 
                 }
                 index += 1
             }
             onUpload(index, 100, 0, 0);
         } catch (err) {
+            console.log(err)
             alert("Upload Failed: " + err.toString())
         }
+    }
+
+    /**
+     * Only get the formdata but don't create folder
+     * @param file File
+     */
+    getSingleUploadFile(file: File): FormData | undefined {
+        if (this.currentFolder) {
+            let formData = new FormData()
+            formData.append("file", file)
+            this.currentFolder.id && formData.append("parent", this.currentFolder.id.toString())
+            return formData
+        }
+
+    }
+
+    async getUploadFileAndCreateFolder(file: File): Promise<FormData | undefined> {
+        if (this.currentFolder) {
+            //@ts-ignore
+            let folders = path.dirname(file.webkitRelativePath).split(path.sep)
+            let folder: Folder | undefined;
+
+            for (let f of folders) {
+                let res = await Axios.post(url, { "parent": folder?.id ?? this.currentFolder.id ?? null, "name": f })
+                folder = res.data;
+
+            }
+
+            let formData = new FormData()
+
+            formData.append("file", file)
+            console.log("parent", folder)
+            folder && folder.id && formData.append("parent", `${folder?.id}`)
+            return formData
+        }
+
     }
 
     deleteFile = async (id: number) => {
@@ -153,9 +193,9 @@ export class Nas {
         }
     }
 
-    createNewFolder = async (data: any) => {
+    createNewFolder = async (name: string) => {
         if (this.currentFolder) {
-            let res = await Axios.post<Folder>(url, { ...data, parent: this.currentFolder.id ? this.currentFolder.id : null })
+            let res = await Axios.post<Folder>(url, { name: name, parent: this.currentFolder.id ? this.currentFolder.id : null })
             this.currentFolder.folders.push(res.data)
         } else {
             alert("Create new folder error: empty parent folder")

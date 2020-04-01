@@ -20,7 +20,8 @@ import { Menu } from "semantic-ui-react";
 export default function NasMenus() {
   const { nas } = useContext(HomePageContext);
 
-  const [open, setOpen] = useState(false);
+  const [openFilesUpload, setOpenFilesUpload] = useState(false);
+  const [openFolderUpload, setOpenFolderUpload] = useState(false);
   const [openNewFolder, setOpenNewFolder] = useState(false);
   const [openEditor, setOpenEditor] = useState(false);
 
@@ -44,14 +45,30 @@ export default function NasMenus() {
           </MMenuItem>
           <MMenuItem
             onClick={() => {
-              setOpen(true);
+              setOpenFilesUpload(true);
             }}
           >
             Upload Files
           </MMenuItem>
+          <MMenuItem
+            onClick={() => {
+              setOpenFolderUpload(true);
+            }}
+          >
+            Upload Folder
+          </MMenuItem>
         </Menu>
       </ContextMenu>
-      <UploadDialog open={open} setOpen={setOpen}></UploadDialog>
+      <UploadDialog
+        isDir={false}
+        open={openFilesUpload}
+        setOpen={setOpenFilesUpload}
+      />
+      <UploadDialog
+        isDir={true}
+        open={openFolderUpload}
+        setOpen={setOpenFolderUpload}
+      />
       <NewFolderDialog
         open={openNewFolder}
         setOpen={setOpenNewFolder}

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useContext } from "react";
 import {
   Modal,
@@ -12,6 +13,7 @@ import { HomePageContext } from "../../../../models/HomeContext";
 interface Props {
   open: boolean;
   setOpen(open: boolean): void;
+  isDir: boolean;
 }
 
 export interface UploadInfo {
@@ -33,44 +35,39 @@ export default function UploadDialog(props: Props) {
     updateUploadInfo
   } = useContext(HomePageContext);
 
-  function calculateSize(size: number): string {
-    if (size < 1024 * 1024) {
-      return `${size / 1024} kb`;
-    } else if (size >= 1024 * 1024 && size < 1024 * 1024 * 1024) {
-      return `${size / 1024 / 1024} mb`;
-    } else if (size >= 1024 * 1024 * 1024 && size < 1024 * 1024 * 1024 * 1024) {
-      return `${size / 1024 / 1024 / 1024} gb`;
-    } else if (
-      size >= 1024 * 1024 * 1024 * 1024 &&
-      size < 1024 * 1024 * 1024 * 1024 * 1024
-    ) {
-      return `${size / 1024 / 1024 / 1024 / 1024} tb`;
-    }
+  const onInputChange = e => {
+    let uploadFiles = e.target.files;
+    if (uploadFiles) {
+      let l: File[] = [];
+      for (var i = 0; i < uploadFiles.length; i++) {
+        l.push(uploadFiles[i]);
+      }
 
-    return `${size} bytes`;
-  }
+      setUploadInfo(l);
+    }
+  };
 
   return (
     <Modal open={props.open}>
-      <Modal.Header>Select Files</Modal.Header>
+      <Modal.Header>Select {props.isDir ? "Folder" : "Files"} </Modal.Header>
       <Modal.Content>
         <Grid.Row>
-          <input
-            type="file"
-            multiple
-            name="Upload file"
-            onChange={e => {
-              let uploadFiles = e.target.files;
-              if (uploadFiles) {
-                let l: File[] = [];
-                for (var i = 0; i < uploadFiles.length; i++) {
-                  l.push(uploadFiles[i]);
-                }
-
-                setUploadInfo(l);
-              }
-            }}
-          ></input>
+          {props.isDir ? (
+            <input
+              type="file"
+              multiple
+              webkitdirectory=""
+              name="Upload file"
+              onChange={onInputChange}
+            />
+          ) : (
+            <input
+              type="file"
+              multiple
+              name="Upload file"
+              onChange={onInputChange}
+            />
+          )}
         </Grid.Row>
         {uploadInfo && (
           <Grid.Row style={{ marginTop: 20 }}>
@@ -106,6 +103,7 @@ export default function UploadDialog(props: Props) {
             if (uploadFiles) {
               await nas.uploadFile(
                 uploadFiles,
+                props.isDir,
                 (
                   index: number,
                   progress: number,
