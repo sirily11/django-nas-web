@@ -52,15 +52,8 @@ export default function DocumentEditor() {
       <div>
         <AppBar elevation={0} className={classes.appbar} color="secondary">
           <Toolbar>
-            <NavLink to={`/home/${currentDocument?.parent}`}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                onClick={() => {
-                  window.history.back();
-                }}
-              >
+            <NavLink to={`/home/${currentDocument?.parent ?? ""}`}>
+              <IconButton edge="start" color="inherit" aria-label="menu">
                 <DescriptionIcon fontSize="large" color="primary" />
               </IconButton>
             </NavLink>

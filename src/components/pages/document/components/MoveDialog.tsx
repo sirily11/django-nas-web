@@ -24,7 +24,9 @@ interface Props {
 }
 
 export default function MoveDialog(props: Props) {
-  const { nas, update, currentDocument } = useContext(DocumentContext);
+  const { nas, update, currentDocument, updateDocument } = useContext(
+    DocumentContext
+  );
   const [loading, setLoading] = useState(false);
   const [loadingFolder, setLoadingFolder] = useState(false);
 
@@ -80,9 +82,20 @@ export default function MoveDialog(props: Props) {
           loading={loading}
           onClick={async () => {
             if (currentDocument && nas.currentFolder) {
-              await nas.moveDocument(currentDocument.id, nas.currentFolder.id);
-              update();
-              props.onClose();
+              setLoading(true);
+              console.log(nas.currentFolder);
+              await nas.moveDocument(
+                currentDocument.id,
+                nas.currentFolder.id ?? null
+              );
+              currentDocument.parent = nas.currentFolder.id;
+              updateDocument(currentDocument);
+
+              setTimeout(() => {
+                setLoading(false);
+                update();
+                props.onClose();
+              }, 400);
             }
           }}
         >

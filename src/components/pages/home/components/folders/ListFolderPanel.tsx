@@ -23,7 +23,8 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  Collapse
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import moment from "moment";
@@ -92,36 +93,38 @@ export default function ListPanel() {
             <div>{nas.errorMsg.toString()}</div>
           </Message>
         )}
-        {/*Render Folders*/}
-        {nas.currentFolder &&
-          nas.currentFolder.folders.map((f, i) => (
-            <ListItem button key={`folder-${f.id}`}>
-              <ListItemAvatar>
-                <Icon name="folder" size="large" color="grey"></Icon>
-              </ListItemAvatar>
-              <ListItemText
-                onClick={() => {
-                  window.location.href = `#/home/${f.id}`;
-                }}
-                style={{ color: "black" }}
-                primary={f.name}
-                secondary={moment(f.modified_at).format("MMM DD, YYYY")}
-              />
-              {/** folder menu button */}
-              <ListItemSecondaryAction>
-                <IconButton
-                  onClick={e => {
-                    handleClick(e);
-                    setSelectedFolder(f);
+        <Collapse in={!isLoading} timeout={300}>
+          {/*Render Folders*/}
+          {nas.currentFolder &&
+            nas.currentFolder.folders.map((f, i) => (
+              <ListItem button key={`folder-${f.id}`}>
+                <ListItemAvatar>
+                  <Icon name="folder" size="large" color="grey"></Icon>
+                </ListItemAvatar>
+                <ListItemText
+                  onClick={() => {
+                    window.location.href = `#/home/${f.id}`;
                   }}
-                >
-                  <MoreHorizIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
+                  style={{ color: "black" }}
+                  primary={f.name}
+                  secondary={moment(f.modified_at).format("MMM DD, YYYY")}
+                />
+                {/** folder menu button */}
+                <ListItemSecondaryAction>
+                  <IconButton
+                    onClick={e => {
+                      handleClick(e);
+                      setSelectedFolder(f);
+                    }}
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
 
-              {/** end folder menu button */}
-            </ListItem>
-          ))}
+                {/** end folder menu button */}
+              </ListItem>
+            ))}
+        </Collapse>
         {/*End Render Folders*/}
       </List>
 

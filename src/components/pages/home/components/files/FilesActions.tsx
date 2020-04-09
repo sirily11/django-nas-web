@@ -29,7 +29,12 @@ export default function FilesActions() {
           {/*Render documents*/}
           {nas.currentFolder &&
             nas.currentFolder.documents.map((f, i) => (
-              <Grid.Column computer={4} mobile={8} style={{ padding: 10 }}>
+              <Grid.Column
+                computer={4}
+                mobile={8}
+                style={{ padding: 10 }}
+                key={`document-${i}`}
+              >
                 <Card variant="outlined" raised={shadow === i ? true : false}>
                   <NavLink to={`/document/${f.id}`}>
                     <CardActionArea style={{ height: 80 }}>
@@ -42,6 +47,7 @@ export default function FilesActions() {
                     <IconButton
                       onClick={async () => {
                         await nas.deleteDocument(f.id);
+                        update();
                       }}
                     >
                       <DeleteIcon />
