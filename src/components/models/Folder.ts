@@ -46,7 +46,7 @@ export interface Document {
     description: string;
     size: null;
     modified_at: Date;
-    parent: null;
+    parent: undefined | null | string | number;
     content: any
 }
 

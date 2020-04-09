@@ -44,7 +44,6 @@ export default function RenameDialog(props: Props) {
   const { nas } = useContext(HomePageContext);
 
   const [name, setName] = useState<string>(getDefaultName());
-  console.log(props.selectedFile);
   return (
     <Dialog open={props.open} fullWidth>
       <DialogTitle>Rename</DialogTitle>
@@ -79,6 +78,10 @@ export default function RenameDialog(props: Props) {
                   break;
                 case "folder":
                   await nas.renameFolder(props.selectedFile.id, name);
+                  break;
+                case "document":
+                  await nas.renameDocument(props.selectedFile.id, name);
+                  break;
               }
             }
             props.onClose();

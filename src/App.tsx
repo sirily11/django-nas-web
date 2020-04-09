@@ -14,6 +14,8 @@ import SystemInfoPage from "./components/pages/systemInfo/SystemInfoPage";
 import { Sidebar, Menu, Icon, Button } from "semantic-ui-react";
 import MenuIcon from "@material-ui/icons/Menu";
 import { IconButton } from "@material-ui/core";
+import { DocumentProvider } from "./components/models/DocumentContext";
+import DocumentEditor from "./components/pages/document/DocumentEditor";
 
 export default function App() {
   const [visible, setVisible] = useState(false);
@@ -33,6 +35,18 @@ export default function App() {
                 <HomePageProvider {...props}>
                   <HomePage></HomePage>
                 </HomePageProvider>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/document/:id"
+            component={(props: any) => {
+              setShowMenu(true);
+              return (
+                <DocumentProvider {...props}>
+                  <DocumentEditor />
+                </DocumentProvider>
               );
             }}
           />

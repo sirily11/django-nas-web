@@ -35,6 +35,19 @@ export class Nas {
         }
     }
 
+    moveDocument = async (documentId: number, dest: number | null) => {
+        try {
+            if (this.currentFolder) {
+                let url = `${documentURL}${documentId}/`
+                await Axios.patch(url, { "parent": dest })
+                await this.getContent(this.currentFolder.id)
+            }
+
+        } catch (err) {
+            this.errorMsg = err;
+        }
+    }
+
     moveFolderTo = async (folderId: number, dest: number | null) => {
         try {
             if (this.currentFolder) {
@@ -239,6 +252,24 @@ export class Nas {
         }
     }
 
+
+    /**
+     * Rename the folder 
+     * @param id folder id
+     * @param newName new name
+     */
+    renameDocument = async (id: number, newName: string) => {
+        if (this.currentFolder) {
+            let res = await Axios.patch<NasDocument>(`${documentURL}${id}/`, { "name": newName })
+            let index = this.currentFolder.documents.findIndex((f) => f.id === id)
+            if (index > -1) {
+                this.currentFolder.documents[index] = res.data
+            }
+        } else {
+            alert("Rename new document error")
+        }
+    }
+
     /**
      * Get document from server.
      * We need this function because we are getting abstract document object from server
@@ -246,7 +277,7 @@ export class Nas {
      * 
      * We will Call this function when user want to edit the file
      */
-    getDocument = async (id: string | number) => {
+    getDocument = async (id: string | number): Promise<NasDocument> => {
 
         let res = await Axios.get<NasDocument>(`${documentURL}${id}/`)
         /// Need to parse the content into js object
@@ -259,11 +290,11 @@ export class Nas {
      * @param name: Name of the document
      * @param data: EditorJS object
      */
-    createNewDocument = async (name: string, data: DeltaStatic) => {
+    createNewDocument = async (name: string, data?: DeltaStatic) => {
         let res = await Axios.post<NasDocument>(documentURL,
             {
                 name: name, parent: this.currentFolder && this.currentFolder.id ? this.currentFolder.id : null,
-                content: JSON.stringify(data.ops)
+                content: data ? JSON.stringify(data.ops) : undefined
             })
         this.currentFolder && this.currentFolder.documents.push(res.data)
 
@@ -276,7 +307,7 @@ export class Nas {
      */
     updateDocument = async (id: number, name: string, data: DeltaStatic) => {
 
-        let res = await Axios.patch<NasDocument>(`${documentURL}${id}/`, { name, content: JSON.stringify(data.ops) })
+        let res = await Axios.patch<NasDocument>(`${documentURL}${id}/`, { name, content: JSON.stringify(data?.ops) })
         if (this.currentFolder) {
             let index = this.currentFolder.documents.findIndex((f) => f.id === id)
             if (index > -1) {

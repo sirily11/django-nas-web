@@ -16,6 +16,7 @@ import Editor from "../documents/Editor";
 import { ContextMenu, MenuItem } from "react-contextmenu";
 
 import { Menu } from "semantic-ui-react";
+import CreateDocumentDialog from "../documents/CreateDocumentDialog";
 
 export default function NasMenus() {
   const { nas } = useContext(HomePageContext);
@@ -73,7 +74,7 @@ export default function NasMenus() {
         open={openNewFolder}
         setOpen={setOpenNewFolder}
       ></NewFolderDialog>
-      <Editor open={openEditor} setOpen={setOpenEditor}></Editor>
+      <CreateDocumentDialog open={openEditor} setOpen={setOpenEditor} />
     </div>
   );
 }

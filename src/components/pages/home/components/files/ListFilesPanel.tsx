@@ -37,17 +37,19 @@ import {
   File as NasFile
 } from "../../../../models/Folder";
 import Editor from "../documents/Editor";
-import { downloadURL } from "../../../../models/urls";
+import { downloadURL, fileURL } from "../../../../models/urls";
 import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
 import MoveDialog from "./MoveDialog";
 import RenameDialog from "./RenameDialog";
 import { formatBytes } from "./utils";
+import PDFViewer from "./pdf/PDFViewer";
 
 const { Player } = require("video-react");
 
 const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif", ".jpeg", ".JPEG"];
 const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
+const pdfExt = [".pdf"];
 
 export default function ListFilesPanel() {
   const {
@@ -69,6 +71,7 @@ export default function ListFilesPanel() {
     { src: string; cover: string } | undefined
   >(undefined);
 
+  const [pdfSrc, setpdfSrc] = useState<string | undefined>(undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -89,6 +92,10 @@ export default function ListFilesPanel() {
 
   function isVideo(filepath: string): boolean {
     return videoExt.includes(path.extname(filepath));
+  }
+
+  function isPdf(filepath: string): boolean {
+    return pdfExt.includes(path.extname(filepath));
   }
 
   function getIcon(filepath: string): SemanticICONS {
@@ -139,6 +146,8 @@ export default function ListFilesPanel() {
                               src: f.transcode_filepath ?? f.file,
                               cover: f.cover
                             });
+                          } else if (isPdf(f.file)) {
+                            setpdfSrc(f.file);
                           }
                         }}
                       >
@@ -236,12 +245,15 @@ export default function ListFilesPanel() {
             document={selectedDocument}
           ></Editor>
         )}
+        {/** Preview image */}
         <Modal
           open={imageSrc !== undefined}
           onClose={() => setImageSrc(undefined)}
         >
           <Image src={imageSrc} fluid></Image>
         </Modal>
+        {/** End preview image */}
+        {/** Preview video */}
         <Modal
           open={videoSrc !== undefined}
           onClose={() => setVideoSrc(undefined)}
@@ -250,6 +262,12 @@ export default function ListFilesPanel() {
             <source src={videoSrc && videoSrc.src} />
           </Player>
         </Modal>
+        {/** End preview video */}
+        {/** Preview pdf */}
+        <Modal open={pdfSrc !== undefined} onClose={() => setpdfSrc(undefined)}>
+          {pdfSrc && <PDFViewer file={pdfSrc} />}
+        </Modal>
+        {/** End preview pdf */}
         {selectedFile && (
           <MoveDialog
             type="file"

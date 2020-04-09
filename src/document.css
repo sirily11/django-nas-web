@@ -1,0 +1,14 @@
+body,
+html {
+  height: 100%;
+  margin: 0px;
+  background-color: #e8e8e8;
+}
+
+.ql-container.ql-snow {
+  border: 0;
+}
+
+.ql-toolbar.ql-snow {
+  border: 0;
+}
