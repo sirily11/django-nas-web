@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import AutosizeInput from "react-input-autosize";
 import { DocumentContext } from "../../../models/DocumentContext";
 import {
   makeStyles,
@@ -48,21 +49,24 @@ export default function Titlebar() {
   return (
     <div style={{ marginTop: 5 }}>
       <Tooltip title="Rename">
-        <input
-          className={classes.notchedOutline}
-          style={{
-            width: (currentDocument.name.length + 5) * 8.5,
-            maxWidth: window.innerWidth * 0.8
-          }}
-          value={currentDocument.name}
-          onChange={e => {
-            currentDocument.name = e.target.value;
-            updateDocument(currentDocument);
-          }}
-          onBlur={async () => {
+        <ClickAwayListener
+          onClickAway={async () => {
             await saveDocument();
           }}
-        />
+        >
+          <AutosizeInput
+            id="test-input"
+            className={classes.notchedOutline}
+            style={{
+              maxWidth: window.innerWidth * 0.8
+            }}
+            value={currentDocument.name}
+            onChange={e => {
+              currentDocument.name = e.target.value;
+              updateDocument(currentDocument);
+            }}
+          />
+        </ClickAwayListener>
       </Tooltip>
       <Tooltip title="Move">
         <IconButton
