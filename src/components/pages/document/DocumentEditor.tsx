@@ -13,7 +13,9 @@ import {
   IconButton,
   makeStyles,
   Container,
-  Paper
+  Paper,
+  Snackbar,
+  Tooltip
 } from "@material-ui/core";
 import { DocumentContext } from "../../models/DocumentContext";
 import Titlebar from "./components/Titlebar";
@@ -22,6 +24,7 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import BodyEditor from "./components/BodyEditor";
 import "../../../document.css";
 import { NavLink } from "react-router-dom";
+import MenuBar from "./components/MenuBar";
 
 const theme = createMuiTheme({
   palette: {
@@ -36,30 +39,46 @@ const theme = createMuiTheme({
 
 const useStyles = makeStyles(theme => ({
   appbar: {
-    height: "85px"
+    height: "90px"
   },
   container: {
-    paddingTop: "100px",
+    paddingTop: "95px",
     height: "100%"
+  },
+  row: {
+    paddingTop: 0,
+    paddingBottom: 0
+  },
+  largeIcon: {
+    width: 40,
+    height: 40
   }
 }));
 
 export default function DocumentEditor() {
-  const { currentDocument, isLoading } = useContext(DocumentContext);
+  const { currentDocument, isLoading, errorMsg } = useContext(DocumentContext);
   const classes = useStyles();
+
   return (
     <ThemeProvider theme={theme}>
       <div>
         <AppBar elevation={0} className={classes.appbar} color="secondary">
           <Toolbar>
-            <NavLink to={`/home/${currentDocument?.parent ?? ""}`}>
-              <IconButton edge="start" color="inherit" aria-label="menu">
-                <DescriptionIcon fontSize="large" color="primary" />
-              </IconButton>
-            </NavLink>
+            <Tooltip title="Back">
+              <NavLink to={`/home/${currentDocument?.parent ?? ""}`}>
+                <DescriptionIcon
+                  className={classes.largeIcon}
+                  fontSize="large"
+                  color="primary"
+                />
+              </NavLink>
+            </Tooltip>
             <Grid style={{ marginLeft: 10 }}>
               <Grid.Row style={{ padding: 0 }}>
                 <Titlebar />
+              </Grid.Row>
+              <Grid.Row style={{ paddingTop: 0, paddingBottom: 0 }}>
+                <MenuBar />
               </Grid.Row>
               <Grid.Row style={{ padding: 0 }}>
                 {currentDocument && <ToolsBar />}
@@ -69,14 +88,24 @@ export default function DocumentEditor() {
         </AppBar>
         <Container id="container" className={classes.container}>
           {currentDocument && (
-            <Paper style={{ height: "100%" }}>
+            <Paper
+              style={{ height: "100%", minHeight: window.innerHeight - 95 }}
+              square
+            >
               <BodyEditor />
             </Paper>
           )}
         </Container>
-
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left"
+          }}
+          open={errorMsg !== undefined}
+          message={errorMsg}
+        />
         <Backdrop
-          open={isLoading}
+          open={isLoading && currentDocument === undefined}
           style={{
             zIndex: 1,
             color: "#fff"

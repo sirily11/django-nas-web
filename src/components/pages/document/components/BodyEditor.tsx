@@ -6,13 +6,16 @@ import {
   makeStyles,
   IconButton,
   Tooltip,
-  LinearProgress
+  LinearProgress,
+  ClickAwayListener
 } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
 import { Folder, Document as NasDocument } from "../../../models/Folder";
 import EditorJS from "@editorjs/editorjs";
 import ReactQuill, { Quill } from "react-quill";
+import { DividerBlot } from "./blots/DividerBlot";
 
+Quill.register(DividerBlot);
 const useStyles = makeStyles(theme => ({
   notchedOutline: {
     "&:focus": {},
@@ -47,29 +50,37 @@ export default function BodyEditor() {
   if (currentDocument === undefined) {
     return (
       <ReactQuill
-        style={{ height: "100%", border: 0, paddingBottom: "85px" }}
+        style={{
+          height: "100%",
+          border: 0,
+          paddingBottom: "85px"
+        }}
         modules={modules}
       />
     );
   }
 
   return (
-    <ReactQuill
-      ref={instance => setEditor(instance != null ? instance : undefined)}
-      onBlur={async () => {
+    <ClickAwayListener
+      onClickAway={async () => {
         if (numChanges > 0) {
           await save();
         }
       }}
-      onChange={async () => {
-        setNumberOfChanges(numChanges + 1);
-        if (numChanges > 3) {
-          await save();
-        }
-      }}
-      style={{ height: "100%", border: 0, paddingBottom: "85px" }}
-      defaultValue={currentDocument.content}
-      modules={modules}
-    />
+    >
+      <ReactQuill
+        ref={instance => setEditor(instance != null ? instance : undefined)}
+        onKeyDown={async () => {
+          setNumberOfChanges(numChanges + 1);
+          if (numChanges > 3) {
+            await save();
+          }
+        }}
+        onChange={async e => {}}
+        style={{ height: "100%", border: 0, paddingBottom: "85px" }}
+        defaultValue={currentDocument.content}
+        modules={modules}
+      />
+    </ClickAwayListener>
   );
 }

@@ -11,11 +11,14 @@ import {
   CircularProgress,
   Fade,
   Collapse,
-  LinearProgress
+  LinearProgress,
+  Tooltip,
+  Divider
 } from "@material-ui/core";
 import { DocumentContext } from "../../../models/DocumentContext";
 import FolderIcon from "@material-ui/icons/Folder";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 
 import { Button } from "semantic-ui-react";
 
@@ -34,7 +37,6 @@ export default function MoveDialog(props: Props) {
     <Card style={{ width: "300px" }}>
       <CardContent>
         <div>
-          {" "}
           <IconButton
             onClick={async () => {
               setLoadingFolder(true);
@@ -76,10 +78,19 @@ export default function MoveDialog(props: Props) {
             ))}
           </List>
         </Collapse>
+        <Divider />
       </CardContent>
-      <CardActions>
+      <CardActions disableSpacing>
+        <Tooltip title="New Folder">
+          <IconButton>
+            <CreateNewFolderIcon />
+          </IconButton>
+        </Tooltip>
         <Button
           loading={loading}
+          color="blue"
+          style={{ marginLeft: "auto" }}
+          size="tiny"
           onClick={async () => {
             if (currentDocument && nas.currentFolder) {
               setLoading(true);
@@ -99,7 +110,7 @@ export default function MoveDialog(props: Props) {
             }
           }}
         >
-          Move To This
+          Move Here
         </Button>
       </CardActions>
     </Card>

@@ -3,6 +3,11 @@ import { Nas } from "./nas";
 import { RouteComponentProps } from "react-router";
 import { Folder, Document as NasDocument, File as NasFile } from "./Folder";
 import { UploadInfo } from "../pages/home/components/files/UploadDialog";
+import * as path from "path";
+//@ts-ignore
+import { MarkdownToQuill } from "md-to-quill-delta";
+const QuillDeltaToHtmlConverter = require("quill-delta-to-html")
+  .QuillDeltaToHtmlConverter;
 
 interface RouterProps {
   id: string;
@@ -16,6 +21,9 @@ interface DocumentContext {
   update(): void;
   updateDocument(doc: NasDocument): void;
   saveDocument(): Promise<void>;
+  saveToLocal(savingType: "html" | "pdf"): Promise<void>;
+  oepnFromLocal(): Promise<void>;
+  newDocument(name: string): Promise<void>;
 }
 
 interface DocumentProps extends RouteComponentProps<RouterProps> {}
@@ -31,7 +39,10 @@ export class DocumentProvider extends Component<
       isLoading: false,
       update: this.update,
       updateDocument: this.update,
-      saveDocument: this.saveDocument
+      saveDocument: this.saveDocument,
+      saveToLocal: this.saveToLocal,
+      oepnFromLocal: this.openFromLocal,
+      newDocument: this.newDocument
     };
   }
 
@@ -49,12 +60,92 @@ export class DocumentProvider extends Component<
   };
 
   saveDocument = async () => {
-    this.setState({ isLoading: true });
+    try {
+      let doc = this.state.currentDocument;
+      if (doc) {
+        this.setState({ isLoading: true });
+        await this.state.nas.updateDocument(doc.id, doc.name, doc.content);
+      }
+    } catch (err) {
+      this.setState({ errorMsg: "Failed to save" });
+    } finally {
+      this.setState({ isLoading: false });
+      setTimeout(() => {
+        this.setState({ errorMsg: undefined });
+      }, 3000);
+    }
+  };
+
+  newDocument = async (name: string) => {};
+
+  readFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.onload = content => {
+        let text = reader.result;
+
+        resolve(text as string);
+      };
+      reader.readAsText(file);
+    });
+  };
+
+  openFromLocal = async () => {
+    const { currentDocument, nas } = this.state;
+    try {
+      let input =
+        (document.getElementById("new file") as HTMLInputElement) ??
+        document.createElement("input");
+      input.id = "new file";
+      input.type = "file";
+      input.accept = ".md,.html";
+      input.multiple = false;
+      input.click();
+      input.addEventListener("change", async e => {
+        this.setState({
+          isLoading: true,
+          errorMsg: "Reading Local Document..."
+        });
+        let files = input.files;
+        if (files) {
+          let file = files[0];
+          let ext = path.extname(file.name);
+          if (ext === ".md") {
+            const converter = new MarkdownToQuill();
+            let content = await this.readFile(file);
+            let delta = converter.convert(content);
+            this.setState({ errorMsg: "Creating New Document" });
+            let d = await nas.createNewDocument(
+              file.name,
+              { ops: delta } as any,
+              currentDocument?.parent
+            );
+            this.setState({
+              errorMsg: "Document Created. Preparing for redirecting"
+            });
+            setTimeout(() => {
+              this.setState({ isLoading: false, errorMsg: undefined });
+              window.location.href = "#/document/" + d.id;
+            }, 1500);
+          }
+        }
+        input.remove();
+      });
+    } catch (err) {
+      this.setState({ errorMsg: "Unable to open file", isLoading: false });
+    }
+  };
+
+  saveToLocal = async (savingType: "html" | "pdf") => {
     let doc = this.state.currentDocument;
     if (doc) {
-      await this.state.nas.updateDocument(doc.id, doc.name, doc.content);
+      switch (savingType) {
+        case "html":
+          let converter = new QuillDeltaToHtmlConverter(doc.content);
+          let html = converter.convert();
+          break;
+      }
     }
-    this.setState({ isLoading: false });
   };
 
   async componentWillMount() {
@@ -65,11 +156,23 @@ export class DocumentProvider extends Component<
   }
 
   fetch = async (id: string) => {
-    this.setState({ isLoading: true });
-    let document = await this.state.nas.getDocument(id);
-    setTimeout(() => {
-      this.setState({ currentDocument: document, isLoading: false });
-    }, 400);
+    try {
+      this.setState({ isLoading: true });
+      let document = await this.state.nas.getDocument(id);
+      setTimeout(() => {
+        this.setState({ currentDocument: document });
+      }, 400);
+    } catch (err) {
+      this.setState({ errorMsg: "Failed to open" });
+    } finally {
+      setTimeout(() => {
+        this.setState({ isLoading: false });
+      }, 500);
+      this.setState({ currentDocument: undefined });
+      setTimeout(() => {
+        this.setState({ errorMsg: undefined });
+      }, 3000);
+    }
   };
 
   update = () => {
@@ -92,6 +195,15 @@ const context: DocumentContext = {
   update: () => {},
   updateDocument: (d: NasDocument) => {},
   saveDocument: () => {
+    return Promise.resolve();
+  },
+  oepnFromLocal: () => {
+    return Promise.resolve();
+  },
+  newDocument: () => {
+    return Promise.resolve();
+  },
+  saveToLocal: () => {
     return Promise.resolve();
   },
   isLoading: false

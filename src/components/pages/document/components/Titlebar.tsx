@@ -8,7 +8,10 @@ import {
   LinearProgress,
   Popper,
   ClickAwayListener,
-  Paper
+  Paper,
+  Fade,
+  Slide,
+  Collapse
 } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
 import { Folder, Document as NasDocument } from "../../../models/Folder";
@@ -19,7 +22,11 @@ const useStyles = makeStyles(theme => ({
     border: 0,
     fontWeight: "normal",
     background: "transparent",
-    fontSize: "20px"
+    fontSize: "18px",
+    paddingTop: 5
+  },
+  button: {
+    padding: "0px 5px"
   }
 }));
 
@@ -34,58 +41,84 @@ export default function Titlebar() {
   } = useContext(DocumentContext);
 
   const [anchorEl, setAnchorEl] = React.useState<undefined | HTMLElement>();
+  const [numChanges, setNumChanges] = useState(0);
   const classes = useStyles();
 
-  if (currentDocument === undefined) {
+  if (currentDocument === undefined && !isLoading) {
     return (
-      <div style={{ height: 24, width: 100 }}>
-        <LinearProgress
-          variant="indeterminate"
-          style={{ marginTop: 15, width: 100 }}
+      <div>
+        <AutosizeInput
+          id="test-input"
+          className={classes.notchedOutline}
+          style={{
+            maxWidth: window.innerWidth * 0.8
+          }}
+          value={"Cannot fetch document"}
         />
       </div>
     );
   }
-  return (
-    <div style={{ marginTop: 5 }}>
-      <Tooltip title="Rename">
-        <ClickAwayListener
-          onClickAway={async () => {
-            await saveDocument();
-          }}
-        >
-          <AutosizeInput
-            id="test-input"
-            className={classes.notchedOutline}
-            style={{
-              maxWidth: window.innerWidth * 0.8
-            }}
-            value={currentDocument.name}
-            onChange={e => {
-              currentDocument.name = e.target.value;
-              updateDocument(currentDocument);
-            }}
-          />
-        </ClickAwayListener>
-      </Tooltip>
-      <Tooltip title="Move">
-        <IconButton
-          style={{ verticalAlign: "sub" }}
-          onClick={async e => {
-            setAnchorEl(e.currentTarget);
-            if (currentDocument) {
-              await nas.getContent(currentDocument.parent as number);
-            }
 
-            update();
-          }}
-        >
-          <FolderIcon />
-        </IconButton>
-      </Tooltip>
-      <span style={{ textDecoration: "underline", color: "grey" }}>
-        {isLoading ? "Commnucating with server" : "All changes saved in Drive"}
-      </span>
+  return (
+    <div style={{ marginTop: 15, marginLeft: 5 }}>
+      <Collapse in={isLoading && !currentDocument} unmountOnExit mountOnEnter>
+        <div style={{ height: 24, width: 100 }}>
+          <LinearProgress
+            variant="indeterminate"
+            style={{ marginTop: 15, width: 100 }}
+          />
+        </div>
+      </Collapse>
+      <Collapse
+        in={!isLoading && currentDocument !== undefined}
+        mountOnEnter
+        unmountOnExit
+      >
+        <div>
+          <Tooltip title="Rename">
+            <ClickAwayListener
+              onClickAway={async () => {
+                if (numChanges > 0) {
+                  await saveDocument();
+                  setNumChanges(0);
+                }
+              }}
+            >
+              <AutosizeInput
+                id="test-input"
+                className={classes.notchedOutline}
+                style={{
+                  maxWidth: window.innerWidth * 0.8
+                }}
+                value={currentDocument?.name}
+                onChange={e => {
+                  if (currentDocument) {
+                    currentDocument.name = e.target.value;
+                    setNumChanges(numChanges + 1);
+                    updateDocument(currentDocument);
+                  }
+                }}
+              />
+            </ClickAwayListener>
+          </Tooltip>
+          <Tooltip title="Move">
+            <IconButton
+              className={classes.button}
+              onClick={async e => {
+                setAnchorEl(e.currentTarget);
+                if (currentDocument) {
+                  await nas.getContent(currentDocument.parent as number);
+                }
+
+                update();
+              }}
+            >
+              <FolderIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
+      </Collapse>
+
       {anchorEl && (
         <ClickAwayListener onClickAway={() => setAnchorEl(undefined)}>
           <Popper

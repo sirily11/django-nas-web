@@ -290,14 +290,14 @@ export class Nas {
      * @param name: Name of the document
      * @param data: EditorJS object
      */
-    createNewDocument = async (name: string, data?: DeltaStatic) => {
+    createNewDocument = async (name: string, data?: DeltaStatic, parent?: any) => {
         let res = await Axios.post<NasDocument>(documentURL,
             {
-                name: name, parent: this.currentFolder && this.currentFolder.id ? this.currentFolder.id : null,
+                name: name, parent: this.currentFolder && this.currentFolder.id ? this.currentFolder.id : parent,
                 content: data ? JSON.stringify(data.ops) : undefined
             })
         this.currentFolder && this.currentFolder.documents.push(res.data)
-
+        return res.data
     }
 
     /**

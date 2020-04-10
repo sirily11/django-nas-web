@@ -16,3 +16,11 @@ html {
 .ql-toolbar.ql-snow {
   border: 0;
 }
+
+#toolbar {
+  padding: 0;
+}
+
+.ql-size-huge {
+  line-height: 1.4;
+}
