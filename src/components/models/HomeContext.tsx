@@ -14,9 +14,11 @@ interface HomePageContext {
   uploadInfo?: UploadInfo;
   updateUploadInfo(info?: UploadInfo): void;
   uploadFiles?: File[];
+  uploadedFiles: File[];
   setUploadInfo(files?: File[]): void;
   update(): void;
   selectDocument(doc?: NasDocument): void;
+  setUploadedFiles(files: File[]): void;
   isLoading: boolean;
 }
 
@@ -34,9 +36,15 @@ export class HomePageProvider extends Component<
       updateUploadInfo: this.updateUploadInfo,
       setUploadInfo: this.setUploadInfo,
       update: this.update,
+      uploadedFiles: [],
+      setUploadedFiles: this.setUploadedFile,
       isLoading: false
     };
   }
+
+  setUploadedFile = (files: File[]) => {
+    this.setState({ uploadedFiles: files });
+  };
 
   selectDocument = (document?: NasDocument) => {
     this.setState({ selectedDocument: document });
@@ -86,6 +94,8 @@ export class HomePageProvider extends Component<
 
 const context: HomePageContext = {
   nas: new Nas(),
+  uploadedFiles: [],
+  setUploadedFiles: (files: File[]) => {},
   update: () => {},
   selectDocument: () => {},
   updateUploadInfo: (info: UploadInfo) => {},

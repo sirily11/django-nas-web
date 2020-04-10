@@ -32,7 +32,9 @@ export default function UploadDialog(props: Props) {
     uploadInfo,
     setUploadInfo,
     uploadFiles,
-    updateUploadInfo
+    updateUploadInfo,
+    setUploadedFiles,
+    uploadedFiles
   } = useContext(HomePageContext);
 
   const onInputChange = e => {
@@ -120,6 +122,10 @@ export default function UploadDialog(props: Props) {
                     uploadedDataSize: current,
                     totalDataSize: total
                   });
+                },
+                async file => {
+                  uploadedFiles.push(file);
+                  // setUploadedFiles(uploadedFiles);
                 }
               );
               update();

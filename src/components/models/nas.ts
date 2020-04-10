@@ -116,7 +116,7 @@ export class Nas {
      * @param onUpload: callback function
      * @param isDir: Whether upload directory
      */
-    uploadFile = async (files: File[], isDir: boolean, onUpload: (index: number, progress: number, current: number, total: number) => void) => {
+    uploadFile = async (files: File[], isDir: boolean, onUpload: (index: number, progress: number, current: number, total: number) => void, onFileUploaded: (file: File) => Promise<void>) => {
         try {
             let index = 0;
             for (let f of files) {
@@ -139,7 +139,9 @@ export class Nas {
                             }
 
                         })
-                    await this.getContent(this.currentFolder.id)
+
+                    await this.getContent(this.currentFolder?.id)
+                    await onFileUploaded(f)
 
                 }
                 index += 1

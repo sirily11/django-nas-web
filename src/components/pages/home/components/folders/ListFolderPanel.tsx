@@ -28,6 +28,7 @@ import {
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import moment from "moment";
+import Axios from "axios";
 import "video-react/dist/video-react.css";
 import { Folder, Document as NasDocument } from "../../../../models/Folder";
 
@@ -35,6 +36,7 @@ import { NavLink } from "react-router-dom";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import MoveDialog from "../files/MoveDialog";
 import RenameDialog from "../files/RenameDialog";
+import { downloadURL } from "../../../../models/urls";
 
 export default function ListPanel() {
   const { nas, isLoading, update } = useContext(HomePageContext);
@@ -142,6 +144,24 @@ export default function ListPanel() {
           }}
         >
           Rename
+        </MenuItem>
+        <MenuItem
+          onClick={async () => {
+            if (selectedFolder) {
+              let response = await Axios.post(
+                `${downloadURL}${selectedFolder.id}`
+              );
+
+              const link = document.createElement("a");
+              link.href = `${response.data.download_url}`;
+              console.log(link.href);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+          }}
+        >
+          Download Folder
         </MenuItem>
         <MenuItem
           onClick={async () => {

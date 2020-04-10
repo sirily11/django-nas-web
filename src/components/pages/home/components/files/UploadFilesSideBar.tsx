@@ -14,13 +14,15 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { SystemContext } from "../../../../models/SystemContext";
 
 export default function UploadFilesSideBar() {
-  const { uploadFiles, uploadInfo } = useContext(HomePageContext);
+  const { uploadFiles, uploadInfo, uploadedFiles } = useContext(
+    HomePageContext
+  );
   const { systemInfo } = useContext(SystemContext);
 
   return (
-    <List>
+    <List style={{ overflowY: "auto", height: "100%", overflowX: "hidden" }}>
       {systemInfo && (
-        <Grid style={{ height: "100%", marginTop: 10 }}>
+        <Grid>
           <Grid.Row style={{ height: 40 }}>
             <Grid.Column width={8}>
               <div>CPU</div>
@@ -44,33 +46,35 @@ export default function UploadFilesSideBar() {
       )}
 
       {uploadFiles ? (
-        uploadFiles.map((f, i) => (
-          <ListItem>
-            <ListItemIcon>
-              <Icon name="file" />
-            </ListItemIcon>
-            <ListItemText
-              primary={f.name}
-              secondary={
-                <LinearProgress
-                  color="secondary"
-                  variant={
-                    uploadInfo && uploadInfo.currentIndex === i
-                      ? "determinate"
-                      : "indeterminate"
-                  }
-                  value={
-                    uploadInfo && uploadInfo.currentIndex === i
-                      ? uploadInfo.progress
-                      : undefined
-                  }
-                />
-              }
-            />
-          </ListItem>
-        ))
+        uploadFiles
+          .filter(f => !uploadedFiles.includes(f))
+          .map((f, i) => (
+            <ListItem>
+              <ListItemIcon>
+                <Icon name="file" />
+              </ListItemIcon>
+              <ListItemText
+                primary={f.name}
+                secondary={
+                  <LinearProgress
+                    color="secondary"
+                    variant={
+                      uploadInfo && uploadInfo.currentIndex === i
+                        ? "determinate"
+                        : "indeterminate"
+                    }
+                    value={
+                      uploadInfo && uploadInfo.currentIndex === i
+                        ? uploadInfo.progress
+                        : undefined
+                    }
+                  />
+                }
+              />
+            </ListItem>
+          ))
       ) : (
-        <Grid style={{ height: "100%" }} centered verticalAlign="middle">
+        <Grid centered verticalAlign="middle">
           <div style={{ marginTop: "10px", marginBottom: "auto" }}>
             No Pending Uploads
           </div>
