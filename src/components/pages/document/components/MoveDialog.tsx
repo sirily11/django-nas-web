@@ -21,23 +21,46 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 
 import { Button } from "semantic-ui-react";
+import { MovingContext } from "../../../models/MovingContext";
+import {
+  Folder,
+  File as NasFile,
+  Document as NasDocument
+} from "../../../models/Folder";
 
 interface Props {
+  currentFile: Folder | NasFile | NasDocument;
   onClose(): void;
+  onMove(file: Folder | NasFile | NasDocument, dest: Folder): Promise<void>;
 }
 
 export default function MoveDialog(props: Props) {
-  const { nas, update, currentDocument, updateDocument } = useContext(
-    DocumentContext
-  );
+  const { nas, update } = useContext(MovingContext);
+  const { currentFile, onMove, onClose } = props;
   const [loading, setLoading] = useState(false);
-  const [loadingFolder, setLoadingFolder] = useState(false);
+  const [loadingFolder, setLoadingFolder] = useState(
+    nas.currentFolder === undefined
+  );
+
+  if (!nas.currentFolder) {
+    console.log(currentFile);
+    nas
+      .getContent(currentFile.parent as any)
+      .then(() => {
+        setLoadingFolder(false);
+      })
+      .catch(err => {
+        alert(`${err}`);
+        setLoadingFolder(false);
+      });
+  }
 
   return (
     <Card style={{ width: "300px" }}>
       <CardContent>
         <div>
           <IconButton
+            disabled={nas.currentFolder?.parent === undefined}
             onClick={async () => {
               setLoadingFolder(true);
               await nas.getContent(nas.currentFolder?.parent);
@@ -52,7 +75,7 @@ export default function MoveDialog(props: Props) {
           {nas.currentFolder?.name ?? "root"}
         </div>
         <Collapse in={loadingFolder} mountOnEnter unmountOnExit>
-          <LinearProgress />
+          <LinearProgress style={{ backgroundColor: "#47bcff" }} />
         </Collapse>
 
         <Collapse in={!loadingFolder} mountOnEnter unmountOnExit>
@@ -92,21 +115,20 @@ export default function MoveDialog(props: Props) {
           style={{ marginLeft: "auto" }}
           size="tiny"
           onClick={async () => {
-            if (currentDocument && nas.currentFolder) {
-              setLoading(true);
-              console.log(nas.currentFolder);
-              await nas.moveDocument(
-                currentDocument.id,
-                nas.currentFolder.id ?? null
-              );
-              currentDocument.parent = nas.currentFolder.id;
-              updateDocument(currentDocument);
-
-              setTimeout(() => {
+            if (currentFile && nas.currentFolder) {
+              try {
+                setLoading(true);
+                await onMove(currentFile, nas.currentFolder);
+                setTimeout(() => {
+                  setLoading(false);
+                  update();
+                  onClose();
+                  nas.currentFolder = undefined;
+                }, 400);
+              } catch (err) {
+                alert("Cannot move to this location");
                 setLoading(false);
-                update();
-                props.onClose();
-              }, 400);
+              }
             }
           }}
         >

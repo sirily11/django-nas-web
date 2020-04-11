@@ -16,6 +16,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { IconButton } from "@material-ui/core";
 import { DocumentProvider } from "./components/models/DocumentContext";
 import DocumentEditor from "./components/pages/document/DocumentEditor";
+import { MovingProvider } from "./components/models/MovingContext";
 
 export default function App() {
   const [visible, setVisible] = useState(false);
@@ -32,9 +33,11 @@ export default function App() {
             component={(props: any) => {
               setShowMenu(true);
               return (
-                <HomePageProvider {...props}>
-                  <HomePage></HomePage>
-                </HomePageProvider>
+                <MovingProvider>
+                  <HomePageProvider {...props}>
+                    <HomePage></HomePage>
+                  </HomePageProvider>
+                </MovingProvider>
               );
             }}
           />
@@ -44,9 +47,11 @@ export default function App() {
             component={(props: any) => {
               setShowMenu(true);
               return (
-                <DocumentProvider {...props}>
-                  <DocumentEditor />
-                </DocumentProvider>
+                <MovingProvider>
+                  <DocumentProvider {...props}>
+                    <DocumentEditor />
+                  </DocumentProvider>
+                </MovingProvider>
               );
             }}
           />

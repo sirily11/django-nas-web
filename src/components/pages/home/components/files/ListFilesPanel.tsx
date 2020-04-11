@@ -1,8 +1,5 @@
 import React, { useContext, useState } from "react";
 import {
-  Segment,
-  MessageHeader,
-  Message,
   Icon,
   Modal,
   Image,
@@ -10,6 +7,9 @@ import {
   Dropdown,
   CardContent
 } from "semantic-ui-react";
+import AudioPlayer from "react-h5-audio-player";
+import "react-h5-audio-player/lib/styles.css";
+import DeleteIcon from "@material-ui/icons/Delete";
 import {
   TableContainer,
   TableHead,
@@ -24,7 +24,12 @@ import {
   Paper,
   CardMedia,
   Card,
-  CardActionArea
+  CardActionArea,
+  Checkbox,
+  Toolbar,
+  Tooltip,
+  DialogTitle,
+  DialogContent
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
@@ -40,16 +45,19 @@ import Editor from "../documents/Editor";
 import { downloadURL, fileURL } from "../../../../models/urls";
 import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
-import MoveDialog from "./MoveDialog";
 import RenameDialog from "./RenameDialog";
 import { formatBytes } from "./utils";
 import PDFViewer from "./pdf/PDFViewer";
+import { Dialog } from "@material-ui/core";
+import MoveDialog from "../../../document/components/MoveDialog";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 const { Player } = require("video-react");
 
 const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif", ".jpeg", ".JPEG"];
 const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
 const pdfExt = [".pdf"];
+const audioExt = [".mp3", ".m4a"];
 
 export default function ListFilesPanel() {
   const {
@@ -62,11 +70,14 @@ export default function ListFilesPanel() {
   const [previewAnchor, setPreviewAnchor] = React.useState<null | HTMLElement>(
     null
   );
+  const [selectedFiles, setSelectedFiles] = useState<NasFile[]>([]);
   const [onHoverFile, setOnHoverFile] = useState<NasFile>();
   const [selectedFile, setselectedFile] = useState<NasFile>();
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [showMoveToDialog, setShowMoveToDialog] = useState(false);
+  const [showMultiMoveDialog, setShowMultiMoveDialog] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+  const [audioSrc, setaudioSrc] = useState<string | undefined>(undefined);
   const [videoSrc, setVideoSrc] = useState<
     { src: string; cover: string } | undefined
   >(undefined);
@@ -98,6 +109,10 @@ export default function ListFilesPanel() {
     return pdfExt.includes(path.extname(filepath));
   }
 
+  function isAudio(filepath: string): boolean {
+    return audioExt.includes(path.extname(filepath));
+  }
+
   function getIcon(filepath: string): SemanticICONS {
     if (isImage(filepath)) {
       return "images";
@@ -112,6 +127,50 @@ export default function ListFilesPanel() {
     <div id="file-list">
       <Grid>
         <FilesActions />
+        <Toolbar>
+          <div>
+            {selectedFiles.length === 0 ? (
+              <h2>Files</h2>
+            ) : (
+              <h2>Selected {selectedFiles.length} files</h2>
+            )}
+          </div>
+          {selectedFiles.length === 0 ? (
+            <div> </div>
+          ) : (
+            <div>
+              <Tooltip title="Delete">
+                <IconButton
+                  aria-label="delete"
+                  onClick={async () => {
+                    let confirm = window.confirm(
+                      "Do you want to delete these files?"
+                    );
+                    if (confirm) {
+                      for (let file of selectedFiles) {
+                        await nas.deleteFile(file.id, false);
+                        update();
+                      }
+                      setSelectedFiles([]);
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Move To">
+                <IconButton
+                  aria-label="Move To"
+                  onClick={async () => {
+                    setShowMultiMoveDialog(true);
+                  }}
+                >
+                  <FileCopyIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          )}
+        </Toolbar>
         <Grid.Row style={{ overflow: "auto", overflowX: "hidden" }}>
           {/** Render files */}
           {nas.currentFolder && nas.currentFolder.files.length > 0 && (
@@ -119,6 +178,23 @@ export default function ListFilesPanel() {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell>
+                      <Checkbox
+                        onChange={e => {
+                          if (e.target.checked) {
+                            if (nas.currentFolder)
+                              setSelectedFiles(nas.currentFolder.files);
+                          } else {
+                            setSelectedFiles([]);
+                          }
+                          update();
+                        }}
+                        checked={
+                          selectedFiles.length ===
+                          nas.currentFolder.files.length
+                        }
+                      />
+                    </TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Last Modify</TableCell>
                     <TableCell>Size</TableCell>
@@ -127,7 +203,22 @@ export default function ListFilesPanel() {
                 </TableHead>
                 <TableBody>
                   {nas.currentFolder.files.map((f, i) => (
-                    <TableRow hover>
+                    <TableRow hover selected={selectedFiles.includes(f)}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedFiles.includes(f)}
+                          onChange={e => {
+                            if (e.target.checked) {
+                              selectedFiles.push(f);
+                            } else {
+                              let index = selectedFiles.indexOf(f);
+                              selectedFiles.splice(index, 1);
+                            }
+                            update();
+                            setSelectedFiles(selectedFiles);
+                          }}
+                        />
+                      </TableCell>
                       <TableCell
                         style={{ cursor: "grab" }}
                         onMouseOver={e => {
@@ -146,6 +237,8 @@ export default function ListFilesPanel() {
                               src: f.transcode_filepath ?? f.file,
                               cover: f.cover
                             });
+                          } else if (isAudio(f.file)) {
+                            setaudioSrc(f.file);
                           } else if (isPdf(f.file)) {
                             setpdfSrc(f.file);
                           }
@@ -253,6 +346,20 @@ export default function ListFilesPanel() {
           <Image src={imageSrc} fluid></Image>
         </Modal>
         {/** End preview image */}
+        {/** Preview image */}
+        <Dialog
+          fullWidth
+          open={audioSrc !== undefined}
+          onClose={() => setaudioSrc(undefined)}
+        >
+          <DialogTitle>
+            <h4>{path.basename(audioSrc ?? "")}</h4>
+          </DialogTitle>
+          <DialogContent>
+            <AudioPlayer src={audioSrc} />
+          </DialogContent>
+        </Dialog>
+        {/** End preview image */}
         {/** Preview video */}
         <Modal
           open={videoSrc !== undefined}
@@ -269,14 +376,47 @@ export default function ListFilesPanel() {
         </Modal>
         {/** End preview pdf */}
         {selectedFile && (
-          <MoveDialog
-            type="file"
+          <Dialog
             open={showMoveToDialog}
-            selectedFile={selectedFile}
             onClose={() => {
+              setselectedFile(undefined);
               setShowMoveToDialog(false);
             }}
-          />
+          >
+            <MoveDialog
+              currentFile={selectedFile}
+              onClose={() => {
+                setselectedFile(undefined);
+                setShowMoveToDialog(false);
+              }}
+              onMove={async (file, dest) => {
+                await nas.moveFileTo(file.id, dest.id);
+                update();
+              }}
+            />
+          </Dialog>
+        )}
+        {selectedFiles.length > 0 && (
+          <Dialog
+            open={showMultiMoveDialog}
+            onClose={() => {
+              setShowMultiMoveDialog(false);
+            }}
+          >
+            <MoveDialog
+              currentFile={selectedFiles[0]}
+              onClose={() => {
+                setSelectedFiles([]);
+                setShowMultiMoveDialog(false);
+              }}
+              onMove={async (file, dest) => {
+                for (let f of selectedFiles) {
+                  await nas.moveFileTo(f.id, dest.id);
+                  update();
+                }
+              }}
+            />
+          </Dialog>
         )}
         {selectedFile && (
           <RenameDialog
@@ -300,8 +440,8 @@ export default function ListFilesPanel() {
                 image={onHoverFile.file}
               />
             )}
-            {isVideo(onHoverFile.filename) &&
-              (onHoverFile.cover ? (
+            {isVideo(onHoverFile.filename) ? (
+              onHoverFile.cover ? (
                 <CardActionArea>
                   <CardMedia
                     style={{ height: 140, width: 140 }}
@@ -313,7 +453,12 @@ export default function ListFilesPanel() {
                 <div>
                   {onHoverFile.filename} - {formatBytes(onHoverFile.size)}
                 </div>
-              ))}
+              )
+            ) : (
+              <div>
+                {onHoverFile.filename} - {formatBytes(onHoverFile.size)}
+              </div>
+            )}
           </Card>
         )}
       </Popper>

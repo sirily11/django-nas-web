@@ -24,7 +24,8 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Collapse
+  Collapse,
+  Dialog
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import moment from "moment";
@@ -34,9 +35,9 @@ import { Folder, Document as NasDocument } from "../../../../models/Folder";
 
 import { NavLink } from "react-router-dom";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import MoveDialog from "../files/MoveDialog";
 import RenameDialog from "../files/RenameDialog";
 import { downloadURL } from "../../../../models/urls";
+import MoveDialog from "../../../document/components/MoveDialog";
 
 export default function ListPanel() {
   const { nas, isLoading, update } = useContext(HomePageContext);
@@ -198,15 +199,28 @@ export default function ListPanel() {
       )}
 
       {selectedFolder && showMoveToDialog && (
-        <MoveDialog
-          type="folder"
-          selectedFile={selectedFolder}
+        <Dialog
           open={showMoveToDialog}
           onClose={() => {
             setShowMoveToDialog(false);
             setSelectedFolder(undefined);
           }}
-        />
+        >
+          <MoveDialog
+            currentFile={selectedFolder}
+            onClose={() => {
+              setShowMoveToDialog(false);
+              setSelectedFolder(undefined);
+            }}
+            onMove={async (file, dest) => {
+              if (file.id === dest.id) {
+                throw Error("Cannot move to this place");
+              }
+              await nas.moveFolderTo(file.id, dest.id);
+              update();
+            }}
+          />
+        </Dialog>
       )}
     </div>
   );

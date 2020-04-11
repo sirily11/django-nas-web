@@ -66,10 +66,6 @@ export default function FilesActions() {
             ))}
           {/*End Render documents*/}
         </Grid.Row>
-
-        <Grid.Row>
-          <h3>Files</h3>
-        </Grid.Row>
       </Grid>
       {selectedDocument && (
         <RenameDialog

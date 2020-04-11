@@ -127,7 +127,17 @@ export default function Titlebar() {
             style={{ zIndex: 2000 }}
             placement="right-end"
           >
-            <MoveDialog onClose={() => setAnchorEl(undefined)} />
+            {currentDocument && (
+              <MoveDialog
+                currentFile={currentDocument}
+                onClose={() => setAnchorEl(undefined)}
+                onMove={async (file: NasDocument, dest) => {
+                  await nas.moveDocument(file.id, dest.id);
+                  currentDocument.parent = dest.id;
+                  updateDocument(currentDocument);
+                }}
+              />
+            )}
           </Popper>
         </ClickAwayListener>
       )}

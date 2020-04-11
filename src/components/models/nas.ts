@@ -197,9 +197,10 @@ export class Nas {
     /** 
      * Delete file by id
      */
-    deleteFile = async (id: number) => {
+    deleteFile = async (id: number, showAlert = true) => {
         try {
-            let confirm = window.confirm("Are you sure you want to delete this file?")
+
+            let confirm = showAlert ? window.confirm("Are you sure you want to delete this file?") : true
             if (confirm && this.currentFolder) {
                 await Axios.delete<Nas>(`${fileURL}${id}/`)
                 await this.getContent(this.currentFolder.id)

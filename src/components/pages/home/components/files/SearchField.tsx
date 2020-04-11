@@ -29,12 +29,6 @@ import {
 } from "../../../../models/Folder";
 import SearchIcon from "@material-ui/icons/Search";
 
-import { NavLink } from "react-router-dom";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import MoveDialog from "../files/MoveDialog";
-import RenameDialog from "../files/RenameDialog";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     popper: {
