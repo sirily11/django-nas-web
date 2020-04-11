@@ -43,7 +43,6 @@ export default function MoveDialog(props: Props) {
   );
 
   if (!nas.currentFolder) {
-    console.log(currentFile);
     nas
       .getContent(currentFile.parent as any)
       .then(() => {

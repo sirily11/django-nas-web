@@ -351,9 +351,10 @@ export default function ListFilesPanel() {
           fullWidth
           open={audioSrc !== undefined}
           onClose={() => setaudioSrc(undefined)}
+          style={{ overflowX: "hidden" }}
         >
           <DialogTitle>
-            <h4>{path.basename(audioSrc ?? "")}</h4>
+            <h4>{decodeURIComponent(path.basename(audioSrc ?? ""))}</h4>
           </DialogTitle>
           <DialogContent>
             <AudioPlayer src={audioSrc} />
