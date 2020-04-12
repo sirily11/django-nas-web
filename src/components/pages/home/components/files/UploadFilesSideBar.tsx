@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { HomePageContext } from "../../../../models/HomeContext";
 import Rating from "@material-ui/lab/Rating";
 import List from "@material-ui/core/List";
+import { FixedSizeList } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { Icon, Grid, Item } from "semantic-ui-react";
 import {
   ListItem,
@@ -18,9 +20,12 @@ export default function UploadFilesSideBar() {
     HomePageContext
   );
   const { systemInfo } = useContext(SystemContext);
+  let filtedFiles = uploadFiles
+    ? uploadFiles.filter(f => !uploadedFiles.includes(f))
+    : [];
 
   return (
-    <List style={{ overflowY: "auto", height: "100%", overflowX: "hidden" }}>
+    <List style={{ overflowY: "hidden", height: "100%", overflowX: "hidden" }}>
       {systemInfo && (
         <Grid>
           <Grid.Row style={{ height: 40 }}>
@@ -44,38 +49,45 @@ export default function UploadFilesSideBar() {
           </Grid.Row>
         </Grid>
       )}
-
-      {uploadFiles ? (
-        uploadFiles
-          .filter(f => !uploadedFiles.includes(f))
-          .map((f, i) => (
-            <ListItem>
-              <ListItemIcon>
-                <Icon name="file" />
-              </ListItemIcon>
-              <ListItemText
-                primary={f.name}
-                secondary={
-                  <LinearProgress
-                    color="secondary"
-                    variant={
-                      uploadInfo && uploadInfo.currentIndex === i
-                        ? "determinate"
-                        : "indeterminate"
-                    }
-                    value={
-                      uploadInfo && uploadInfo.currentIndex === i
-                        ? uploadInfo.progress
-                        : undefined
-                    }
-                  />
-                }
-              />
-            </ListItem>
-          ))
-      ) : (
+      <AutoSizer>
+        {({ height, width }) => (
+          <FixedSizeList
+            height={height - 100}
+            itemCount={Math.min(3000, filtedFiles.length)}
+            itemSize={80}
+            width={width}
+          >
+            {({ index, style }) => (
+              <ListItem key={`upload-${index}`} style={style}>
+                <ListItemIcon>
+                  <Icon name="file" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={filtedFiles[index].name}
+                  secondary={
+                    <LinearProgress
+                      color="secondary"
+                      variant={
+                        uploadInfo && uploadInfo.currentIndex === index
+                          ? "determinate"
+                          : "indeterminate"
+                      }
+                      value={
+                        uploadInfo && uploadInfo.currentIndex === index
+                          ? uploadInfo.progress
+                          : undefined
+                      }
+                    />
+                  }
+                />
+              </ListItem>
+            )}
+          </FixedSizeList>
+        )}
+      </AutoSizer>
+      {uploadFiles === undefined && (
         <Grid centered verticalAlign="middle">
-          <div style={{ marginTop: "10px", marginBottom: "auto" }}>
+          <div style={{ marginTop: "50px", marginBottom: "auto" }}>
             No Pending Uploads
           </div>
         </Grid>

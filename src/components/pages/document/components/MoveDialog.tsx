@@ -19,6 +19,8 @@ import { DocumentContext } from "../../../models/DocumentContext";
 import FolderIcon from "@material-ui/icons/Folder";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
+import { FixedSizeList } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 import { Button } from "semantic-ui-react";
 import { MovingContext } from "../../../models/MovingContext";
@@ -55,7 +57,7 @@ export default function MoveDialog(props: Props) {
   }
 
   return (
-    <Card style={{ width: "300px" }}>
+    <Card style={{ width: "400px" }}>
       <CardContent>
         <div>
           <IconButton
@@ -78,7 +80,7 @@ export default function MoveDialog(props: Props) {
         </Collapse>
 
         <Collapse in={!loadingFolder} mountOnEnter unmountOnExit>
-          <List style={{ padding: 0 }}>
+          <List style={{ padding: 0, maxHeight: 400, overflowY: "auto" }}>
             {nas.currentFolder?.folders?.map((f, i) => (
               <ListItem
                 key={`folder-${i}`}

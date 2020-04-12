@@ -373,6 +373,7 @@ export default function ListFilesPanel() {
         {selectedFile && (
           <Dialog
             open={showMoveToDialog}
+            scroll="paper"
             onClose={() => {
               setselectedFile(undefined);
               setShowMoveToDialog(false);

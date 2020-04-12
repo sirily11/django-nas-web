@@ -190,20 +190,14 @@ export class Nas {
     async getUploadFileAndCreateFolder(file: File): Promise<FormData | undefined> {
         if (this.currentFolder) {
             //@ts-ignore
-            let folders = path.dirname(file.webkitRelativePath).split(path.sep)
+            let paths = file.webkitRelativePath
+
             let folder: Folder | undefined;
-
-            for (let f of folders) {
-                let res = await Axios.post(url, { "parent": folder?.id ?? this.currentFolder.id ?? null, "name": f })
-                folder = res.data;
-
-            }
-
             let formData = new FormData()
 
             formData.append("file", file)
-            console.log("parent", folder)
             folder && folder.id && formData.append("parent", `${folder?.id}`)
+            formData.append("paths", paths)
             return formData
         }
 
