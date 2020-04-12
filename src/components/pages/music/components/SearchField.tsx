@@ -93,6 +93,7 @@ export default function MusicSearchField() {
           root: classes.inputRoot,
           input: classes.inputInput
         }}
+        value={value}
         inputProps={{ "aria-label": "search" }}
         onChange={async e => {
           let keyword = e.target.value;

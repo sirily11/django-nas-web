@@ -191,12 +191,10 @@ export class Nas {
         if (this.currentFolder) {
             //@ts-ignore
             let paths = file.webkitRelativePath
-
-            let folder: Folder | undefined;
             let formData = new FormData()
-
+            console.log(this.currentFolder)
             formData.append("file", file)
-            folder && folder.id && formData.append("parent", `${folder?.id}`)
+            this.currentFolder.id && formData.append("parent", `${this.currentFolder?.id}`)
             formData.append("paths", paths)
             return formData
         }

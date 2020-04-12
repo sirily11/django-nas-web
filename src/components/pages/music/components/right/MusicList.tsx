@@ -18,9 +18,14 @@ import { musicURL } from "../../../../models/urls";
 import { File as NasFile } from "../../../../models/Folder";
 
 export default function MusicList() {
-  const { musicResponse, play, currentMusic, stop, fetch } = React.useContext(
-    MusicContext
-  );
+  const {
+    musicResponse,
+    play,
+    currentMusic,
+    stop,
+    fetch,
+    paginationURL
+  } = React.useContext(MusicContext);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setheight] = React.useState(window.innerHeight);
   const isSelected = (
@@ -81,9 +86,14 @@ export default function MusicList() {
             <Pagination
               size="medium"
               style={{ marginBottom: 10, marginTop: 10 }}
+              page={musicResponse?.current_page ?? 0}
               count={musicResponse?.total_pages ?? 0}
               onChange={async (e, value) => {
-                await fetch(`${musicURL}?page=${value}`);
+                if (paginationURL === musicURL) {
+                  await fetch(`${musicURL}?page=${value}`);
+                } else {
+                  await fetch(`${paginationURL}&page=${value}`);
+                }
               }}
             />
           </TableRow>

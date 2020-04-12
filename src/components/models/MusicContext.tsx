@@ -23,6 +23,7 @@ interface MusicContext {
   currentTag?: mm.IAudioMetadata;
   currentMusic?: NasFile;
   musicResponse?: PaginationResponse<NasFile>;
+  paginationURL: string;
   play(music: NasFile): Promise<void>;
   stop(): void;
   fetch(url: string): Promise<void>;
@@ -36,6 +37,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
     super(props);
     this.state = {
       nas: new Nas(),
+      paginationURL: musicURL,
       isLoading: false,
       update: this.update,
       play: this.play,
@@ -58,10 +60,25 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
 
   search = async (keyword: string) => {
     try {
-      let response = await Axios.get<PaginationResponse<NasFile>>(
-        `${musicURL}?search=${keyword}`
-      );
-      this.setState({ musicResponse: response.data });
+      if (keyword === "") {
+        let musicList = await this.state.nas.fetchMusicList();
+        this.setState({
+          musicResponse: musicList,
+          isLoading: false,
+          paginationURL: musicURL
+        });
+      } else {
+        this.setState({ errorMsg: "Searching " + keyword });
+        let searchURL = `${musicURL}?search=${keyword}`;
+        let response = await Axios.get<PaginationResponse<NasFile>>(searchURL);
+        this.setState({
+          musicResponse: response.data,
+          paginationURL: searchURL
+        });
+        setTimeout(() => {
+          this.setState({ errorMsg: undefined });
+        }, 3000);
+      }
     } catch (err) {
       this.setState({ errorMsg: err });
     }
