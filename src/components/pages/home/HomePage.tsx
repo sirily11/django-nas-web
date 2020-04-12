@@ -2,15 +2,15 @@ import React, { useContext, useState } from "react";
 import Header from "./components/others/Header";
 import "semantic-ui-css/semantic.min.css";
 import ListPanel from "./components/folders/ListFolderPanel";
-import { Container, Segment, Progress, Grid, Menu } from "semantic-ui-react";
+import { Segment, Grid, Menu } from "semantic-ui-react";
 import NasMenus from "./components/others/NasMenu";
 import ComputerStatus from "./components/others/ComputerStatus";
 import ListFilesPanel from "./components/files/ListFilesPanel";
 import { HomePageContext } from "../../models/HomeContext";
-import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
+import { ContextMenuTrigger } from "react-contextmenu";
 import MenuIcon from "@material-ui/icons/Menu";
 import UploadFilesSideBar from "./components/files/UploadFilesSideBar";
-import SearchIcon from "@material-ui/icons/Search";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   Hidden,
   AppBar,
@@ -24,10 +24,12 @@ import {
   Typography,
   InputBase,
   createMuiTheme,
-  ThemeProvider
+  ThemeProvider,
+  Tooltip
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import SearchField from "./components/files/SearchField";
+import { NavLink } from "react-router-dom";
 
 const theme = createMuiTheme({
   palette: {
@@ -125,6 +127,13 @@ export function HomePage() {
             <Typography className={classes.title} variant="h6" noWrap>
               Django Nas
             </Typography>
+            <Tooltip title="Open Music App">
+              <NavLink to="/music">
+                <IconButton>
+                  <OpenInNewIcon />
+                </IconButton>
+              </NavLink>
+            </Tooltip>
             <SearchField />
           </Toolbar>
         </AppBar>

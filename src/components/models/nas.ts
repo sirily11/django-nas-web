@@ -1,7 +1,7 @@
 import Axios from "axios"
-import { Folder, Parent, File as NasFile, Document as NasDocument } from './Folder';
+import { Folder, Parent, File as NasFile, Document as NasDocument, PaginationResponse } from './Folder';
 
-import { url, documentURL, fileURL, searchFileURL } from "./urls"
+import { url, documentURL, fileURL, searchFileURL, musicURL } from "./urls"
 import { DeltaStatic } from "quill";
 import * as path from 'path';
 
@@ -31,6 +31,21 @@ export class Nas {
             }
 
         } catch (err) {
+            this.errorMsg = err;
+        }
+    }
+
+    /**
+     * Fetch list of music
+     */
+    fetchMusicList = async () => {
+        try {
+
+            let url = `${musicURL}`
+            let data = await Axios.get<PaginationResponse<NasFile>>(url)
+            return data.data
+        } catch (err) {
+            console.log("err")
             this.errorMsg = err;
         }
     }

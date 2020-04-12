@@ -1,3 +1,12 @@
+export interface PaginationResponse<T> {
+    next: string | null;
+    previous: string | null;
+    count: number;
+    total_pages: number;
+    current_page: number;
+    results: T[]
+}
+
 export interface Folder {
     id: number;
     created_at: Date;

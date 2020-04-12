@@ -7,8 +7,7 @@ import {
   Dropdown,
   CardContent
 } from "semantic-ui-react";
-import AudioPlayer from "react-h5-audio-player";
-import "react-h5-audio-player/lib/styles.css";
+
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
   TableContainer,
@@ -51,6 +50,7 @@ import PDFViewer from "./pdf/PDFViewer";
 import { Dialog } from "@material-ui/core";
 import MoveDialog from "../../../document/components/MoveDialog";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
+import Musicplayer from "./music/Musicplayer";
 
 const { Player } = require("video-react");
 
@@ -328,6 +328,12 @@ export default function ListFilesPanel() {
             Move To
           </MenuItem>
         </Menu>
+        {audioSrc && (
+          <Musicplayer
+            musicSrc={audioSrc}
+            onClose={() => setaudioSrc(undefined)}
+          />
+        )}
         {/** end file action menu */}
         {selectedDocument && (
           <Editor
@@ -347,19 +353,7 @@ export default function ListFilesPanel() {
         </Modal>
         {/** End preview image */}
         {/** Preview image */}
-        <Dialog
-          fullWidth
-          open={audioSrc !== undefined}
-          onClose={() => setaudioSrc(undefined)}
-          style={{ overflowX: "hidden" }}
-        >
-          <DialogTitle>
-            <h4>{decodeURIComponent(path.basename(audioSrc ?? ""))}</h4>
-          </DialogTitle>
-          <DialogContent>
-            <AudioPlayer src={audioSrc} />
-          </DialogContent>
-        </Dialog>
+
         {/** End preview image */}
         {/** Preview video */}
         <Modal

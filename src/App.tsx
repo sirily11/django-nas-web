@@ -17,6 +17,9 @@ import { IconButton } from "@material-ui/core";
 import { DocumentProvider } from "./components/models/DocumentContext";
 import DocumentEditor from "./components/pages/document/DocumentEditor";
 import { MovingProvider } from "./components/models/MovingContext";
+import { MusicProvider } from "./components/models/MusicContext";
+import MusicPage from "./components/pages/music/MusicPage";
+
 
 export default function App() {
   const [visible, setVisible] = useState(false);
@@ -62,6 +65,18 @@ export default function App() {
             component={(props: any) => {
               setShowMenu(true);
               return <SystemInfoPage />;
+            }}
+          />
+          <Route
+            exact
+            path="/music"
+            component={(props: any) => {
+              setShowMenu(true);
+              return (
+                <MusicProvider>
+                  <MusicPage />
+                </MusicProvider>
+              );
             }}
           />
         </div>
