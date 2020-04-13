@@ -31,7 +31,7 @@ export default function CurrentPlayingPage() {
         <Typography variant="subtitle1">No Music Selected</Typography>
       </Collapse>
       <Collapse
-        in={currentTag?.common.picture !== undefined}
+        in={currentMusic?.music_metadata?.picture !== undefined}
         mountOnEnter
         unmountOnExit
       >
@@ -43,7 +43,9 @@ export default function CurrentPlayingPage() {
             marginLeft: "auto",
             marginRight: "auto"
           }}
-          image={getMusicPicture(currentTag)}
+          image={
+            currentMusic?.music_metadata?.picture ?? getMusicPicture(currentTag)
+          }
         />
       </Collapse>
       <Collapse in={currentMusic !== undefined} mountOnEnter unmountOnExit>
@@ -56,15 +58,15 @@ export default function CurrentPlayingPage() {
         >
           <Typography component="h5" variant="h5">
             {decodeURIComponent(
-              currentTag?.common.title ??
+              currentMusic?.music_metadata?.title ??
                 path.basename(currentMusic?.filename ?? "")
             )}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-            {decodeURIComponent(currentTag?.common.artist ?? "")}
+            {decodeURIComponent(currentMusic?.music_metadata?.artist ?? "")}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-            {decodeURIComponent(currentTag?.common.album ?? "")}
+            {decodeURIComponent(currentMusic?.music_metadata?.album ?? "")}
           </Typography>
           {currentMusic && (
             <audio

@@ -38,7 +38,7 @@ export class Nas {
     /**
      * Fetch list of music
      */
-    fetchMusicList = async () => {
+    fetchMusicList = async (): Promise<PaginationResponse<NasFile> | undefined> => {
         try {
 
             let url = `${musicURL}`

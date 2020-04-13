@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-
+import UpdateIcon from "@material-ui/icons/Update";
 import { Container, Segment, Progress, Menu } from "semantic-ui-react";
 import { HomePageContext } from "../../models/HomeContext";
 import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
@@ -21,7 +21,8 @@ import {
   Backdrop,
   CircularProgress,
   Snackbar,
-  Paper
+  Paper,
+  Tooltip
 } from "@material-ui/core";
 import orange from "@material-ui/core/colors/orange";
 import CurrentPlayingPage from "./components/left/CurrentPlayingPage";
@@ -32,6 +33,7 @@ import { MusicContext } from "../../models/MusicContext";
 import MusicSearchField from "./components/SearchField";
 import MusicListMobile from "./components/mobile/MusicListMobile";
 import CurrentPlayingMobile from "./components/mobile/CurrentPlayingMobile";
+import ClearIcon from "@material-ui/icons/Clear";
 
 const theme = createMuiTheme({
   palette: {
@@ -62,7 +64,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function MusicPage() {
-  const { isLoading, errorMsg } = React.useContext(MusicContext);
+  const { isLoading, errorMsg, updateMetadata, filterField } = React.useContext(
+    MusicContext
+  );
   const [show, setShow] = useState(false);
   const classes = useStyles();
 
@@ -78,8 +82,27 @@ export default function MusicPage() {
               </IconButton>
             </NavLink>
             <Typography className={classes.title} variant="h6" noWrap>
-              Music
+              {filterField ?? "Music"}
+              {filterField && (
+                <Tooltip title="Clear field">
+                  <NavLink to="/music">
+                    <IconButton>
+                      <ClearIcon />
+                    </IconButton>
+                  </NavLink>
+                </Tooltip>
+              )}
             </Typography>
+
+            <Tooltip title="Update metadata">
+              <IconButton
+                onClick={async () => {
+                  await updateMetadata();
+                }}
+              >
+                <UpdateIcon />
+              </IconButton>
+            </Tooltip>
             <MusicSearchField />
           </Toolbar>
         </AppBar>
@@ -88,7 +111,13 @@ export default function MusicPage() {
         </Backdrop>
         <Hidden xsDown implementation="js">
           <Container
-            style={{ paddingTop: 20, overflow: "hidden", height: "100%" }}
+            style={{
+              paddingTop: 20,
+              overflow: "hidden",
+              height: "100%",
+              paddingLeft: 40,
+              paddingRight: 40
+            }}
           >
             {/** End App Bar */}
             <Grid container style={{ margin: 10 }}>

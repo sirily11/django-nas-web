@@ -76,7 +76,10 @@ export default function CurrentPlayingMobile() {
             {currentMusic ? (
               <CardMedia
                 style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
-                image={getMusicPicture(currentTag)}
+                image={
+                  currentMusic?.music_metadata?.picture ??
+                  getMusicPicture(currentTag)
+                }
               />
             ) : (
               <Skeleton width={IMAGE_SIZE} height={IMAGE_SIZE} />
@@ -115,9 +118,9 @@ export default function CurrentPlayingMobile() {
               {currentMusic === undefined && (
                 <Typography component="div">No Music Playing</Typography>
               )}
-              <Typography noWrap component="h6" variant="h6">
+              <Typography noWrap>
                 {decodeURIComponent(
-                  currentTag?.common.title ??
+                  currentMusic?.music_metadata?.title ??
                     path.basename(currentMusic?.filename ?? "")
                 )}
               </Typography>
@@ -144,7 +147,10 @@ export default function CurrentPlayingMobile() {
             {currentMusic ? (
               <CardMedia
                 style={{ height: LARGE_IMAGE_SIZE, width: "100%" }}
-                image={getMusicPicture(currentTag)}
+                image={
+                  currentMusic?.music_metadata?.picture ??
+                  getMusicPicture(currentTag)
+                }
               />
             ) : (
               <Skeleton width="100%" height={LARGE_IMAGE_SIZE} />
@@ -153,15 +159,15 @@ export default function CurrentPlayingMobile() {
           <div>
             <Typography component="h5" variant="h5" noWrap>
               {decodeURIComponent(
-                currentTag?.common.title ??
+                currentMusic?.music_metadata?.title ??
                   path.basename(currentMusic?.filename ?? "")
               )}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              {decodeURIComponent(currentTag?.common.artist ?? "")}
+              {decodeURIComponent(currentMusic?.music_metadata?.artist ?? "")}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              {decodeURIComponent(currentTag?.common.album ?? "")}
+              {decodeURIComponent(currentMusic?.music_metadata?.album ?? "")}
             </Typography>
           </div>
           <div>

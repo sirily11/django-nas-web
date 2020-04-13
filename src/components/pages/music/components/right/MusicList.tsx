@@ -5,7 +5,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TableCell
+  TableCell,
+  Typography
 } from "@material-ui/core";
 import { MusicContext } from "../../../../models/MusicContext";
 import { TableBody, TableFooter } from "semantic-ui-react";
@@ -16,6 +17,8 @@ import Pagination from "@material-ui/lab/Pagination";
 import { IconButton } from "@material-ui/core";
 import { musicURL } from "../../../../models/urls";
 import { File as NasFile } from "../../../../models/Folder";
+import moment from "moment";
+import { NavLink } from "react-router-dom";
 
 export default function MusicList() {
   const {
@@ -41,13 +44,16 @@ export default function MusicList() {
       style={{
         marginTop: "40px",
         marginLeft: 30,
-        maxHeight: height - 100
+        maxHeight: height - 100,
+        width: "100%"
       }}
     >
       <Table stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
+            <TableCell>Artist</TableCell>
+            <TableCell>Duration</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -55,7 +61,41 @@ export default function MusicList() {
           {musicResponse &&
             musicResponse.results.map((m, i) => (
               <TableRow selected={isSelected(currentMusic, m)}>
-                <TableCell>{path.basename(m.filename)}</TableCell>
+                <TableCell style={{ maxWidth: 200 }}>
+                  <Typography noWrap>
+                    {m.music_metadata?.title ?? path.basename(m.filename)}
+                  </Typography>
+                  <NavLink
+                    to={
+                      m.music_metadata?.album !== undefined
+                        ? `/music?album=${m.music_metadata?.album}`
+                        : "/music"
+                    }
+                  >
+                    <Typography variant="subtitle1" noWrap>
+                      {m.music_metadata?.album}
+                    </Typography>
+                  </NavLink>
+                </TableCell>
+                <TableCell style={{ maxWidth: 100 }}>
+                  <NavLink
+                    to={
+                      m.music_metadata?.artist !== undefined
+                        ? `/music?artist=${m.music_metadata?.artist}`
+                        : "/music"
+                    }
+                  >
+                    <Typography variant="subtitle1" noWrap>
+                      {m.music_metadata?.artist}
+                    </Typography>
+                  </NavLink>
+                </TableCell>
+                <TableCell>
+                  {m?.music_metadata?.duration &&
+                    moment
+                      .utc(m?.music_metadata?.duration * 1000)
+                      .format("mm:ss")}
+                </TableCell>
                 <TableCell>
                   <IconButton
                     onClick={async () => {

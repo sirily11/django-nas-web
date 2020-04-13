@@ -20,7 +20,6 @@ import { MovingProvider } from "./components/models/MovingContext";
 import { MusicProvider } from "./components/models/MusicContext";
 import MusicPage from "./components/pages/music/MusicPage";
 
-
 export default function App() {
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -34,7 +33,6 @@ export default function App() {
             exact
             path="/home/:id?"
             component={(props: any) => {
-              setShowMenu(true);
               return (
                 <MovingProvider>
                   <HomePageProvider {...props}>
@@ -48,7 +46,6 @@ export default function App() {
             exact
             path="/document/:id"
             component={(props: any) => {
-              setShowMenu(true);
               return (
                 <MovingProvider>
                   <DocumentProvider {...props}>
@@ -68,12 +65,10 @@ export default function App() {
             }}
           />
           <Route
-            exact
             path="/music"
             component={(props: any) => {
-              setShowMenu(true);
               return (
-                <MusicProvider>
+                <MusicProvider {...props}>
                   <MusicPage />
                 </MusicProvider>
               );

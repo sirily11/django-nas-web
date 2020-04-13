@@ -5,7 +5,8 @@ import {
   ListItemSecondaryAction,
   ListItemIcon,
   Typography,
-  Divider
+  Divider,
+  CardMedia
 } from "@material-ui/core";
 import { MusicContext } from "../../../../models/MusicContext";
 import { TableBody, TableFooter } from "semantic-ui-react";
@@ -56,11 +57,19 @@ export default function MusicListMobile() {
                 style={{ height: 80 }}
               >
                 <ListItemIcon>
-                  <MusicNoteIcon />
+                  <CardMedia
+                    style={{ height: 40, width: 40 }}
+                    image={m.music_metadata?.picture}
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography noWrap>{path.basename(m.filename)}</Typography>
+                    <Typography noWrap>
+                      {m.music_metadata?.title ?? path.basename(m.filename)}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography noWrap>{m.music_metadata?.album}</Typography>
                   }
                 />
                 <ListItemSecondaryAction>

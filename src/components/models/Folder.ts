@@ -1,3 +1,16 @@
+export interface MusicMetadata {
+    id: number;
+    title: string;
+    album: string;
+    artist: string;
+    year: string;
+    genre: string;
+    track: number;
+    picture: string
+    duration: number;
+    file: number
+}
+
 export interface PaginationResponse<T> {
     next: string | null;
     previous: string | null;
@@ -35,7 +48,7 @@ export interface File {
     transcode_filepath: string;
     filename: string;
     cover: string;
-
+    music_metadata?: MusicMetadata
 }
 
 export interface User {
