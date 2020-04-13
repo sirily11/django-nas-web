@@ -30,6 +30,8 @@ import StopIcon from "@material-ui/icons/Stop";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import VolumeDown from "@material-ui/icons/VolumeDown";
 import VolumeUp from "@material-ui/icons/VolumeUp";
+import RepeatIcon from "@material-ui/icons/Repeat";
+import RepeatOneIcon from "@material-ui/icons/RepeatOne";
 
 const getMusicPicture = (tag?: mm.IAudioMetadata) => {
   const pictures = tag?.common.picture;
@@ -55,7 +57,8 @@ export default function CurrentPlayingMobile() {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState<number>();
   const [totalTime, setTotalTime] = React.useState<number>();
-  const [volume, setVolume] = React.useState<number>();
+  const [volume, setVolume] = React.useState<number | undefined>(0.5);
+  const [repeat, setRepeat] = React.useState(false);
   const [playingState, setPlayingState] = React.useState<"playing" | "pause">(
     "playing"
   );
@@ -89,8 +92,9 @@ export default function CurrentPlayingMobile() {
                   setCurrentTime(player.current?.currentTime);
                   setTotalTime(player.current?.duration);
                   if (player.current) {
-                    player.current.volume = 0.5;
-                    setVolume(0.5);
+                    player.current.volume = volume ?? 0.5;
+                    setVolume(volume);
+                    player.current.loop = repeat;
                   }
                 }}
                 crossOrigin="anonymous"
@@ -162,9 +166,6 @@ export default function CurrentPlayingMobile() {
           </div>
           <div>
             <Grid container spacing={2}>
-              <Grid item>
-                {currentTime && moment.utc(currentTime * 1000).format("mm:ss")}
-              </Grid>
               <Grid item xs>
                 <Slider
                   value={currentTime}
@@ -176,6 +177,11 @@ export default function CurrentPlayingMobile() {
                   }}
                   aria-labelledby="continuous-slider"
                 />
+              </Grid>
+            </Grid>
+            <Grid justify="space-between" container>
+              <Grid item>
+                {currentTime && moment.utc(currentTime * 1000).format("mm:ss")}
               </Grid>
               <Grid item>
                 {totalTime && moment.utc(totalTime * 1000).format("mm:ss")}
@@ -205,6 +211,23 @@ export default function CurrentPlayingMobile() {
               </IconButton>
             </Grid>
           </div>
+          <Grid container justify="center">
+            <IconButton
+              onClick={() => {
+                if (player.current) {
+                  if (repeat) {
+                    setRepeat(false);
+                    player.current.loop = false;
+                  } else {
+                    setRepeat(true);
+                    player.current.loop = true;
+                  }
+                }
+              }}
+            >
+              {repeat ? <RepeatOneIcon /> : <RepeatIcon />}
+            </IconButton>
+          </Grid>
           <Grid container spacing={2}>
             <Grid item>
               <VolumeDown />

@@ -30,6 +30,7 @@ export default function MusicListMobile() {
   } = React.useContext(MusicContext);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setheight] = React.useState(window.innerHeight);
+
   const isSelected = (
     file: NasFile | undefined,
     file2: NasFile | undefined
@@ -46,6 +47,12 @@ export default function MusicListMobile() {
               <ListItem
                 button
                 selected={isSelected(currentMusic, m)}
+                onClick={async () => {
+                  if (isSelected(currentMusic, m)) {
+                  } else {
+                    await play(m);
+                  }
+                }}
                 style={{ height: 80 }}
               >
                 <ListItemIcon>
