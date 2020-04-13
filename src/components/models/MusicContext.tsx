@@ -31,6 +31,7 @@ interface MusicContext {
   albums: MusicMetadata[];
   artists: MusicMetadata[];
   artistDetail: MusicMetadata[];
+  isSearching: boolean;
   updateMetadata(): Promise<void>;
   play(music: NasFile): Promise<void>;
   stop(): void;
@@ -58,6 +59,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
       artistDetail: [],
       albums: [],
       artists: [],
+      isSearching: false,
       update: this.update,
       play: this.play,
       stop: this.stop,
@@ -72,7 +74,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   async componentDidUpdate(oldProps: MusicProps) {
     if (
       this.props.location.search !== oldProps.location.search &&
-      this.props.location.search !== ""
+      !this.state.isSearching
     ) {
       console.log("update");
       await this.init();
@@ -171,6 +173,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   };
 
   search = async (keyword: string) => {
+    this.setState({ isSearching: true });
     window.location.replace("#/music");
     this.setState({ isLoading: true });
     try {
@@ -197,6 +200,8 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
       }
     } catch (err) {
       this.setState({ errorMsg: err });
+    } finally {
+      this.setState({ isSearching: false });
     }
   };
 
@@ -216,8 +221,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   };
 
   play = async (music: NasFile) => {
-    let tag = await readMusicTag(music.file);
-    this.setState({ currentTag: tag, currentMusic: music });
+    this.setState({ currentMusic: music });
   };
 
   stop = async () => {
