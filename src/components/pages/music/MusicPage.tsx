@@ -20,7 +20,8 @@ import {
   ThemeProvider,
   Backdrop,
   CircularProgress,
-  Snackbar
+  Snackbar,
+  Paper
 } from "@material-ui/core";
 import orange from "@material-ui/core/colors/orange";
 import CurrentPlayingPage from "./components/left/CurrentPlayingPage";
@@ -29,6 +30,8 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { NavLink } from "react-router-dom";
 import { MusicContext } from "../../models/MusicContext";
 import MusicSearchField from "./components/SearchField";
+import MusicListMobile from "./components/mobile/MusicListMobile";
+import CurrentPlayingMobile from "./components/mobile/CurrentPlayingMobile";
 
 const theme = createMuiTheme({
   palette: {
@@ -65,12 +68,7 @@ export default function MusicPage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div
-        style={{
-          height: "100%",
-          overflow: "hidden"
-        }}
-      >
+      <div>
         {/** App Bar */}
         <AppBar>
           <Toolbar>
@@ -88,17 +86,35 @@ export default function MusicPage() {
         <Backdrop className={classes.backdrop} open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
-        <Container style={{ paddingTop: 20 }}>
-          {/** End App Bar */}
-          <Grid container style={{ margin: 10 }}>
-            <Grid item xs={12} md={4}>
-              <CurrentPlayingPage />
+        <Hidden xsDown implementation="js">
+          <Container
+            style={{ paddingTop: 20, overflow: "hidden", height: "100%" }}
+          >
+            {/** End App Bar */}
+            <Grid container style={{ margin: 10 }}>
+              <Grid item sm={4}>
+                <CurrentPlayingPage />
+              </Grid>
+              <Grid item sm={8}>
+                <MusicList />
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={8}>
-              <MusicList />
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
+        </Hidden>
+        <Hidden mdUp implementation="js">
+          <Container fluid>
+            <MusicListMobile />
+          </Container>
+          <div
+            style={{
+              position: "fixed",
+              bottom: 0,
+              width: "100%"
+            }}
+          >
+            <CurrentPlayingMobile />
+          </div>
+        </Hidden>
         <Snackbar
           anchorOrigin={{
             vertical: "bottom",

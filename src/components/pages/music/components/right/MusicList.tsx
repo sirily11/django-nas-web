@@ -35,18 +35,13 @@ export default function MusicList() {
     return file?.id === file2?.id;
   };
 
-  window.addEventListener("resize", e => {
-    setWidth(window.innerWidth);
-    setheight(window.innerHeight);
-  });
-
   return (
     <TableContainer
       component={Paper}
       style={{
         marginTop: "40px",
         marginLeft: 30,
-        maxHeight: width < 960 ? height / 2 : height - 100
+        maxHeight: height - 100
       }}
     >
       <Table stickyHeader>

@@ -1,0 +1,96 @@
+import React from "react";
+import {
+  List,
+  ListItemText,
+  ListItemSecondaryAction,
+  ListItemIcon,
+  Typography,
+  Divider
+} from "@material-ui/core";
+import { MusicContext } from "../../../../models/MusicContext";
+import { TableBody, TableFooter } from "semantic-ui-react";
+import * as path from "path";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import StopIcon from "@material-ui/icons/Stop";
+import Pagination from "@material-ui/lab/Pagination";
+import { IconButton } from "@material-ui/core";
+import { musicURL } from "../../../../models/urls";
+import { File as NasFile } from "../../../../models/Folder";
+import ListItem from "@material-ui/core/ListItem";
+import MusicNoteIcon from "@material-ui/icons/MusicNote";
+
+export default function MusicListMobile() {
+  const {
+    musicResponse,
+    play,
+    currentMusic,
+    stop,
+    fetch,
+    paginationURL
+  } = React.useContext(MusicContext);
+  const [width, setWidth] = React.useState(window.innerWidth);
+  const [height, setheight] = React.useState(window.innerHeight);
+  const isSelected = (
+    file: NasFile | undefined,
+    file2: NasFile | undefined
+  ): boolean => {
+    return file?.id === file2?.id;
+  };
+
+  return (
+    <div style={{ marginBottom: 100, marginTop: 70 }}>
+      <List>
+        {musicResponse &&
+          musicResponse.results.map((m, i) => (
+            <div>
+              <ListItem
+                button
+                selected={isSelected(currentMusic, m)}
+                style={{ height: 80 }}
+              >
+                <ListItemIcon>
+                  <MusicNoteIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography noWrap>{path.basename(m.filename)}</Typography>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  <IconButton
+                    onClick={async () => {
+                      if (isSelected(currentMusic, m)) {
+                        stop();
+                      } else {
+                        await play(m);
+                      }
+                    }}
+                  >
+                    {isSelected(currentMusic, m) ? (
+                      <StopIcon />
+                    ) : (
+                      <PlayArrowIcon />
+                    )}
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider style={{ color: "black", marginLeft: 50 }} />
+            </div>
+          ))}
+      </List>
+      <Pagination
+        size="medium"
+        style={{ marginBottom: 10, marginTop: 10 }}
+        page={musicResponse?.current_page ?? 0}
+        count={musicResponse?.total_pages ?? 0}
+        onChange={async (e, value) => {
+          if (paginationURL === musicURL) {
+            await fetch(`${musicURL}?page=${value}`);
+          } else {
+            await fetch(`${paginationURL}&page=${value}`);
+          }
+        }}
+      />
+    </div>
+  );
+}

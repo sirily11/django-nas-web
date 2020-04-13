@@ -59,6 +59,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   }
 
   search = async (keyword: string) => {
+    this.setState({ isLoading: true });
     try {
       if (keyword === "") {
         let musicList = await this.state.nas.fetchMusicList();
@@ -73,7 +74,8 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
         let response = await Axios.get<PaginationResponse<NasFile>>(searchURL);
         this.setState({
           musicResponse: response.data,
-          paginationURL: searchURL
+          paginationURL: searchURL,
+          isLoading: false
         });
         setTimeout(() => {
           this.setState({ errorMsg: undefined });
