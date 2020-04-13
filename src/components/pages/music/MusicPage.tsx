@@ -133,6 +133,7 @@ export default function MusicPage() {
             <Tab label="Music" value={0} />
             <Tab label="Album" value={1} />
             <Tab label="Artist" value={2} />
+            <Tab label="Playlist" value={3} />
           </Tabs>
         </AppBar>
         <Backdrop className={classes.backdrop} open={isLoading}>
@@ -158,7 +159,16 @@ export default function MusicPage() {
             <ArtistPage />
           </div>
         </Collapse>
-
+        <Collapse in={currentTabIndex === 3} mountOnEnter unmountOnExit>
+          <div
+            className={classes.root1}
+            style={{
+              overflow: "hidden"
+            }}
+          >
+            <PlayerPage />
+          </div>
+        </Collapse>
         <Snackbar
           anchorOrigin={{
             vertical: "bottom",

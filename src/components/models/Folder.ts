@@ -8,7 +8,8 @@ export interface MusicMetadata {
     track: number;
     picture: string
     duration: number;
-    file: number
+    file: number;
+    like: boolean
 }
 
 export interface PaginationResponse<T> {

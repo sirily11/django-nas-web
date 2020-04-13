@@ -7,3 +7,4 @@ export const searchFileURL = "/api/file?search="
 export const downloadURL = "/api/download/"
 //music 
 export const musicURL = "/api/music/"
+export const musicMetadataURL = "/api/music-metadata/"

@@ -9,7 +9,7 @@ import {
 } from "./Folder";
 import Axios from "axios";
 import * as mm from "music-metadata-browser";
-import { musicURL } from "./urls";
+import { musicURL, musicMetadataURL } from "./urls";
 import queryString from "query-string";
 import { MusicMetadata } from "./Folder";
 //@ts-ignore
@@ -39,6 +39,7 @@ interface MusicContext {
   search(k: string): Promise<void>;
   setTabIndex(index: number): Promise<void>;
   getAlbumsByArtist(artist: string): Promise<void>;
+  presslike(file: NasFile): Promise<void>;
 }
 
 interface RouterProps {
@@ -67,7 +68,8 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
       search: this.search,
       updateMetadata: this.updateMetadata,
       setTabIndex: this.setTabIndex,
-      getAlbumsByArtist: this.getAlbumsByArtist
+      getAlbumsByArtist: this.getAlbumsByArtist,
+      presslike: this.presslike
     };
   }
 
@@ -124,6 +126,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   };
 
   setTabIndex = async (index: number) => {
+    const prevIndex = this.state.currentTabIndex;
     this.setState({ currentTabIndex: index, isLoading: true });
     switch (index) {
       case 1:
@@ -135,7 +138,14 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
         this.setState({ artists: artistResonse.data, isLoading: false });
         break;
 
+      case 3:
+        await this.fetch(`${musicURL}?like=true/`);
+        break;
+
       default:
+        if (prevIndex === 3) {
+          await this.init();
+        }
         this.setState({ isLoading: false });
     }
   };
@@ -217,6 +227,24 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
       setTimeout(() => {
         this.setState({ errorMsg: undefined });
       }, 1000);
+    }
+  };
+
+  presslike = async (file: NasFile) => {
+    try {
+      if (file.music_metadata) {
+        let response = await Axios.patch(
+          `${musicMetadataURL}${file.music_metadata?.id}/`,
+          { like: !file.music_metadata?.like }
+        );
+        file.music_metadata.like = true;
+        this.setState({ musicResponse: this.state.musicResponse });
+      }
+    } catch (err) {
+      this.setState({ errorMsg: err });
+      setTimeout(() => {
+        this.setState({ errorMsg: undefined });
+      });
     }
   };
 

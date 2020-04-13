@@ -14,11 +14,12 @@ import * as path from "path";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import StopIcon from "@material-ui/icons/Stop";
 import Pagination from "@material-ui/lab/Pagination";
-import { IconButton } from "@material-ui/core";
+import { IconButton, Grid } from "@material-ui/core";
 import { musicURL } from "../../../../models/urls";
 import { File as NasFile } from "../../../../models/Folder";
 import moment from "moment";
 import { NavLink } from "react-router-dom";
+import FavoriteIcon from "@material-ui/icons/Favorite";
 
 export default function MusicList() {
   const {
@@ -27,7 +28,8 @@ export default function MusicList() {
     currentMusic,
     stop,
     fetch,
-    paginationURL
+    paginationURL,
+    presslike
   } = React.useContext(MusicContext);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setheight] = React.useState(window.innerHeight);
@@ -62,20 +64,37 @@ export default function MusicList() {
             musicResponse.results.map((m, i) => (
               <TableRow selected={isSelected(currentMusic, m)}>
                 <TableCell style={{ maxWidth: 200 }}>
-                  <Typography noWrap>
-                    {m.music_metadata?.title ?? path.basename(m.filename)}
-                  </Typography>
-                  <NavLink
-                    to={
-                      m.music_metadata?.album !== undefined
-                        ? `/music?album=${m.music_metadata?.album}`
-                        : "/music"
-                    }
-                  >
-                    <Typography variant="subtitle1" noWrap>
-                      {m.music_metadata?.album}
-                    </Typography>
-                  </NavLink>
+                  <Grid container>
+                    <Grid item xs={3}>
+                      <IconButton
+                        onClick={async () => {
+                          await presslike(m);
+                        }}
+                      >
+                        <FavoriteIcon
+                          style={{
+                            color: m.music_metadata?.like ? "pink" : undefined
+                          }}
+                        />
+                      </IconButton>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <Typography noWrap>
+                        {m.music_metadata?.title ?? path.basename(m.filename)}
+                      </Typography>
+                      <NavLink
+                        to={
+                          m.music_metadata?.album !== undefined
+                            ? `/music?album=${m.music_metadata?.album}`
+                            : "/music"
+                        }
+                      >
+                        <Typography variant="subtitle1" noWrap>
+                          {m.music_metadata?.album}
+                        </Typography>
+                      </NavLink>
+                    </Grid>
+                  </Grid>
                 </TableCell>
                 <TableCell style={{ maxWidth: 100 }}>
                   <NavLink
