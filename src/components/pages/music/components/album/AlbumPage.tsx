@@ -10,6 +10,8 @@ import {
   CardContent
 } from "@material-ui/core";
 import { MusicContext } from "../../../../models/MusicContext";
+//@ts-ignore
+import LazyLoad from "react-lazyload";
 
 export default function AlbumPage() {
   const { albums, setTabIndex } = React.useContext(MusicContext);
@@ -27,10 +29,20 @@ export default function AlbumPage() {
                   setTabIndex(0);
                 }}
               >
-                <CardMedia
-                  style={{ height: 200, width: "100%" }}
-                  image={a.picture}
-                />
+                {i < 5 ? (
+                  <CardMedia
+                    style={{ height: 200, width: "100%" }}
+                    image={a.picture}
+                  />
+                ) : (
+                  <LazyLoad height={200} offset={120}>
+                    <CardMedia
+                      style={{ height: 200, width: "100%" }}
+                      image={a.picture}
+                    />
+                  </LazyLoad>
+                )}
+
                 <CardContent>
                   <Typography>{a.album}</Typography>
                 </CardContent>

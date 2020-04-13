@@ -20,6 +20,7 @@ import { File as NasFile } from "../../../../models/Folder";
 import ListItem from "@material-ui/core/ListItem";
 import MusicNoteIcon from "@material-ui/icons/MusicNote";
 import FavoriteIcon from "@material-ui/icons/Favorite";
+import LazyLoad from "react-lazyload";
 
 export default function MusicListMobile() {
   const {
@@ -59,10 +60,12 @@ export default function MusicListMobile() {
                 style={{ height: 80 }}
               >
                 <ListItemIcon>
-                  <CardMedia
-                    style={{ height: 40, width: 40 }}
-                    image={m.music_metadata?.picture}
-                  />
+                  <LazyLoad height={40}>
+                    <CardMedia
+                      style={{ height: 40, width: 40 }}
+                      image={m.music_metadata?.picture}
+                    />
+                  </LazyLoad>
                 </ListItemIcon>
                 <ListItemText
                   primary={
