@@ -11,6 +11,7 @@ import Axios from "axios";
 import * as mm from "music-metadata-browser";
 import { musicURL } from "./urls";
 import queryString from "query-string";
+import { MusicMetadata } from "./Folder";
 //@ts-ignore
 const readMusicTag = async (musicSrc: string): Promise<mm.IAudioMetadata> => {
   const metadata = await mm.fetchFromUrl(musicSrc);
@@ -21,16 +22,22 @@ interface MusicContext {
   filterField?: string;
   isLoading: boolean;
   errorMsg?: string;
+  currentTabIndex: number;
   update(): void;
   currentTag?: mm.IAudioMetadata;
   currentMusic?: NasFile;
   musicResponse?: PaginationResponse<NasFile>;
   paginationURL: string;
+  albums: MusicMetadata[];
+  artists: MusicMetadata[];
+  artistDetail: MusicMetadata[];
   updateMetadata(): Promise<void>;
   play(music: NasFile): Promise<void>;
   stop(): void;
   fetch(url: string): Promise<void>;
   search(k: string): Promise<void>;
+  setTabIndex(index: number): Promise<void>;
+  getAlbumsByArtist(artist: string): Promise<void>;
 }
 
 interface RouterProps {
@@ -47,17 +54,26 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
       nas: new Nas(),
       paginationURL: musicURL,
       isLoading: false,
+      currentTabIndex: 0,
+      artistDetail: [],
+      albums: [],
+      artists: [],
       update: this.update,
       play: this.play,
       stop: this.stop,
       fetch: this.fetch,
       search: this.search,
-      updateMetadata: this.updateMetadata
+      updateMetadata: this.updateMetadata,
+      setTabIndex: this.setTabIndex,
+      getAlbumsByArtist: this.getAlbumsByArtist
     };
   }
 
   async componentDidUpdate(oldProps: MusicProps) {
-    if (this.props.location.search !== oldProps.location.search) {
+    if (
+      this.props.location.search !== oldProps.location.search &&
+      this.props.location.search !== ""
+    ) {
       console.log("update");
       await this.init();
     }
@@ -67,6 +83,21 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
     console.log("init");
     await this.init();
   }
+
+  getAlbumsByArtist = async (artist: string) => {
+    try {
+      let response = await Axios.get<MusicMetadata[]>(
+        `${musicURL}album/?artist=${artist}`
+      );
+      this.setState({ artistDetail: response.data });
+    } catch (err) {
+      this.setState({ errorMsg: err });
+    } finally {
+      setTimeout(() => {
+        this.setState({ errorMsg: undefined, isLoading: false });
+      });
+    }
+  };
 
   init = async () => {
     this.setState({ isLoading: true, errorMsg: "Loading Music Library" });
@@ -88,6 +119,23 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
     setTimeout(() => {
       this.setState({ errorMsg: undefined });
     }, 3000);
+  };
+
+  setTabIndex = async (index: number) => {
+    this.setState({ currentTabIndex: index, isLoading: true });
+    switch (index) {
+      case 1:
+        let albumResponse = await Axios.get(`${musicURL}album/`);
+        this.setState({ albums: albumResponse.data, isLoading: false });
+        break;
+      case 2:
+        let artistResonse = await Axios.get(`${musicURL}artist/`);
+        this.setState({ artists: artistResonse.data, isLoading: false });
+        break;
+
+      default:
+        this.setState({ isLoading: false });
+    }
   };
 
   /**

@@ -108,6 +108,7 @@ export default function MusicSearchField() {
         }}
       />
       <IconButton
+        disabled={value === ""}
         onClick={async () => {
           setIsLoading(true);
           setValue("");

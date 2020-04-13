@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import UpdateIcon from "@material-ui/icons/Update";
-import { Container, Segment, Progress, Menu } from "semantic-ui-react";
+import { Container, Segment, Progress, Menu, TabPane } from "semantic-ui-react";
 import { HomePageContext } from "../../models/HomeContext";
 import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
 import {
@@ -22,7 +22,12 @@ import {
   CircularProgress,
   Snackbar,
   Paper,
-  Tooltip
+  Tooltip,
+  Tabs,
+  Tab,
+  Slide,
+  Fade,
+  Collapse
 } from "@material-ui/core";
 import orange from "@material-ui/core/colors/orange";
 import CurrentPlayingPage from "./components/left/CurrentPlayingPage";
@@ -34,6 +39,9 @@ import MusicSearchField from "./components/SearchField";
 import MusicListMobile from "./components/mobile/MusicListMobile";
 import CurrentPlayingMobile from "./components/mobile/CurrentPlayingMobile";
 import ClearIcon from "@material-ui/icons/Clear";
+import PlayerPage from "./components/player/PlayerPage";
+import AlbumPage from "./components/album/AlbumPage";
+import ArtistPage from "./components/artist/ArtistPage";
 
 const theme = createMuiTheme({
   palette: {
@@ -43,8 +51,12 @@ const theme = createMuiTheme({
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root1: {
+      paddingTop: 80
+    },
     root: {
-      flexGrow: 1
+      paddingTop: 120,
+      height: "100%"
     },
     backdrop: {
       zIndex: theme.zIndex.drawer + 1,
@@ -64,9 +76,14 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function MusicPage() {
-  const { isLoading, errorMsg, updateMetadata, filterField } = React.useContext(
-    MusicContext
-  );
+  const {
+    isLoading,
+    errorMsg,
+    updateMetadata,
+    filterField,
+    currentTabIndex,
+    setTabIndex
+  } = React.useContext(MusicContext);
   const [show, setShow] = useState(false);
   const classes = useStyles();
 
@@ -105,45 +122,43 @@ export default function MusicPage() {
             </Tooltip>
             <MusicSearchField />
           </Toolbar>
+          <Tabs
+            value={currentTabIndex}
+            variant="scrollable"
+            onChange={async (e, v) => {
+              await setTabIndex(v);
+            }}
+            aria-label="simple tabs example"
+          >
+            <Tab label="Music" value={0} />
+            <Tab label="Album" value={1} />
+            <Tab label="Artist" value={2} />
+          </Tabs>
         </AppBar>
         <Backdrop className={classes.backdrop} open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
-        <Hidden xsDown implementation="js">
-          <Container
-            style={{
-              paddingTop: 20,
-              overflow: "hidden",
-              height: "100%",
-              paddingLeft: 40,
-              paddingRight: 40
-            }}
-          >
-            {/** End App Bar */}
-            <Grid container style={{ margin: 10 }}>
-              <Grid item sm={4}>
-                <CurrentPlayingPage />
-              </Grid>
-              <Grid item sm={8}>
-                <MusicList />
-              </Grid>
-            </Grid>
-          </Container>
-        </Hidden>
-        <Hidden mdUp implementation="js">
-          <Container fluid>
-            <MusicListMobile />
-          </Container>
+        <Collapse in={currentTabIndex === 0} mountOnEnter unmountOnExit>
           <div
+            className={classes.root1}
             style={{
-              position: "fixed",
-              bottom: 0,
-              width: "100%"
+              overflow: "hidden"
             }}
           >
-            <CurrentPlayingMobile />
+            <PlayerPage />
           </div>
-        </Hidden>
+        </Collapse>
+        <Collapse in={currentTabIndex === 1} mountOnEnter unmountOnExit>
+          <div className={classes.root}>
+            <AlbumPage />
+          </div>
+        </Collapse>
+        <Collapse in={currentTabIndex === 2} mountOnEnter unmountOnExit>
+          <div className={classes.root}>
+            <ArtistPage />
+          </div>
+        </Collapse>
+
         <Snackbar
           anchorOrigin={{
             vertical: "bottom",

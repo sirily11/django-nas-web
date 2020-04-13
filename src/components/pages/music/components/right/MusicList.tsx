@@ -44,7 +44,7 @@ export default function MusicList() {
       style={{
         marginTop: "40px",
         marginLeft: 30,
-        maxHeight: height - 100,
+        maxHeight: height - 180,
         width: "100%"
       }}
     >
