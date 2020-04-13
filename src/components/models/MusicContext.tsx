@@ -123,6 +123,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   };
 
   search = async (keyword: string) => {
+    window.location.replace("#/music");
     this.setState({ isLoading: true });
     try {
       if (keyword === "") {
@@ -139,7 +140,8 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
         this.setState({
           musicResponse: response.data,
           paginationURL: searchURL,
-          isLoading: false
+          isLoading: false,
+          filterField: undefined
         });
         setTimeout(() => {
           this.setState({ errorMsg: undefined });
