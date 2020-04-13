@@ -19,6 +19,7 @@ import { musicURL } from "../../../../models/urls";
 import { File as NasFile } from "../../../../models/Folder";
 import ListItem from "@material-ui/core/ListItem";
 import MusicNoteIcon from "@material-ui/icons/MusicNote";
+import FavoriteIcon from "@material-ui/icons/Favorite";
 
 export default function MusicListMobile() {
   const {
@@ -27,7 +28,8 @@ export default function MusicListMobile() {
     currentMusic,
     stop,
     fetch,
-    paginationURL
+    paginationURL,
+    presslike
   } = React.useContext(MusicContext);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setheight] = React.useState(window.innerHeight);
@@ -40,7 +42,7 @@ export default function MusicListMobile() {
   };
 
   return (
-    <div style={{ marginBottom: 100, marginTop: 70 }}>
+    <div style={{ marginTop: 10 }}>
       <List>
         {musicResponse &&
           musicResponse.results.map((m, i) => (
@@ -75,18 +77,14 @@ export default function MusicListMobile() {
                 <ListItemSecondaryAction>
                   <IconButton
                     onClick={async () => {
-                      if (isSelected(currentMusic, m)) {
-                        stop();
-                      } else {
-                        await play(m);
-                      }
+                      await presslike(m);
                     }}
                   >
-                    {isSelected(currentMusic, m) ? (
-                      <StopIcon />
-                    ) : (
-                      <PlayArrowIcon />
-                    )}
+                    <FavoriteIcon
+                      style={{
+                        color: m.music_metadata?.like ? "pink" : undefined
+                      }}
+                    />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -96,7 +94,7 @@ export default function MusicListMobile() {
       </List>
       <Pagination
         size="medium"
-        style={{ marginBottom: 10, marginTop: 10 }}
+        style={{ marginBottom: 10, marginTop: 10, height: 140 }}
         page={musicResponse?.current_page ?? 0}
         count={musicResponse?.total_pages ?? 0}
         onChange={async (e, value) => {
