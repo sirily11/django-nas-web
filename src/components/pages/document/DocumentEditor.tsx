@@ -15,7 +15,10 @@ import {
   Container,
   Paper,
   Snackbar,
-  Tooltip
+  Tooltip,
+  Fab,
+  Drawer,
+  Collapse
 } from "@material-ui/core";
 import { DocumentContext } from "../../models/DocumentContext";
 import Titlebar from "./components/Titlebar";
@@ -24,7 +27,10 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import BodyEditor from "./components/BodyEditor";
 import "../../../document.css";
 import { NavLink } from "react-router-dom";
+import MenuIcon from "@material-ui/icons/Menu";
 import MenuBar from "./components/MenuBar";
+import BookDrawer from "./components/book/BookDrawer";
+import { BookContext } from "../../models/BookContext";
 
 const theme = createMuiTheme({
   palette: {
@@ -52,11 +58,18 @@ const useStyles = makeStyles(theme => ({
   largeIcon: {
     width: 40,
     height: 40
+  },
+  menuIcon: {
+    position: "fixed",
+    top: 100,
+    left: 30
   }
 }));
 
 export default function DocumentEditor() {
   const { currentDocument, isLoading, errorMsg } = useContext(DocumentContext);
+  const { fetchBookDetail } = useContext(BookContext);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const classes = useStyles();
 
   return (
@@ -96,6 +109,30 @@ export default function DocumentEditor() {
             </Paper>
           )}
         </Container>
+        <Drawer
+          open={openDrawer}
+          onClose={() => {
+            setOpenDrawer(false);
+          }}
+        >
+          <BookDrawer />
+        </Drawer>
+        <Collapse in={currentDocument?.show_in_folder === false}>
+          <Tooltip title="Show Index">
+            <Fab
+              className={classes.menuIcon}
+              onClick={async () => {
+                if (currentDocument) {
+                  console.log(currentDocument);
+                  await fetchBookDetail(currentDocument?.collection);
+                  setOpenDrawer(true);
+                }
+              }}
+            >
+              <MenuIcon />
+            </Fab>
+          </Tooltip>
+        </Collapse>
         <Snackbar
           anchorOrigin={{
             vertical: "bottom",

@@ -32,6 +32,7 @@ export default function BodyEditor() {
   );
   const [numChanges, setNumberOfChanges] = useState(0);
   const [editor, setEditor] = useState<ReactQuill | undefined>();
+
   const save = async () => {
     if (currentDocument && editor) {
       let data = editor.getEditor().getContents();
@@ -47,6 +48,7 @@ export default function BodyEditor() {
       container: "#toolbar"
     }
   };
+
   if (currentDocument === undefined) {
     return (
       <ReactQuill

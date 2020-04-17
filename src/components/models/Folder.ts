@@ -1,3 +1,12 @@
+export interface BookCollection {
+    id: number;
+    name: string;
+    description: string;
+    created_time: Date;
+    documents?: Document[]
+}
+
+
 export interface MusicMetadata {
     id: number;
     title: string;
@@ -71,6 +80,9 @@ export interface Document {
     modified_at: Date;
     parent: undefined | null | string | number;
     content: any
+    collection: number;
+    book_collection: BookCollection;
+    show_in_folder: boolean;
 }
 
 export interface SystemInfo {

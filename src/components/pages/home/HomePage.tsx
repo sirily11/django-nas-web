@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import Header from "./components/others/Header";
 import "semantic-ui-css/semantic.min.css";
 import ListPanel from "./components/folders/ListFolderPanel";
-import { Segment, Grid, Menu } from "semantic-ui-react";
+import { Segment, Grid } from "semantic-ui-react";
 import NasMenus from "./components/others/NasMenu";
 import ComputerStatus from "./components/others/ComputerStatus";
 import ListFilesPanel from "./components/files/ListFilesPanel";
@@ -12,6 +12,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import UploadFilesSideBar from "./components/files/UploadFilesSideBar";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
+  Menu,
   Hidden,
   AppBar,
   Toolbar,
@@ -25,7 +26,8 @@ import {
   InputBase,
   createMuiTheme,
   ThemeProvider,
-  Tooltip
+  Tooltip,
+  MenuItem
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import SearchField from "./components/files/SearchField";
@@ -99,6 +101,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export function HomePage() {
   const { nas, isLoading, update } = useContext(HomePageContext);
   const [show, setShow] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
 
   return (
@@ -128,11 +131,9 @@ export function HomePage() {
               Django Nas
             </Typography>
             <Tooltip title="Open Music App">
-              <NavLink to="/music">
-                <IconButton>
-                  <OpenInNewIcon />
-                </IconButton>
-              </NavLink>
+              <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
+                <OpenInNewIcon />
+              </IconButton>
             </Tooltip>
             <SearchField />
           </Toolbar>
@@ -206,6 +207,18 @@ export function HomePage() {
           </Grid>
         </Segment>
         <NasMenus />
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+        >
+          <NavLink to="/music">
+            <MenuItem>Open Music</MenuItem>
+          </NavLink>
+          <NavLink to="/book">
+            <MenuItem>Open Book</MenuItem>
+          </NavLink>
+        </Menu>
       </div>
     </ThemeProvider>
   );

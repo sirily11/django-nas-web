@@ -70,7 +70,7 @@ export default function Titlebar() {
         </div>
       </Collapse>
       <Collapse
-        in={!isLoading && currentDocument !== undefined}
+        in={!isLoading || currentDocument !== undefined}
         mountOnEnter
         unmountOnExit
       >

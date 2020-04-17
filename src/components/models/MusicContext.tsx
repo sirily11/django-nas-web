@@ -237,7 +237,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
           `${musicMetadataURL}${file.music_metadata?.id}/`,
           { like: !file.music_metadata?.like }
         );
-        file.music_metadata.like = true;
+        file.music_metadata.like = !file.music_metadata.like;
         this.setState({ musicResponse: this.state.musicResponse });
       }
     } catch (err) {

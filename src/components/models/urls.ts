@@ -8,3 +8,5 @@ export const downloadURL = "/api/download/"
 //music 
 export const musicURL = "/api/music/"
 export const musicMetadataURL = "/api/music-metadata/"
+// book collect
+export const bookCollectionURL = '/api/book-collection/'

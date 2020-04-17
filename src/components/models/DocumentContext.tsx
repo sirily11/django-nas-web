@@ -69,7 +69,10 @@ export class DocumentProvider extends Component<
     } catch (err) {
       this.setState({ errorMsg: "Failed to save" });
     } finally {
-      this.setState({ isLoading: false });
+      setTimeout(() => {
+        this.setState({ isLoading: false });
+      }, 1000);
+
       setTimeout(() => {
         this.setState({ errorMsg: undefined });
       }, 3000);
@@ -190,6 +193,7 @@ export class DocumentProvider extends Component<
   }
 }
 
+//@ts-ignore
 const context: DocumentContext = {
   nas: new Nas(),
   update: () => {},

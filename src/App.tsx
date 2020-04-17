@@ -19,6 +19,8 @@ import DocumentEditor from "./components/pages/document/DocumentEditor";
 import { MovingProvider } from "./components/models/MovingContext";
 import { MusicProvider } from "./components/models/MusicContext";
 import MusicPage from "./components/pages/music/MusicPage";
+import BookPage from "./components/pages/book/BookPage";
+import { BookContext, BookProvider } from "./components/models/BookContext";
 
 export default function App() {
   const [visible, setVisible] = useState(false);
@@ -47,10 +49,25 @@ export default function App() {
             path="/document/:id"
             component={(props: any) => {
               return (
+                <BookProvider>
+                  <MovingProvider>
+                    <DocumentProvider {...props}>
+                      <DocumentEditor />
+                    </DocumentProvider>
+                  </MovingProvider>
+                </BookProvider>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/book"
+            component={(props: any) => {
+              return (
                 <MovingProvider>
-                  <DocumentProvider {...props}>
-                    <DocumentEditor />
-                  </DocumentProvider>
+                  <BookProvider>
+                    <BookPage />
+                  </BookProvider>
                 </MovingProvider>
               );
             }}
