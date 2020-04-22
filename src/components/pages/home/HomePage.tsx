@@ -10,6 +10,7 @@ import { HomePageContext } from "../../models/HomeContext";
 import { ContextMenuTrigger } from "react-contextmenu";
 import MenuIcon from "@material-ui/icons/Menu";
 import UploadFilesSideBar from "./components/files/UploadFilesSideBar";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   Menu,
@@ -99,7 +100,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export function HomePage() {
-  const { nas, isLoading, update } = useContext(HomePageContext);
+  const { nas, isLoading, update, updateDescription } = useContext(
+    HomePageContext
+  );
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
@@ -130,7 +133,16 @@ export function HomePage() {
             <Typography className={classes.title} variant="h6" noWrap>
               Django Nas
             </Typography>
-            <Tooltip title="Open Music App">
+            <Tooltip title="Refresh description">
+              <IconButton
+                onClick={async () => {
+                  await updateDescription();
+                }}
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Open Apps">
               <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
                 <OpenInNewIcon />
               </IconButton>

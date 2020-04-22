@@ -168,7 +168,7 @@ export class BookProvider extends Component<BookProps, BookContext> {
     try {
       if (this.state.currentBook) {
         let response = await Axios.patch(
-          `${bookCollectionURL}/${this.state.currentBook.id}/`,
+          `${bookCollectionURL}${this.state.currentBook.id}/`,
           {
             name: title,
             description: desc

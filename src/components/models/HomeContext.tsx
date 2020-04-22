@@ -3,6 +3,8 @@ import { Nas } from "./nas";
 import { RouteComponentProps } from "react-router";
 import { Folder, Document as NasDocument, File as NasFile } from "./Folder";
 import { UploadInfo } from "../pages/home/components/files/UploadDialog";
+import Axios from "axios";
+import { updateDescriptionURL } from "./urls";
 
 interface RouterProps {
   id: string;
@@ -19,6 +21,7 @@ interface HomePageContext {
   update(): void;
   selectDocument(doc?: NasDocument): void;
   setUploadedFiles(files: File[]): void;
+  updateDescription(): Promise<void>;
   isLoading: boolean;
 }
 
@@ -38,9 +41,23 @@ export class HomePageProvider extends Component<
       update: this.update,
       uploadedFiles: [],
       setUploadedFiles: this.setUploadedFile,
+      updateDescription: this.updateDescription,
       isLoading: false
     };
   }
+
+  updateDescription = async () => {
+    try {
+      this.setState({ isLoading: true });
+      await Axios.get(updateDescriptionURL);
+      let id = this.props.match.params.id;
+      await this.fetch(id);
+    } catch (err) {
+      alert(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
 
   setUploadedFile = (files: File[]) => {
     this.setState({ uploadedFiles: files });
@@ -92,6 +109,7 @@ export class HomePageProvider extends Component<
   }
 }
 
+//@ts-ignore
 const context: HomePageContext = {
   nas: new Nas(),
   uploadedFiles: [],

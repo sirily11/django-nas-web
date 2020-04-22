@@ -41,7 +41,11 @@ import {
   File as NasFile
 } from "../../../../models/Folder";
 import Editor from "../documents/Editor";
-import { downloadURL, fileURL } from "../../../../models/urls";
+import {
+  downloadURL,
+  fileURL,
+  downloadMultipleURL
+} from "../../../../models/urls";
 import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
 import RenameDialog from "./RenameDialog";
@@ -51,6 +55,9 @@ import { Dialog } from "@material-ui/core";
 import MoveDialog from "../../../document/components/MoveDialog";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Musicplayer from "./music/Musicplayer";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import Axios from "axios";
+import fileDownload from "js-file-download";
 
 const { Player } = require("video-react");
 
@@ -139,6 +146,29 @@ export default function ListFilesPanel() {
             <div> </div>
           ) : (
             <div>
+              <Tooltip title="Download files">
+                <IconButton
+                  aria-label="download"
+                  onClick={async () => {
+                    try {
+                      let res = await Axios.post(
+                        `${downloadMultipleURL}`,
+                        selectedFiles.map(f => f.id)
+                      );
+                      const link = document.createElement("a");
+                      link.href = `${res.data.download_url}`;
+                      console.log(link.href);
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    } catch (err) {
+                      alert(err);
+                    }
+                  }}
+                >
+                  <GetAppIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Delete">
                 <IconButton
                   aria-label="delete"
@@ -158,6 +188,7 @@ export default function ListFilesPanel() {
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
+
               <Tooltip title="Move To">
                 <IconButton
                   aria-label="Move To"

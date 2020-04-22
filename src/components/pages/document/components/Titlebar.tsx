@@ -101,21 +101,23 @@ export default function Titlebar() {
               />
             </ClickAwayListener>
           </Tooltip>
-          <Tooltip title="Move">
-            <IconButton
-              className={classes.button}
-              onClick={async e => {
-                setAnchorEl(e.currentTarget);
-                if (currentDocument) {
-                  await nas.getContent(currentDocument.parent as number);
-                }
+          {currentDocument?.show_in_folder && (
+            <Tooltip title="Move">
+              <IconButton
+                className={classes.button}
+                onClick={async e => {
+                  setAnchorEl(e.currentTarget);
+                  if (currentDocument) {
+                    await nas.getContent(currentDocument.parent as number);
+                  }
 
-                update();
-              }}
-            >
-              <FolderIcon />
-            </IconButton>
-          </Tooltip>
+                  update();
+                }}
+              >
+                <FolderIcon />
+              </IconButton>
+            </Tooltip>
+          )}
         </div>
       </Collapse>
 

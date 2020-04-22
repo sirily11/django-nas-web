@@ -17,7 +17,8 @@ import {
   MenuList,
   Popper,
   Paper,
-  ClickAwayListener
+  ClickAwayListener,
+  Typography
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import moment from "moment";
@@ -126,7 +127,7 @@ export default function SearchField() {
         <ClickAwayListener onClickAway={handleClose}>
           <Paper className={classes.popper}>
             {nas.searchedFiles.length === 0 && (
-              <MenuItem>No File. Press Enter to search</MenuItem>
+              <ListItem>No File. Press Enter to search</ListItem>
             )}
             {nas.searchedFiles.map(f => (
               <MenuItem
@@ -136,7 +137,12 @@ export default function SearchField() {
                   handleClose();
                 }}
               >
-                {path.basename(f.filename)}
+                <ListItemText
+                  primary={
+                    <Typography noWrap>{path.basename(f.filename)}</Typography>
+                  }
+                  secondary={<Typography>{f.created_at}</Typography>}
+                />
               </MenuItem>
             ))}
           </Paper>

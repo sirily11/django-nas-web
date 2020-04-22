@@ -49,7 +49,7 @@ export interface File {
     id: number;
     created_at: Date;
     parent: number;
-    description: null;
+    description?: string;
     user: User;
     size: number;
     modified_at: Date;
