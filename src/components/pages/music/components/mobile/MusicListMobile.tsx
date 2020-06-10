@@ -16,7 +16,7 @@ import StopIcon from "@material-ui/icons/Stop";
 import Pagination from "@material-ui/lab/Pagination";
 import { IconButton } from "@material-ui/core";
 import { musicURL } from "../../../../models/urls";
-import { File as NasFile } from "../../../../models/Folder";
+import { File as NasFile } from "../../../../models/interfaces/Folder";
 import ListItem from "@material-ui/core/ListItem";
 import MusicNoteIcon from "@material-ui/icons/MusicNote";
 import FavoriteIcon from "@material-ui/icons/Favorite";

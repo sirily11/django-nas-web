@@ -28,7 +28,7 @@ import {
   Folder,
   File as NasFile,
   Document as NasDocument
-} from "../../../models/Folder";
+} from "../../../models/interfaces/Folder";
 
 interface Props {
   currentFile: Folder | NasFile | NasDocument;

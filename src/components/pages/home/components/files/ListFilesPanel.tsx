@@ -1,11 +1,12 @@
+/** @format */
+
 import React, { useContext, useState } from "react";
 import {
   Icon,
   Modal,
-  Image,
   SemanticICONS,
   Dropdown,
-  CardContent
+  CardContent,
 } from "semantic-ui-react";
 
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -28,23 +29,24 @@ import {
   Toolbar,
   Tooltip,
   DialogTitle,
-  DialogContent
+  DialogContent,
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import moment from "moment";
 import path from "path";
+import FileSaver, { saveAs } from "file-saver";
 import "video-react/dist/video-react.css";
 import {
   Folder,
   Document as NasDocument,
-  File as NasFile
-} from "../../../../models/Folder";
+  File as NasFile,
+} from "../../../../models/interfaces/Folder";
 import Editor from "../documents/Editor";
 import {
   downloadURL,
   fileURL,
-  downloadMultipleURL
+  downloadMultipleURL,
 } from "../../../../models/urls";
 import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
@@ -58,47 +60,41 @@ import Musicplayer from "./music/Musicplayer";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import Axios from "axios";
 import fileDownload from "js-file-download";
+import { convertCaptionURL } from "../../../../models/urls";
+import { FileActionContext } from "../../../../models/FileActionContext";
+import { MusicFilePlugin } from "../../../../models/Plugins/file plugins/plugins/MusicFilePlugin";
+import { BaseFilePlugin } from "../../../../models/Plugins/file plugins/BaseFilePlugin";
+import { videoExt } from "../../../../models/Plugins/file plugins/plugins/VideoFilePlugin";
+import { imageExt } from "../../../../models/Plugins/file plugins/plugins/ImageFilePlugin";
 
-const { Player } = require("video-react");
 
-const imageExt = [".jpg", ".png", ".bmp", ".JPG", ".gif", ".jpeg", ".JPEG"];
-const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
-const pdfExt = [".pdf"];
-const audioExt = [".mp3", ".m4a"];
 
-export default function ListFilesPanel() {
+
+export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
+  const { plugins } = props;
   const {
     nas,
     isLoading,
     update,
     selectedDocument,
-    selectDocument
+    selectDocument,
   } = useContext(HomePageContext);
+  const {
+    openMenu,
+    renderMenu,
+    currentFile,
+    showRenameDialog,
+    showMoveToDialog,
+    closeMoveToDialog,
+    closeRenameDialog,
+  } = useContext(FileActionContext);
   const [previewAnchor, setPreviewAnchor] = React.useState<null | HTMLElement>(
     null
   );
+  const [selectedFile, setSelectedFile] = useState<NasFile>();
   const [selectedFiles, setSelectedFiles] = useState<NasFile[]>([]);
   const [onHoverFile, setOnHoverFile] = useState<NasFile>();
-  const [selectedFile, setselectedFile] = useState<NasFile>();
-  const [showRenameDialog, setShowRenameDialog] = useState(false);
-  const [showMoveToDialog, setShowMoveToDialog] = useState(false);
   const [showMultiMoveDialog, setShowMultiMoveDialog] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
-  const [audioSrc, setaudioSrc] = useState<string | undefined>(undefined);
-  const [videoSrc, setVideoSrc] = useState<
-    { src: string; cover: string } | undefined
-  >(undefined);
-
-  const [pdfSrc, setpdfSrc] = useState<string | undefined>(undefined);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleClosePreview = () => {
     setPreviewAnchor(null);
@@ -112,14 +108,6 @@ export default function ListFilesPanel() {
     return videoExt.includes(path.extname(filepath));
   }
 
-  function isPdf(filepath: string): boolean {
-    return pdfExt.includes(path.extname(filepath));
-  }
-
-  function isAudio(filepath: string): boolean {
-    return audioExt.includes(path.extname(filepath));
-  }
-
   function getIcon(filepath: string): SemanticICONS {
     if (isImage(filepath)) {
       return "images";
@@ -129,6 +117,10 @@ export default function ListFilesPanel() {
 
     return "file";
   }
+
+  const onClose = React.useCallback(() => {
+    setSelectedFile(undefined);
+  }, []);
 
   return (
     <div id="file-list">
@@ -153,7 +145,7 @@ export default function ListFilesPanel() {
                     try {
                       let res = await Axios.post(
                         `${downloadMultipleURL}`,
-                        selectedFiles.map(f => f.id)
+                        selectedFiles.map((f) => f.id)
                       );
                       const link = document.createElement("a");
                       link.href = `${res.data.download_url}`;
@@ -211,7 +203,7 @@ export default function ListFilesPanel() {
                   <TableRow>
                     <TableCell>
                       <Checkbox
-                        onChange={e => {
+                        onChange={(e) => {
                           if (e.target.checked) {
                             if (nas.currentFolder)
                               setSelectedFiles(nas.currentFolder.files);
@@ -234,11 +226,15 @@ export default function ListFilesPanel() {
                 </TableHead>
                 <TableBody>
                   {nas.currentFolder.files.map((f, i) => (
-                    <TableRow hover selected={selectedFiles.includes(f)}>
+                    <TableRow
+                      key={`file-${i}`}
+                      hover
+                      selected={selectedFiles.includes(f)}
+                    >
                       <TableCell>
                         <Checkbox
                           checked={selectedFiles.includes(f)}
-                          onChange={e => {
+                          onChange={(e) => {
                             if (e.target.checked) {
                               selectedFiles.push(f);
                             } else {
@@ -252,7 +248,7 @@ export default function ListFilesPanel() {
                       </TableCell>
                       <TableCell
                         style={{ cursor: "grab" }}
-                        onMouseOver={e => {
+                        onMouseOver={(e) => {
                           setPreviewAnchor(e.currentTarget);
                           setOnHoverFile(f);
                         }}
@@ -261,18 +257,7 @@ export default function ListFilesPanel() {
                           setOnHoverFile(undefined);
                         }}
                         onClick={() => {
-                          if (isImage(f.file)) {
-                            setImageSrc(f.file);
-                          } else if (isVideo(f.file)) {
-                            setVideoSrc({
-                              src: f.transcode_filepath ?? f.file,
-                              cover: f.cover
-                            });
-                          } else if (isAudio(f.file)) {
-                            setaudioSrc(f.file);
-                          } else if (isPdf(f.file)) {
-                            setpdfSrc(f.file);
-                          }
+                          setSelectedFile(f);
                         }}
                       >
                         <Icon
@@ -288,9 +273,8 @@ export default function ListFilesPanel() {
                       <TableCell>{formatBytes(f.size)}</TableCell>
                       <TableCell>
                         <IconButton
-                          onClick={e => {
-                            setselectedFile(f);
-                            handleClick(e);
+                          onClick={(e) => {
+                            openMenu(e.currentTarget, f);
                           }}
                         >
                           <MoreHorizIcon></MoreHorizIcon>
@@ -304,117 +288,40 @@ export default function ListFilesPanel() {
           )}
           {/** End Render files */}
         </Grid.Row>
-        {/** File Action Menu */}
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem
-            onClick={() => {
-              /// Download from link
-              if (selectedFile) {
-                const link = document.createElement("a");
-                link.href = `${selectedFile.file}`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }
-              handleClose();
-            }}
-          >
-            Download
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              if (selectedFile) {
-                handleClose();
-                setShowRenameDialog(true);
-              }
-            }}
-          >
-            Rename
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              if (selectedFile) {
-                await nas.deleteFile(selectedFile.id);
-                handleClose();
-                update();
-              }
-            }}
-          >
-            Delete
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              if (selectedFile) {
-                handleClose();
-                setShowMoveToDialog(true);
-              }
-            }}
-          >
-            Move To
-          </MenuItem>
-        </Menu>
-        {audioSrc && (
-          <Musicplayer
-            musicSrc={audioSrc}
-            onClose={() => setaudioSrc(undefined)}
-          />
+        {currentFile && renderMenu()}
+
+        {/** Plugins */}
+        {plugins.map(
+          (plugin, index) =>
+            selectedFile &&
+            plugin.shouldShow(selectedFile) &&
+            plugin.render({ file: selectedFile, onClose: onClose })
         )}
-        {/** end file action menu */}
+        {/** End Plugins */}
         {selectedDocument && (
           <Editor
             open={selectedDocument !== undefined}
-            setOpen={v => {
+            setOpen={(v) => {
               !v && selectDocument(undefined);
             }}
             document={selectedDocument}
           ></Editor>
         )}
-        {/** Preview image */}
-        <Modal
-          open={imageSrc !== undefined}
-          onClose={() => setImageSrc(undefined)}
-        >
-          <Image src={imageSrc} fluid></Image>
-        </Modal>
-        {/** End preview image */}
-        {/** Preview image */}
 
-        {/** End preview image */}
-        {/** Preview video */}
-        <Modal
-          open={videoSrc !== undefined}
-          onClose={() => setVideoSrc(undefined)}
-        >
-          <Player poster={videoSrc && videoSrc.cover}>
-            <source src={videoSrc && videoSrc.src} />
-          </Player>
-        </Modal>
-        {/** End preview video */}
-        {/** Preview pdf */}
-        <Modal open={pdfSrc !== undefined} onClose={() => setpdfSrc(undefined)}>
-          {pdfSrc && <PDFViewer file={pdfSrc} />}
-        </Modal>
-        {/** End preview pdf */}
-        {selectedFile && (
+
+        {/** MoveToDialog */}
+        {currentFile && (
           <Dialog
             open={showMoveToDialog}
             scroll="paper"
             onClose={() => {
-              setselectedFile(undefined);
-              setShowMoveToDialog(false);
+              closeMoveToDialog();
             }}
           >
             <MoveDialog
-              currentFile={selectedFile}
+              currentFile={currentFile}
               onClose={() => {
-                setselectedFile(undefined);
-                setShowMoveToDialog(false);
+                closeMoveToDialog();
               }}
               onMove={async (file, dest) => {
                 await nas.moveFileTo(file.id, dest.id);
@@ -423,6 +330,7 @@ export default function ListFilesPanel() {
             />
           </Dialog>
         )}
+        {/** End move to dialog */}
         {selectedFiles.length > 0 && (
           <Dialog
             open={showMultiMoveDialog}
@@ -445,17 +353,18 @@ export default function ListFilesPanel() {
             />
           </Dialog>
         )}
-        {selectedFile && (
+        {/** rename dialog */}
+        {currentFile && (
           <RenameDialog
             type="file"
             open={showRenameDialog}
-            selectedFile={selectedFile}
+            selectedFile={currentFile}
             onClose={() => {
-              setShowRenameDialog(false);
-              setselectedFile(undefined);
+              closeRenameDialog();
             }}
           />
         )}
+        {/** end rename dialog */}
       </Grid>
       {/** Preview */}
       <Popper open={Boolean(previewAnchor)} anchorEl={previewAnchor}>

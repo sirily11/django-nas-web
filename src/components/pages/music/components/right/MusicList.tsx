@@ -16,7 +16,7 @@ import StopIcon from "@material-ui/icons/Stop";
 import Pagination from "@material-ui/lab/Pagination";
 import { IconButton, Grid } from "@material-ui/core";
 import { musicURL } from "../../../../models/urls";
-import { File as NasFile } from "../../../../models/Folder";
+import { File as NasFile } from "../../../../models/interfaces/Folder";
 import moment from "moment";
 import { NavLink } from "react-router-dom";
 import FavoriteIcon from "@material-ui/icons/Favorite";

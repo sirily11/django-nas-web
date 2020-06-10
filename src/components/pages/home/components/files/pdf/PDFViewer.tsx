@@ -10,17 +10,29 @@ interface Props {
 export default function PDFViewer(props: Props) {
   const [pageNumber, setpageNumber] = useState(1);
   const [current, setcurrent] = useState(1);
-
+  //@ts-ignore
   return (
-    <Document
-      file={props.file}
-      onLoadSuccess={pdf => {
-        setpageNumber(pdf.numPages);
-      }}
-    >
-      {Array.from(new Array(pageNumber), (el, index) => (
-        <Page key={`page-${index}`} pageNumber={index + 1} />
-      ))}
-    </Document>
+    <div id="document">
+      <Document
+        /*
+        // @ts-ignore */
+        style={{ width: "100%" }}
+        file={props.file}
+        onLoadSuccess={(pdf) => {
+          setpageNumber(pdf.numPages);
+        }}
+      >
+        {Array.from(new Array(pageNumber), (el, index) => (
+          <Page
+            /*
+        // @ts-ignore */
+            style={{ width: "100%" }}
+            size="A4"
+            key={`page-${index}`}
+            pageNumber={index + 1}
+          />
+        ))}
+      </Document>
+    </div>
   );
 }

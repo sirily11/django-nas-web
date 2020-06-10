@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Nas } from "./nas";
+import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
-import { Folder, Document as NasDocument, File as NasFile } from "./Folder";
+import { Folder, Document as NasDocument, File as NasFile } from "./interfaces/Folder";
 import { UploadInfo } from "../pages/home/components/files/UploadDialog";
 //@ts-ignore
 

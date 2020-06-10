@@ -1,7 +1,7 @@
 import Axios from "axios"
 import { Folder, Parent, File as NasFile, Document as NasDocument, PaginationResponse } from './Folder';
 
-import { url, documentURL, fileURL, searchFileURL, musicURL } from "./urls"
+import { url, documentURL, fileURL, searchFileURL, musicURL } from "../urls"
 import { DeltaStatic } from "quill";
 import * as path from 'path';
 

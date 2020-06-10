@@ -3,7 +3,7 @@ import {
   BookCollection,
   Document as NasDocument,
   Folder
-} from "../../../../models/Folder";
+} from "../../../../models/interfaces/Folder";
 import ListItem from "@material-ui/core/ListItem";
 import {
   Dialog,

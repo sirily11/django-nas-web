@@ -10,7 +10,7 @@ import {
   Tooltip
 } from "@material-ui/core";
 import { BookContext } from "../../../../models/BookContext";
-import { BookCollection } from "../../../../models/Folder";
+import { BookCollection } from "../../../../models/interfaces/Folder";
 import BookDetailDialog from "../dialog/BookDetailDialog";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import UpdateCollectionDialog from "../dialog/UpdateCollectionDialog";

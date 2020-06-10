@@ -2,7 +2,7 @@ import React from "react";
 import {
   Document as NasDocument,
   BookCollection
-} from "../../../../models/Folder";
+} from "../../../../models/interfaces/Folder";
 import { BookContext } from "../../../../models/BookContext";
 import {
   Dialog,

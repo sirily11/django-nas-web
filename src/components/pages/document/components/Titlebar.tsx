@@ -14,7 +14,7 @@ import {
   Collapse
 } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
-import { Folder, Document as NasDocument } from "../../../models/Folder";
+import { Folder, Document as NasDocument } from "../../../models/interfaces/Folder";
 import MoveDialog from "./MoveDialog";
 const useStyles = makeStyles(theme => ({
   notchedOutline: {

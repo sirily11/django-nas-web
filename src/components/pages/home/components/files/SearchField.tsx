@@ -27,7 +27,7 @@ import {
   Folder,
   Document as NasDocument,
   File as NasFile
-} from "../../../../models/Folder";
+} from "../../../../models/interfaces/Folder";
 import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles((theme: Theme) =>

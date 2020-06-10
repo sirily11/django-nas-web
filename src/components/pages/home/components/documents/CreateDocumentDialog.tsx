@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogActions
 } from "@material-ui/core";
-import { Document as NasDocument } from "../../../../models/Folder";
+import { Document as NasDocument } from "../../../../models/interfaces/Folder";
 import { HomePageContext } from "../../../../models/HomeContext";
 
 interface Props {

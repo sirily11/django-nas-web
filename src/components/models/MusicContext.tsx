@@ -1,17 +1,17 @@
 import React, { Component } from "react";
-import { Nas } from "./nas";
+import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
 import {
   Folder,
   Document as NasDocument,
   File as NasFile,
   PaginationResponse
-} from "./Folder";
+} from "./interfaces/Folder";
 import Axios from "axios";
 import * as mm from "music-metadata-browser";
 import { musicURL, musicMetadataURL } from "./urls";
 import queryString from "query-string";
-import { MusicMetadata } from "./Folder";
+import { MusicMetadata } from "./interfaces/Folder";
 //@ts-ignore
 const readMusicTag = async (musicSrc: string): Promise<mm.IAudioMetadata> => {
   const metadata = await mm.fetchFromUrl(musicSrc);

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Nas } from "./nas";
+import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
-import { SystemInfo } from "./Folder";
+import { SystemInfo } from "./interfaces/Folder";
 import Axios from "axios";
 import { systemURL } from "./urls";
 

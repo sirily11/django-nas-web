@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useContext, useState } from "react";
 import {
   Segment,
@@ -11,7 +13,7 @@ import {
   Label,
   Button,
   Popup,
-  Grid
+  Grid,
 } from "semantic-ui-react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -25,13 +27,16 @@ import {
   Menu,
   MenuItem,
   Collapse,
-  Dialog
+  Dialog,
 } from "@material-ui/core";
 import { HomePageContext } from "../../../../models/HomeContext";
 import moment from "moment";
 import Axios from "axios";
 import "video-react/dist/video-react.css";
-import { Folder, Document as NasDocument } from "../../../../models/Folder";
+import {
+  Folder,
+  Document as NasDocument,
+} from "../../../../models/interfaces/Folder";
 
 import { NavLink } from "react-router-dom";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
@@ -62,7 +67,7 @@ export default function ListPanel() {
         overflow: "auto",
         overflowX: "hidden",
         height: "100%",
-        color: "blue"
+        color: "blue",
       }}
     >
       <List>
@@ -115,7 +120,7 @@ export default function ListPanel() {
                 {/** folder menu button */}
                 <ListItemSecondaryAction>
                   <IconButton
-                    onClick={e => {
+                    onClick={(e) => {
                       handleClick(e);
                       setSelectedFolder(f);
                     }}

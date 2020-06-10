@@ -10,7 +10,7 @@ import {
   ClickAwayListener
 } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
-import { Folder, Document as NasDocument } from "../../../models/Folder";
+import { Folder, Document as NasDocument } from "../../../models/interfaces/Folder";
 import EditorJS from "@editorjs/editorjs";
 import ReactQuill, { Quill } from "react-quill";
 import { DividerBlot } from "./blots/DividerBlot";

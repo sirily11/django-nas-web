@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import EditorJs from "react-editor-js";
 import { Modal, Button } from "semantic-ui-react";
 import { TextField } from "@material-ui/core";
-import { Document as NasDocument } from "../../../../models/Folder";
+import { Document as NasDocument } from "../../../../models/interfaces/Folder";
 import { HomePageContext } from "../../../../models/HomeContext";
 import EditorJS from "@editorjs/editorjs";
 import "react-quill/dist/quill.snow.css";

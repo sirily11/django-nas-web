@@ -11,7 +11,7 @@ import {
   CardActionArea
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
-import { Folder, Document as NasDocument } from "../../../../models/Folder";
+import { Folder, Document as NasDocument } from "../../../../models/interfaces/Folder";
 import RenameDialog from "./RenameDialog";
 import { NavLink } from "react-router-dom";
 

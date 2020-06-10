@@ -5,7 +5,7 @@ import {
   Route,
   Link,
   NavLink,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 import { HomePage } from "./components/pages/home/HomePage";
 import { HomePageProvider } from "./components/models/HomeContext";
@@ -21,6 +21,7 @@ import { MusicProvider } from "./components/models/MusicContext";
 import MusicPage from "./components/pages/music/MusicPage";
 import BookPage from "./components/pages/book/BookPage";
 import { BookContext, BookProvider } from "./components/models/BookContext";
+import { FileActionProvider } from "./components/models/FileActionContext";
 
 export default function App() {
   const [visible, setVisible] = useState(false);
@@ -36,11 +37,13 @@ export default function App() {
             path="/home/:id?"
             component={(props: any) => {
               return (
-                <MovingProvider>
-                  <HomePageProvider {...props}>
-                    <HomePage></HomePage>
-                  </HomePageProvider>
-                </MovingProvider>
+                <FileActionProvider>
+                  <MovingProvider>
+                    <HomePageProvider {...props}>
+                      <HomePage></HomePage>
+                    </HomePageProvider>
+                  </MovingProvider>
+                </FileActionProvider>
               );
             }}
           />

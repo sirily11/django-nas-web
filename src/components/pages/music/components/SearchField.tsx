@@ -19,7 +19,7 @@ import {
   Folder,
   Document as NasDocument,
   File as NasFile
-} from "../../../models/Folder";
+} from "../../../models/interfaces/Folder";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
