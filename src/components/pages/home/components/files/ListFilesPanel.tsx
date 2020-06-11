@@ -67,8 +67,23 @@ import { BaseFilePlugin } from "../../../../models/Plugins/file plugins/BaseFile
 import { videoExt } from "../../../../models/Plugins/file plugins/plugins/VideoFilePlugin";
 import { imageExt } from "../../../../models/Plugins/file plugins/plugins/ImageFilePlugin";
 
+function isImage(filepath: string): boolean {
+  return imageExt.includes(path.extname(filepath));
+}
 
+function isVideo(filepath: string): boolean {
+  return videoExt.includes(path.extname(filepath));
+}
 
+function getIcon(filepath: string): SemanticICONS {
+  if (isImage(filepath)) {
+    return "images";
+  } else if (isVideo(filepath)) {
+    return "file video";
+  }
+
+  return "file";
+}
 
 export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
   const { plugins } = props;
@@ -99,24 +114,6 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
   const handleClosePreview = () => {
     setPreviewAnchor(null);
   };
-
-  function isImage(filepath: string): boolean {
-    return imageExt.includes(path.extname(filepath));
-  }
-
-  function isVideo(filepath: string): boolean {
-    return videoExt.includes(path.extname(filepath));
-  }
-
-  function getIcon(filepath: string): SemanticICONS {
-    if (isImage(filepath)) {
-      return "images";
-    } else if (isVideo(filepath)) {
-      return "file video";
-    }
-
-    return "file";
-  }
 
   const onClose = React.useCallback(() => {
     setSelectedFile(undefined);
@@ -307,7 +304,6 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
             document={selectedDocument}
           ></Editor>
         )}
-
 
         {/** MoveToDialog */}
         {currentFile && (

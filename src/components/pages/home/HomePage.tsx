@@ -31,6 +31,7 @@ import {
   ThemeProvider,
   Tooltip,
   MenuItem,
+  CssBaseline,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import SearchField from "./components/files/SearchField";
@@ -39,14 +40,8 @@ import { MusicFilePlugin } from "../../models/Plugins/file plugins/plugins/Music
 import { ImageFilePlugin } from "../../models/Plugins/file plugins/plugins/ImageFilePlugin";
 import { PDFFIlePlugin } from "../../models/Plugins/file plugins/plugins/PDFFilePlugin";
 import { VideoFilePlugin } from "../../models/Plugins/file plugins/plugins/VideoFilePlugin";
-
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#fafafa",
-    },
-  },
-});
+import { JSONFilePlugin } from "../../models/Plugins/file plugins/plugins/jsonFilePlugin/JSONFilePlugin";
+import { CodeFilePlugin } from "../../models/Plugins/file plugins/plugins/codeFilePlugin/CodeFilePlugin";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -114,137 +109,135 @@ export function HomePage() {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
-      <div
-        id="home"
+    <div
+      id="home"
+      style={{
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
+      {/** App Bar */}
+      <AppBar position="static">
+        <Toolbar>
+          <Hidden mdUp>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              onClick={() => {
+                setShow(true);
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Hidden>
+          <Typography className={classes.title} variant="h6" noWrap>
+            Django Nas
+          </Typography>
+          <Tooltip title="Refresh description">
+            <IconButton
+              onClick={async () => {
+                await updateDescription();
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Open Apps">
+            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+              <OpenInNewIcon />
+            </IconButton>
+          </Tooltip>
+          <SearchField />
+        </Toolbar>
+      </AppBar>
+      {/** End App Bar */}
+      {/** drawer */}
+      <Drawer open={show} onClose={() => setShow(false)}>
+        <div style={{ width: 300, height: "100%" }}>
+          <ListPanel />
+        </div>
+      </Drawer>
+      {/** end drawer */}
+      <Segment
+        loading={isLoading}
         style={{
           height: "100%",
-          overflow: "hidden",
+          margin: 0,
         }}
       >
-        {/** App Bar */}
-        <AppBar position="static">
-          <Toolbar>
-            <Hidden mdUp>
-              <IconButton
-                className={classes.menuButton}
-                color="inherit"
-                onClick={() => {
-                  setShow(true);
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Hidden>
-            <Typography className={classes.title} variant="h6" noWrap>
-              Django Nas
-            </Typography>
-            <Tooltip title="Refresh description">
-              <IconButton
-                onClick={async () => {
-                  await updateDescription();
-                }}
-              >
-                <RefreshIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Open Apps">
-              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                <OpenInNewIcon />
-              </IconButton>
-            </Tooltip>
-            <SearchField />
-          </Toolbar>
-        </AppBar>
-        {/** End App Bar */}
-        {/** drawer */}
-        <Drawer open={show} onClose={() => setShow(false)}>
-          <div style={{ width: 300, height: "100%" }}>
-            <ListPanel />
-          </div>
-        </Drawer>
-        {/** end drawer */}
-        <Segment
-          loading={isLoading}
+        <Grid
           style={{
             height: "100%",
-            margin: 0,
+            overflow: "hidden",
+            position: "relative",
           }}
         >
-          <Grid
-            style={{
-              height: "100%",
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            <Grid.Row
-              style={{ height: "100%", paddingTop: 0, paddingBottom: 0 }}
-            >
-              {/** left side */}
-              <Hidden smDown implementation="js">
-                <Grid.Column
-                  computer={3}
-                  style={{ height: "100%", backgroundColor: "#fcfcfc" }}
-                >
-                  <ContextMenuTrigger id="folder">
-                    <Grid.Row style={{ height: "92%" }}>
-                      <ListPanel />
-                    </Grid.Row>
-                    <Grid.Row>
-                      <ComputerStatus />
-                    </Grid.Row>
-                  </ContextMenuTrigger>
-                </Grid.Column>
-              </Hidden>
-              {/** end left */}
+          <Grid.Row style={{ height: "100%", paddingTop: 0, paddingBottom: 0 }}>
+            {/** left side */}
+            <Hidden smDown implementation="js">
               <Grid.Column
-                computer={10}
-                mobile={16}
-                tablet={16}
-                style={{ height: "100%" }}
+                computer={3}
+                style={{ height: "100%", backgroundColor: "#fcfcfc" }}
               >
-                <ContextMenuTrigger id="files">
-                  <ListFilesPanel
-                    plugins={[
-                      new MusicFilePlugin(),
-                      new ImageFilePlugin(),
-                      new PDFFIlePlugin(),
-                      new VideoFilePlugin(),
-                    ]}
-                  />
+                <ContextMenuTrigger id="folder">
+                  <Grid.Row style={{ height: "92%" }}>
+                    <ListPanel />
+                  </Grid.Row>
+                  <Grid.Row>
+                    <ComputerStatus />
+                  </Grid.Row>
                 </ContextMenuTrigger>
               </Grid.Column>
-              {/** right side */}
-              <Hidden smDown implementation="js">
-                <Grid.Column
-                  computer={3}
-                  style={{
-                    height: "100%",
-                    backgroundColor: "#fcfcfc",
-                  }}
-                >
-                  <UploadFilesSideBar />
-                </Grid.Column>
-              </Hidden>
-              {/** end right side */}
-            </Grid.Row>
-          </Grid>
-        </Segment>
-        <NasMenus />
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-        >
-          <NavLink to="/music">
-            <MenuItem>Open Music</MenuItem>
-          </NavLink>
-          <NavLink to="/book">
-            <MenuItem>Open Book</MenuItem>
-          </NavLink>
-        </Menu>
-      </div>
-    </ThemeProvider>
+            </Hidden>
+            {/** end left */}
+            <Grid.Column
+              computer={10}
+              mobile={16}
+              tablet={16}
+              style={{ height: "100%" }}
+            >
+              <ContextMenuTrigger id="files">
+                <ListFilesPanel
+                  plugins={[
+                    new MusicFilePlugin(),
+                    new ImageFilePlugin(),
+                    new PDFFIlePlugin(),
+                    new VideoFilePlugin(),
+                    new JSONFilePlugin(),
+                    new CodeFilePlugin(),
+                  ]}
+                />
+              </ContextMenuTrigger>
+            </Grid.Column>
+            {/** right side */}
+            <Hidden smDown implementation="js">
+              <Grid.Column
+                computer={3}
+                style={{
+                  height: "100%",
+                  backgroundColor: "#fcfcfc",
+                }}
+              >
+                <UploadFilesSideBar />
+              </Grid.Column>
+            </Hidden>
+            {/** end right side */}
+          </Grid.Row>
+        </Grid>
+      </Segment>
+      <NasMenus />
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+      >
+        <NavLink to="/music">
+          <MenuItem>Open Music</MenuItem>
+        </NavLink>
+        <NavLink to="/book">
+          <MenuItem>Open Book</MenuItem>
+        </NavLink>
+      </Menu>
+    </div>
   );
 }
