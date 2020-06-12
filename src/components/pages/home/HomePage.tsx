@@ -42,6 +42,7 @@ import { PDFFIlePlugin } from "../../models/Plugins/file plugins/plugins/PDFFile
 import { VideoFilePlugin } from "../../models/Plugins/file plugins/plugins/VideoFilePlugin";
 import { JSONFilePlugin } from "../../models/Plugins/file plugins/plugins/jsonFilePlugin/JSONFilePlugin";
 import { CodeFilePlugin } from "../../models/Plugins/file plugins/plugins/codeFilePlugin/CodeFilePlugin";
+import { PoFilePlugin } from "../../models/Plugins/file plugins/plugins/poFilePlugin/PoFilePlugin";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -205,6 +206,7 @@ export function HomePage() {
                     new VideoFilePlugin(),
                     new JSONFilePlugin(),
                     new CodeFilePlugin(),
+                    new PoFilePlugin()
                   ]}
                 />
               </ContextMenuTrigger>

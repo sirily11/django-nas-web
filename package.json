@@ -48,6 +48,7 @@
     "md-to-quill-delta": "^1.0.9",
     "moment": "^2.24.0",
     "music-metadata-browser": "^2.0.5",
+    "pofile": "^1.1.0",
     "prism-react-renderer": "^1.1.1",
     "prismjs": "^1.16.0",
     "query-string": "^6.12.1",

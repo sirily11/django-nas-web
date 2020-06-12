@@ -271,7 +271,7 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
                       <TableCell>
                         <IconButton
                           onClick={(e) => {
-                            openMenu(e.currentTarget, f);
+                            openMenu(e.currentTarget, f, nas);
                           }}
                         >
                           <MoreHorizIcon></MoreHorizIcon>

@@ -17,12 +17,12 @@ import { BaseFileActionPlugin } from "./Plugins/file action plugins/BasePlugin";
 import { SubtitleConverterPlugin } from "./Plugins/file action plugins/plugins/SubtitlePlugin";
 
 interface FileActionContext {
-  nas: Nas;
+  nas?: Nas;
   currentFile?: NasFile;
   showRenameDialog: boolean;
   showMoveToDialog: boolean;
   anchor?: HTMLElement;
-  openMenu(anchor: HTMLElement, file: NasFile): void;
+  openMenu(anchor: HTMLElement, file: NasFile, nas: Nas): void;
   closeMenu(): void;
   setCurrentFile(file: NasFile): void;
   closeRenameDialog(): void;
@@ -42,7 +42,6 @@ export class FileActionProvider extends Component<
     super(props);
     this.plugins = [new SubtitleConverterPlugin()];
     this.state = {
-      nas: new Nas(),
       showRenameDialog: false,
       showMoveToDialog: false,
       openMenu: this.openMenu,
@@ -54,8 +53,8 @@ export class FileActionProvider extends Component<
     };
   }
 
-  openMenu = (anchor: HTMLElement, file: NasFile) => {
-    this.setState({ currentFile: file, anchor: anchor });
+  openMenu = (anchor: HTMLElement, file: NasFile, nas: Nas) => {
+    this.setState({ currentFile: file, anchor: anchor, nas: nas });
   };
 
   closeMenu = () => {
@@ -80,77 +79,81 @@ export class FileActionProvider extends Component<
 
   renderMenu = () => {
     const { currentFile, anchor, nas } = this.state;
-    return (
-      <Menu
-        id="simple-menu"
-        anchorEl={anchor}
-        keepMounted
-        open={Boolean(anchor)}
-        onClose={this.closeMenu}
-      >
-        <MenuItem
-          onClick={() => {
-            /// Download from link
-            if (currentFile) {
-              const link = document.createElement("a");
-              link.setAttribute("download", currentFile.filename);
-              link.href = `${currentFile.file}`;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }
-            this.closeMenu();
-          }}
+    if (nas === undefined) {
+      return <div></div>;
+    }
+    if (nas)
+      return (
+        <Menu
+          id="simple-menu"
+          anchorEl={anchor}
+          keepMounted
+          open={Boolean(anchor)}
+          onClose={this.closeMenu}
         >
-          Download
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            if (currentFile) {
-              this.hideMenu();
-              this.setState({ showRenameDialog: true });
-            }
-          }}
-        >
-          Rename
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            if (currentFile) {
-              await nas.deleteFile(currentFile.id);
+          <MenuItem
+            onClick={() => {
+              /// Download from link
+              if (currentFile) {
+                const link = document.createElement("a");
+                link.setAttribute("download", currentFile.filename);
+                link.href = `${currentFile.file}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
               this.closeMenu();
-              this.setState({ nas: nas });
-            }
-          }}
-        >
-          Delete
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            if (currentFile) {
-              this.hideMenu();
-              this.setState({ showMoveToDialog: true });
-            }
-          }}
-        >
-          Move To
-        </MenuItem>
-        {this.plugins.map(
-          (plugin, index) =>
-            currentFile &&
-            plugin.shouldShow(currentFile) && (
-              <MenuItem
-                onClick={async () => {
-                  await plugin.onClick(currentFile);
-                  this.closeMenu();
-                }}
-              >
-                {plugin.menuString}
-              </MenuItem>
-            )
-        )}
-      </Menu>
-    );
+            }}
+          >
+            Download
+          </MenuItem>
+          <MenuItem
+            onClick={async () => {
+              if (currentFile) {
+                this.hideMenu();
+                this.setState({ showRenameDialog: true });
+              }
+            }}
+          >
+            Rename
+          </MenuItem>
+          <MenuItem
+            onClick={async () => {
+              if (currentFile) {
+                await nas.deleteFile(currentFile.id);
+                this.closeMenu();
+                this.setState({ nas: nas });
+              }
+            }}
+          >
+            Delete
+          </MenuItem>
+          <MenuItem
+            onClick={async () => {
+              if (currentFile) {
+                this.hideMenu();
+                this.setState({ showMoveToDialog: true });
+              }
+            }}
+          >
+            Move To
+          </MenuItem>
+          {this.plugins.map(
+            (plugin, index) =>
+              currentFile &&
+              plugin.shouldShow(currentFile) && (
+                <MenuItem
+                  onClick={async () => {
+                    await plugin.onClick(currentFile);
+                    this.closeMenu();
+                  }}
+                >
+                  {plugin.menuString}
+                </MenuItem>
+              )
+          )}
+        </Menu>
+      );
   };
 
   render() {

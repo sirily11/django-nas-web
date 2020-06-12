@@ -1,7 +1,7 @@
 import Axios from "axios"
 import { Folder, Parent, File as NasFile, Document as NasDocument, PaginationResponse } from './Folder';
 
-import { url, documentURL, fileURL, searchFileURL, musicURL } from "../urls"
+import { url, documentURL, fileURL, searchFileURL, musicURL, updateFileURL } from "../urls"
 import { DeltaStatic } from "quill";
 import * as path from 'path';
 
@@ -111,7 +111,9 @@ export class Nas {
      */
     getContent = async (id?: number | string) => {
         try {
+
             let u = id ? `${url}${id}/` : url
+            console.log(u)
             let response = await Axios.get<Folder>(u)
             const { data } = response
             this.menus = data.parents
@@ -121,6 +123,11 @@ export class Nas {
             this.errorMsg = err
             this.currentFolder = undefined
         }
+    }
+
+    updateFile = async (fileID: string, file: string) => {
+        await Axios.post(updateFileURL + fileID, { "content": file })
+
     }
 
 
@@ -201,8 +208,9 @@ export class Nas {
 
     }
 
-    /** 
-     * Delete file by id
+
+    /**
+     * Delete file
      */
     deleteFile = async (id: number, showAlert = true) => {
         try {
