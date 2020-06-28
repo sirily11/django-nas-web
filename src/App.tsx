@@ -29,6 +29,8 @@ import MusicPage from "./components/pages/music/MusicPage";
 import BookPage from "./components/pages/book/BookPage";
 import { BookContext, BookProvider } from "./components/models/BookContext";
 import { FileActionProvider } from "./components/models/FileActionContext";
+import { GalleryProvider } from "./components/models/GalleryContext";
+import GalleryPage from "./components/pages/gallery/GalleryPage";
 
 const theme = createMuiTheme({
   palette: {
@@ -88,6 +90,18 @@ export default function App() {
                       <BookPage />
                     </BookProvider>
                   </MovingProvider>
+                );
+              }}
+            />
+
+            <Route
+              exact
+              path="/gallery"
+              component={(props: any) => {
+                return (
+                  <GalleryProvider>
+                    <GalleryPage />
+                  </GalleryProvider>
                 );
               }}
             />

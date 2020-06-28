@@ -19,6 +19,7 @@ import {
 import AutoSizer from "react-virtualized-auto-sizer";
 import { VariableSizeList as List } from "react-window";
 import { HomePageContext } from "../../../../HomeContext";
+import { FileContentManager } from "../../../../FileContentManager";
 
 interface Item {
   msgid: string;
@@ -61,9 +62,8 @@ export default function PoFileViewer(props: {
   const { nas, update } = React.useContext(HomePageContext);
 
   React.useEffect(() => {
-    Axios.get(src)
-      .then((res) => {
-        let content = res.data;
+    FileContentManager.getContent(src)
+      .then((content) => {
         let parsedContent = PO.parse(content);
         //@ts-ignore
         setContent(parsedContent.items);
@@ -122,7 +122,7 @@ export default function PoFileViewer(props: {
                     ""
                   );
                   try {
-                    await nas.updateFile(fileID, str);
+                    await FileContentManager.updateFileContent(fileID, str);
                   } catch (err) {
                     alert("Saving error " + err);
                   }

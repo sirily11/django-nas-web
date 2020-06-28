@@ -1316,6 +1316,11 @@
     hoist-non-react-statics "3.3.0"
     prop-types "^15.7.2"
 
+"@mapbox/point-geometry@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@mapbox/point-geometry/-/point-geometry-0.1.0.tgz#8a83f9335c7860effa2eeeca254332aa0aeed8f2"
+  integrity sha1-ioP5M1x4YO/6Lu7KJUMyqgru2PI=
+
 "@material-ui/core@^4.9.10":
   version "4.9.10"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.9.10.tgz#53f1d18bd274c258698b6cfdab3c4bee0edf7892"
@@ -1686,6 +1691,13 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/google-map-react@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@types/google-map-react/-/google-map-react-1.1.8.tgz#4098db8a86a6d5cc27c6eaa2b3e20e78e7feabcf"
+  integrity sha512-8B83ZUtQgzIx/mwZi6ezPfV/SuI9WzNVGZQPp2HuSpbJVQxJjQ7XFJcGgtvzvD1q9nZGelOHMeCgacYy/x0SDg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/history@*":
   version "4.7.5"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.5.tgz#527d20ef68571a4af02ed74350164e7a67544860"
@@ -1802,6 +1814,13 @@
   version "16.9.5"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.5.tgz#5de610b04a35d07ffd8f44edad93a71032d9aaa7"
   integrity sha512-BX6RQ8s9D+2/gDhxrj8OW+YD4R+8hj7FEM/OJHGNR0KipE1h1mSsf39YeyC81qafkq+N3rU3h3RFbLSwE5VqUg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-infinite-scroll-component@^4.2.5":
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroll-component/-/react-infinite-scroll-component-4.2.5.tgz#63111919c7e5fd86c8f1b019889bcd1a190d45c7"
+  integrity sha512-Vo2ykqsvATeFgAAz0IBvO7fgpx9Q2kHG/KJJRNTrdWL06ghTG0t/l/+oY1Z5Zl5PJoLArEHu8D4Yq0kD8jx8ow==
   dependencies:
     "@types/react" "*"
 
@@ -5461,6 +5480,11 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
+eventemitter3@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"
+  integrity sha1-HIaZHYFq0eUEdQ5zh0Ik7PO+xQg=
+
 eventemitter3@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-2.0.3.tgz#b5e1079b59fb5e1ba2771c0a993be060a58c99ba"
@@ -6296,6 +6320,16 @@ good-listener@^1.2.2:
   integrity sha1-1TswzfkxPf+33JoNR3CWqm0UXFA=
   dependencies:
     delegate "^3.1.2"
+
+google-map-react@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/google-map-react/-/google-map-react-1.1.7.tgz#381baa7d16273de0e981cf2b8f996fccef2ab4a4"
+  integrity sha512-OWwfvVlJG3aQbDZOezWPzT7b8uqk5iMya5yEfBcfGYBFONna5UYCWZl49/cS0j1DPigtwtN0YCzPKjXMQHOUeA==
+  dependencies:
+    "@mapbox/point-geometry" "^0.1.0"
+    eventemitter3 "^1.1.0"
+    prop-types "^15.5.6"
+    scriptjs "^2.5.7"
 
 got@^9.6.0:
   version "9.6.0"
@@ -11463,6 +11497,13 @@ react-h5-audio-player@^3.0.2:
     "@iconify/icons-mdi" "^1.0.46"
     "@iconify/react" "^1.1.3"
 
+react-infinite-scroll-component@^5.0.5:
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-5.0.5.tgz#6e4b2bd53f5da0ec3d46eca9661b086dbb7fd2b2"
+  integrity sha512-Xsqqo6gp+mtPbJe/j3hRZrVLFT+gA5FpE4i21HsMJo87vrqVSda8PLOeH+Wizp6SIW8MM1NaYvF7lblfG5YeCA==
+  dependencies:
+    throttle-debounce "^2.1.0"
+
 react-infinite-scroller@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/react-infinite-scroller/-/react-infinite-scroller-1.2.4.tgz#f67eaec4940a4ce6417bebdd6e3433bfc38826e9"
@@ -12461,6 +12502,11 @@ schema-utils@^2.5.0, schema-utils@^2.6.0, schema-utils@^2.6.1, schema-utils@^2.6
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
+scriptjs@^2.5.7:
+  version "2.5.9"
+  resolved "https://registry.yarnpkg.com/scriptjs/-/scriptjs-2.5.9.tgz#343915cd2ec2ed9bfdde2b9875cd28f59394b35f"
+  integrity sha512-qGVDoreyYiP1pkQnbnFAUIS5AjenNwwQBdl7zeos9etl+hYKWahjRTfzAZZYBv5xNHx7vNKCmaLDQZ6Fr2AEXg==
+
 scroll-into-view-if-needed@^2.2.20:
   version "2.2.24"
   resolved "https://registry.yarnpkg.com/scroll-into-view-if-needed/-/scroll-into-view-if-needed-2.2.24.tgz#12bca532990769bd509115a49edcfa755e92a0ea"
@@ -13434,6 +13480,11 @@ throat@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
+
+throttle-debounce@^2.1.0:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.2.1.tgz#fbd933ae6793448816f7d5b3cae259d464c98137"
+  integrity sha512-i9hAVld1f+woAiyNGqWelpDD5W1tpMroL3NofTz9xzwq6acWBlO2dC8k5EFSZepU6oOINtV5Q3aSPoRg7o4+fA==
 
 throttleit@0.0.2:
   version "0.0.2"

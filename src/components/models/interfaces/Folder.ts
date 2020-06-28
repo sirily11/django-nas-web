@@ -59,6 +59,8 @@ export interface File {
     filename: string;
     cover: string;
     music_metadata?: MusicMetadata
+    file_content?: string
+    image_metadata?: ImageMetaData
 }
 
 export interface User {
@@ -97,4 +99,51 @@ export interface SystemInfo {
 export interface Info {
     used: number;
     total: number;
+}
+
+export interface ImageMetaData {
+    file: number;
+    data: Data;
+}
+
+export interface Data {
+    flash: number;
+    model: string;
+    datetime: string;
+    f_number: number;
+    has_exif: boolean;
+    software: string;
+    gps_speed: number;
+    lens_make: string;
+    lens_model: string;
+    focal_length: number;
+    gps_altitude: number;
+    gps_latitude: number[];
+    subject_area: number[];
+    x_resolution: number;
+    y_resolution: number;
+    exposure_time: number;
+    gps_longitude: number[];
+    gps_speed_ref: string;
+    metering_mode: number;
+    white_balance: number;
+    aperture_value: number;
+    resolution_unit: number;
+    brightness_value: number;
+    gps_altitude_ref: number;
+    gps_dest_bearing: number;
+    gps_latitude_ref: string;
+    gps_img_direction: number;
+    gps_longitude_ref: string;
+    pixel_x_dimension: number;
+    pixel_y_dimension: number;
+    lens_specification: number[];
+    scene_capture_type: number;
+    exposure_bias_value: number;
+    shutter_speed_value: number;
+    gps_dest_bearing_ref: string;
+    subsec_time_original: string;
+    gps_img_direction_ref: string;
+    subsec_time_digitized: string;
+    gps_horizontal_positioning_error: number;
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useContext } from "react";
 import { HomePageContext } from "../../../../models/HomeContext";
 import Rating from "@material-ui/lab/Rating";
@@ -10,7 +12,7 @@ import {
   ListItemText,
   LinearProgress,
   Box,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { SystemContext } from "../../../../models/SystemContext";
@@ -21,7 +23,7 @@ export default function UploadFilesSideBar() {
   );
   const { systemInfo } = useContext(SystemContext);
   let filtedFiles = uploadFiles
-    ? uploadFiles.filter(f => !uploadedFiles.includes(f))
+    ? uploadFiles.filter((f) => !uploadedFiles.includes(f))
     : [];
 
   return (
@@ -70,12 +72,12 @@ export default function UploadFilesSideBar() {
                       variant={
                         uploadInfo && uploadInfo.currentIndex === index
                           ? "determinate"
-                          : "indeterminate"
+                          : "determinate"
                       }
                       value={
                         uploadInfo && uploadInfo.currentIndex === index
                           ? uploadInfo.progress
-                          : undefined
+                          : 0
                       }
                     />
                   }

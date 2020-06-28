@@ -206,7 +206,7 @@ export function HomePage() {
                     new VideoFilePlugin(),
                     new JSONFilePlugin(),
                     new CodeFilePlugin(),
-                    new PoFilePlugin()
+                    new PoFilePlugin(),
                   ]}
                 />
               </ContextMenuTrigger>
@@ -238,6 +238,9 @@ export function HomePage() {
         </NavLink>
         <NavLink to="/book">
           <MenuItem>Open Book</MenuItem>
+        </NavLink>
+        <NavLink to="/gallery">
+          <MenuItem>Open Gallery</MenuItem>
         </NavLink>
       </Menu>
     </div>
