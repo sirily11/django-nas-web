@@ -64,12 +64,12 @@ export class GalleryProvider extends Component<GalleryProps, GalleryContext> {
 
   fetchImages = async () => {
     this.setState({ isLoading: true });
-    const { files } = this.state;
+
     try {
       let response = await Axios.get<PaginationResponse<NasFile>>(galleryURL);
-      response.data.results.forEach((i) => files.push(i));
+
       this.setState({
-        files: files,
+        files: response.data.results,
         nextURL: response.data.next,
       });
     } catch (err) {
@@ -81,15 +81,16 @@ export class GalleryProvider extends Component<GalleryProps, GalleryContext> {
 
   fetchMore = async () => {
     try {
+      const { files } = this.state;
       this.setState({ isLoading: true });
       if (this.state.nextURL) {
         this.setState({ isLoading: true });
         let response = await Axios.get<PaginationResponse<NasFile>>(
           this.state.nextURL
         );
-
+        response.data.results.forEach((i) => files.push(i));
         this.setState({
-          files: response.data.results,
+          files: files,
           nextURL: response.data.next,
         });
       }
