@@ -51,13 +51,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function gpsConverter(num: number[]) {
-  if (num.length !== 3) {
+  if (num?.length !== 3) {
     return undefined;
   }
   return num[0] + num[1] / 60 + num[2] / 3600;
 }
 
 function getPosition(metadata: ImageMetaData) {
+  if (!metadata) {
+    return {
+      lat: 59.95,
+      lng: 30.33,
+    };
+  }
+
   return {
     lat:
       (metadata.data.gps_latitude_ref === "N" ? 1 : -1) *

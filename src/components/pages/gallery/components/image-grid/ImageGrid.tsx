@@ -63,7 +63,7 @@ export default function ImageGrid() {
             style={{ padding: 2, cursor: "grab", position: "relative" }}
             onClick={() => onImageClick(file)}
           >
-            <LazyLoad>
+            <LazyLoad once height={350} throttle={200} offset={100}>
               <CardMedia
                 image={file.file}
                 style={{ height: 350, width: "100%" }}
