@@ -14,6 +14,12 @@ import {
 import JSONViewer from "./JSONViewer";
 
 export class JSONFilePlugin extends BaseFilePlugin {
+  getPluginName(): string {
+    return "json_file_viewer";
+  }
+  shouldOpenNewPage(file: NasFile): boolean {
+    return false;
+  }
   shouldShow(file: NasFile): boolean {
     return [".json"].includes(path.extname(file.filename));
   }

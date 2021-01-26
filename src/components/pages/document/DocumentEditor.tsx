@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState, useContext } from "react";
 import EditorJs from "react-editor-js";
 import { Modal, Button, Grid, Divider } from "semantic-ui-react";
@@ -18,7 +20,7 @@ import {
   Tooltip,
   Fab,
   Drawer,
-  Collapse
+  Collapse,
 } from "@material-ui/core";
 import { DocumentContext } from "../../models/DocumentContext";
 import Titlebar from "./components/Titlebar";
@@ -35,35 +37,35 @@ import { BookContext } from "../../models/BookContext";
 const theme = createMuiTheme({
   palette: {
     secondary: {
-      main: "#ffffff"
+      main: "#ffffff",
     },
     primary: {
-      main: "#00b2ff"
-    }
-  }
+      main: "#00b2ff",
+    },
+  },
 });
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   appbar: {
-    height: "90px"
+    height: "90px",
   },
   container: {
     paddingTop: "95px",
-    height: "100%"
+    height: "100%",
   },
   row: {
     paddingTop: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
   },
   largeIcon: {
     width: 40,
-    height: 40
+    height: 40,
   },
   menuIcon: {
     position: "fixed",
     top: 100,
-    left: 30
-  }
+    left: 30,
+  },
 }));
 
 export default function DocumentEditor() {
@@ -100,14 +102,12 @@ export default function DocumentEditor() {
           </Toolbar>
         </AppBar>
         <Container id="container" className={classes.container}>
-          {currentDocument && (
-            <Paper
-              style={{ height: "100%", minHeight: window.innerHeight - 95 }}
-              square
-            >
-              <BodyEditor />
-            </Paper>
-          )}
+          <Paper
+            style={{ height: "100vh", minHeight: window.innerHeight - 95 }}
+            square
+          >
+            {currentDocument && <BodyEditor />}
+          </Paper>
         </Container>
         <Drawer
           open={openDrawer}
@@ -136,7 +136,7 @@ export default function DocumentEditor() {
         <Snackbar
           anchorOrigin={{
             vertical: "bottom",
-            horizontal: "left"
+            horizontal: "left",
           }}
           open={errorMsg !== undefined}
           message={errorMsg}
@@ -145,7 +145,7 @@ export default function DocumentEditor() {
           open={isLoading && currentDocument === undefined}
           style={{
             zIndex: 1,
-            color: "#fff"
+            color: "#fff",
           }}
         >
           <CircularProgress color="inherit" />

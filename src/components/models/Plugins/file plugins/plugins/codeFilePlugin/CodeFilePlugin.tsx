@@ -10,8 +10,24 @@ import {
   Button,
 } from "@material-ui/core";
 
-import JSONViewer from "./CodeViewer";
+import CodeViewr from "./CodeViewer";
 import { DialogTitle } from "@material-ui/core";
+
+const codeMapping: { [key: string]: string } = {
+  ".py": "python",
+  ".java": "java",
+  ".jsx": "javascript",
+  ".tsx": "typescript",
+  ".lua": "lua",
+  ".html": "html",
+  ".js": "javascript",
+  ".ts": "typescript",
+  ".dart": "dart",
+  ".c": "c",
+  ".h": "c",
+  ".yml": "yaml",
+  ".swift": "swift",
+};
 
 const codeExt = [
   ".py",
@@ -26,25 +42,22 @@ const codeExt = [
   ".c",
   ".h",
   ".yml",
+  ".swift",
 ];
 
 export class CodeFilePlugin extends BaseFilePlugin {
+  getPluginName(): string {
+    return "coder";
+  }
+  shouldOpenNewPage(file: NasFile): boolean {
+    return true;
+  }
   shouldShow(file: NasFile): boolean {
     return codeExt.includes(path.extname(file.filename));
   }
 
   render(arg: Render): JSX.Element {
     const { file, onClose } = arg;
-    return (
-      <Dialog open={true} onClose={() => onClose()} fullWidth>
-        <DialogTitle>{path.basename(file.filename)}</DialogTitle>
-        <DialogContent>
-          <JSONViewer src={file.file} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => onClose()}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    );
+    return <CodeViewr file={arg.file} codeMapping={codeMapping} />;
   }
 }

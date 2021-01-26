@@ -15,6 +15,12 @@ const { Player } = require("video-react");
 
 export const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
 export class VideoFilePlugin extends BaseFilePlugin {
+  getPluginName(): string {
+    return "video";
+  }
+  shouldOpenNewPage(file: NasFile): boolean {
+    return false;
+  }
   shouldShow(file: NasFile): boolean {
     return videoExt.includes(path.extname(file.filename));
   }

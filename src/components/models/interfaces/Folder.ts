@@ -142,7 +142,7 @@ export interface Data {
     exposure_bias_value: number;
     shutter_speed_value: number;
     gps_dest_bearing_ref: string;
-    subsec_time_original: string;
+    subsec_time_original?: string;
     gps_img_direction_ref: string;
     subsec_time_digitized: string;
     gps_horizontal_positioning_error: number;

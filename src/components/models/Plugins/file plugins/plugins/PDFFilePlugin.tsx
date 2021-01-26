@@ -9,6 +9,12 @@ import PDFViewer from "../../../../pages/home/components/files/pdf/PDFViewer";
 
 const pdfExt = [".pdf"];
 export class PDFFIlePlugin extends BaseFilePlugin {
+  getPluginName(): string {
+    return "pdf-file";
+  }
+  shouldOpenNewPage(file: NasFile): boolean {
+    return false;
+  }
   shouldShow(file: NasFile): boolean {
     return pdfExt.includes(path.extname(file.filename));
   }

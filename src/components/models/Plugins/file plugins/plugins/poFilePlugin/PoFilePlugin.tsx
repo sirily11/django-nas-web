@@ -17,6 +17,12 @@ import PoFileViewer from "./PofileViewer";
 const poExt = [".po"];
 
 export class PoFilePlugin extends BaseFilePlugin {
+  getPluginName(): string {
+    return "po-filer";
+  }
+  shouldOpenNewPage(file: NasFile): boolean {
+    return false;
+  }
   shouldShow(file: NasFile): boolean {
     return poExt.includes(path.extname(file.filename));
   }

@@ -288,12 +288,16 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
         {currentFile && renderMenu()}
 
         {/** Plugins */}
-        {plugins.map(
-          (plugin, index) =>
-            selectedFile &&
-            plugin.shouldShow(selectedFile) &&
-            plugin.render({ file: selectedFile, onClose: onClose })
-        )}
+        {plugins.map((plugin, index) => {
+          if (selectedFile) {
+            let component = plugin.openFile({
+              file: selectedFile,
+              onClose: onClose,
+            });
+
+            return component;
+          }
+        })}
         {/** End Plugins */}
         {selectedDocument && (
           <Editor

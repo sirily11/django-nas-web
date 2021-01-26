@@ -31,6 +31,15 @@ import { BookContext, BookProvider } from "./components/models/BookContext";
 import { FileActionProvider } from "./components/models/FileActionContext";
 import { GalleryProvider } from "./components/models/GalleryContext";
 import GalleryPage from "./components/pages/gallery/GalleryPage";
+import { MusicFilePlugin } from "./components/models/Plugins/file plugins/plugins/MusicFilePlugin";
+import { ImageFilePlugin } from "./components/models/Plugins/file plugins/plugins/ImageFilePlugin";
+import { PDFFIlePlugin } from "./components/models/Plugins/file plugins/plugins/PDFFilePlugin";
+import { VideoFilePlugin } from "./components/models/Plugins/file plugins/plugins/VideoFilePlugin";
+import { JSONFilePlugin } from "./components/models/Plugins/file plugins/plugins/jsonFilePlugin/JSONFilePlugin";
+import { CodeFilePlugin } from "./components/models/Plugins/file plugins/plugins/codeFilePlugin/CodeFilePlugin";
+import { PoFilePlugin } from "./components/models/Plugins/file plugins/plugins/poFilePlugin/PoFilePlugin";
+import PluginPage from "./components/pages/plugin_page/PluginPage";
+import { BaseFilePlugin } from "./components/models/Plugins/file plugins/BaseFilePlugin";
 
 const theme = createMuiTheme({
   palette: {
@@ -39,6 +48,22 @@ const theme = createMuiTheme({
     },
   },
 });
+
+const plugins = [
+  new MusicFilePlugin(),
+  new ImageFilePlugin(),
+  new PDFFIlePlugin(),
+  new VideoFilePlugin(),
+  new JSONFilePlugin(),
+  new CodeFilePlugin(),
+  new PoFilePlugin(),
+];
+
+const pluginsMapping: { [key: string]: BaseFilePlugin } = {};
+
+for (let plugin of plugins) {
+  pluginsMapping[plugin.getPluginName()] = plugin;
+}
 
 export default function App() {
   const [showMenu, setShowMenu] = useState(false);
@@ -51,6 +76,12 @@ export default function App() {
           <div style={{ height: "100%" }}>
             <Route exact path="/" component={() => <Redirect to="/home" />} />
             <Route
+              path={"/plugin/:pluginName/:fileId"}
+              component={(props: any) => (
+                <PluginPage pluginsMapping={pluginsMapping} />
+              )}
+            />
+            <Route
               exact
               path="/home/:id?"
               component={(props: any) => {
@@ -58,7 +89,7 @@ export default function App() {
                   <FileActionProvider>
                     <MovingProvider>
                       <HomePageProvider {...props}>
-                        <HomePage></HomePage>
+                        <HomePage plugins={plugins} />
                       </HomePageProvider>
                     </MovingProvider>
                   </FileActionProvider>

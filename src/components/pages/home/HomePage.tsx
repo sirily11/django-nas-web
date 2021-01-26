@@ -36,13 +36,8 @@ import {
 import blue from "@material-ui/core/colors/blue";
 import SearchField from "./components/files/SearchField";
 import { NavLink } from "react-router-dom";
-import { MusicFilePlugin } from "../../models/Plugins/file plugins/plugins/MusicFilePlugin";
-import { ImageFilePlugin } from "../../models/Plugins/file plugins/plugins/ImageFilePlugin";
-import { PDFFIlePlugin } from "../../models/Plugins/file plugins/plugins/PDFFilePlugin";
-import { VideoFilePlugin } from "../../models/Plugins/file plugins/plugins/VideoFilePlugin";
-import { JSONFilePlugin } from "../../models/Plugins/file plugins/plugins/jsonFilePlugin/JSONFilePlugin";
-import { CodeFilePlugin } from "../../models/Plugins/file plugins/plugins/codeFilePlugin/CodeFilePlugin";
-import { PoFilePlugin } from "../../models/Plugins/file plugins/plugins/poFilePlugin/PoFilePlugin";
+
+import { BaseFilePlugin } from "../../models/Plugins/file plugins/BaseFilePlugin";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -101,10 +96,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export function HomePage() {
+export function HomePage(props: { plugins: BaseFilePlugin[] }) {
   const { nas, isLoading, update, updateDescription } = useContext(
     HomePageContext
   );
+  const { plugins } = props;
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
@@ -198,17 +194,7 @@ export function HomePage() {
               style={{ height: "100%" }}
             >
               <ContextMenuTrigger id="files">
-                <ListFilesPanel
-                  plugins={[
-                    new MusicFilePlugin(),
-                    new ImageFilePlugin(),
-                    new PDFFIlePlugin(),
-                    new VideoFilePlugin(),
-                    new JSONFilePlugin(),
-                    new CodeFilePlugin(),
-                    new PoFilePlugin(),
-                  ]}
-                />
+                <ListFilesPanel plugins={plugins} />
               </ContextMenuTrigger>
             </Grid.Column>
             {/** right side */}
