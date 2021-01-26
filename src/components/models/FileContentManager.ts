@@ -13,7 +13,7 @@ export class FileContentManager {
      * @param file File id
      */
     static async getContentById(fileId: string): Promise<NasFile> {
-        let response = await Axios.get(`${fileContentURL}/${fileId}`);
+        let response = await Axios.get(`${fileContentURL}${fileId}`);
         return response.data;
     }
 
