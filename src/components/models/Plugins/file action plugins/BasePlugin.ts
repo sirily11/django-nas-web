@@ -22,5 +22,5 @@ export abstract class BaseFileActionPlugin {
   /**
    * When action menu is clicked
    */
-  abstract onClick(nasFile: NasFile): any;
+  abstract onClick(nasFile: NasFile): Promise<undefined> | Promise<Promise<any>>;
 }

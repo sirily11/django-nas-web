@@ -15,6 +15,8 @@ import { Menu, MenuItem } from "@material-ui/core";
 import FileSaver from "file-saver";
 import { BaseFileActionPlugin } from "./Plugins/file action plugins/BasePlugin";
 import { SubtitleConverterPlugin } from "./Plugins/file action plugins/plugins/SubtitlePlugin";
+import { CodeFilePlugin } from "./Plugins/file plugins/plugins/codeFilePlugin/CodeFilePlugin";
+import { CodeActionPlugin } from "./Plugins/file action plugins/plugins/CodePlugin";
 
 interface FileActionContext {
   nas?: Nas;
@@ -40,7 +42,7 @@ export class FileActionProvider extends Component<
 
   constructor(props: FileActionProps) {
     super(props);
-    this.plugins = [new SubtitleConverterPlugin()];
+    this.plugins = [new SubtitleConverterPlugin(), new CodeActionPlugin()];
     this.state = {
       showRenameDialog: false,
       showMoveToDialog: false,
@@ -144,8 +146,12 @@ export class FileActionProvider extends Component<
               plugin.shouldShow(currentFile) && (
                 <MenuItem
                   onClick={async () => {
-                    await plugin.onClick(currentFile);
+                    let result = await plugin.onClick(currentFile);
                     this.closeMenu();
+                    if (result) {
+                      await result;
+                      window.location.reload();
+                    }
                   }}
                 >
                   {plugin.menuString}

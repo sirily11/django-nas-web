@@ -27,6 +27,13 @@ const codeMapping: { [key: string]: string } = {
   ".h": "c",
   ".yml": "yaml",
   ".swift": "swift",
+  ".md": "markdown",
+  ".txt": "text",
+  ".rtf": "text",
+  ".css": "css",
+  ".scss": "css",
+  ".cpp": "cpp",
+  ".xml": "xml",
 };
 
 const codeExt = [
@@ -43,6 +50,15 @@ const codeExt = [
   ".h",
   ".yml",
   ".swift",
+  ".md",
+  ".txt",
+  ".rtf",
+  ".css",
+  ".scss",
+  ".cpp",
+  ".xml",
+  "Dockerfile",
+  ".go",
 ];
 
 export class CodeFilePlugin extends BaseFilePlugin {
@@ -53,7 +69,11 @@ export class CodeFilePlugin extends BaseFilePlugin {
     return true;
   }
   shouldShow(file: NasFile): boolean {
-    return codeExt.includes(path.extname(file.filename));
+    if (file.size > 100 * 1024 * 1024 * 1024) {
+      window.alert("Too large to open");
+      return false;
+    }
+    return codeExt.includes(path.extname(file.filename) || file.filename);
   }
 
   render(arg: Render): JSX.Element {

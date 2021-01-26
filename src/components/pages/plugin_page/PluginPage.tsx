@@ -50,9 +50,11 @@ export default function PluginPage(props: Props) {
         })
         .catch((err) => {
           window.alert("Cannot fetch file with this id");
+          window.close();
         });
     } catch (err) {
       window.alert("Cannot find plugin with this name");
+      window.close();
     }
   }, [pluginName, fileId]);
 

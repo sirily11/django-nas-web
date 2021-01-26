@@ -7,12 +7,12 @@ import FileSaver from 'file-saver';
 
 export class SubtitleConverterPlugin extends BaseFileActionPlugin {
     constructor() {
-        super()
-        this.menuString = "Convert to vtt"
+        super();
+        this.menuString = "Convert to vtt";
     }
 
     shouldShow(nasFile: NasFile): boolean {
-        return nasFile.filename.includes("srt")
+        return nasFile.filename.includes("srt");
     }
 
 
@@ -26,6 +26,7 @@ export class SubtitleConverterPlugin extends BaseFileActionPlugin {
             type: "text/plain;charset=utf-8",
         });
         FileSaver.saveAs(blob, filename);
+        return undefined;
     }
 
 }
