@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useContext, useState } from "react";
 import UpdateIcon from "@material-ui/icons/Update";
 import { Container, Segment, Progress, Menu, TabPane } from "semantic-ui-react";
@@ -27,7 +29,7 @@ import {
   Tab,
   Slide,
   Fade,
-  Collapse
+  Collapse,
 } from "@material-ui/core";
 import orange from "@material-ui/core/colors/orange";
 import CurrentPlayingPage from "./components/left/CurrentPlayingPage";
@@ -45,33 +47,33 @@ import ArtistPage from "./components/artist/ArtistPage";
 
 const theme = createMuiTheme({
   palette: {
-    primary: orange
-  }
+    primary: orange,
+  },
 });
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root1: {
-      paddingTop: 80
+      paddingTop: 80,
     },
     root: {
       paddingTop: 120,
-      height: "100%"
+      height: "100%",
     },
     backdrop: {
       zIndex: theme.zIndex.drawer + 1,
-      color: "#fff"
+      color: "#fff",
     },
     menuButton: {
-      marginRight: theme.spacing(2)
+      marginRight: theme.spacing(2),
     },
     title: {
       flexGrow: 1,
       display: "none",
       [theme.breakpoints.up("sm")]: {
-        display: "block"
-      }
-    }
+        display: "block",
+      },
+    },
   })
 );
 
@@ -82,14 +84,14 @@ export default function MusicPage() {
     updateMetadata,
     filterField,
     currentTabIndex,
-    setTabIndex
+    setTabIndex,
   } = React.useContext(MusicContext);
   const [show, setShow] = useState(false);
   const classes = useStyles();
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
+      <div style={{ maxHeight: "100%" }}>
         {/** App Bar */}
         <AppBar>
           <Toolbar>
@@ -143,7 +145,7 @@ export default function MusicPage() {
           <div
             className={classes.root1}
             style={{
-              overflow: "hidden"
+              overflow: "hidden",
             }}
           >
             <PlayerPage />
@@ -163,7 +165,7 @@ export default function MusicPage() {
           <div
             className={classes.root1}
             style={{
-              overflow: "hidden"
+              overflow: "hidden",
             }}
           >
             <PlayerPage />
@@ -172,7 +174,7 @@ export default function MusicPage() {
         <Snackbar
           anchorOrigin={{
             vertical: "bottom",
-            horizontal: "left"
+            horizontal: "left",
           }}
           open={errorMsg !== undefined}
           message={`${errorMsg}`}

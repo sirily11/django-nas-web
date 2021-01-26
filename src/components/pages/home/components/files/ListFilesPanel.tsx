@@ -92,7 +92,9 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
     isLoading,
     update,
     selectedDocument,
+
     selectDocument,
+    fetch,
   } = useContext(HomePageContext);
   const {
     openMenu,
@@ -115,8 +117,12 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
     setPreviewAnchor(null);
   };
 
-  const onClose = React.useCallback(() => {
+  const onClose = React.useCallback(async (promise?: Promise<any>) => {
     setSelectedFile(undefined);
+    if (promise) {
+      await promise;
+      await fetch(nas.currentFolder?.id);
+    }
   }, []);
 
   return (

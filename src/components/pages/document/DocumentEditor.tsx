@@ -102,10 +102,7 @@ export default function DocumentEditor() {
           </Toolbar>
         </AppBar>
         <Container id="container" className={classes.container}>
-          <Paper
-            style={{ height: "100vh", minHeight: window.innerHeight - 95 }}
-            square
-          >
+          <Paper style={{ height: "90vh", maxHeight: "90%" }} square>
             {currentDocument && <BodyEditor />}
           </Paper>
         </Container>

@@ -74,19 +74,15 @@ export default function ListPanel() {
         <Grid centered>
           <Grid.Row verticalAlign="middle">
             <Grid.Column width={5}>
-              {nas.currentFolder && nas.currentFolder.parent ? (
-                <NavLink to={`/home/${nas.currentFolder.parent}`}>
-                  <IconButton>
-                    <ArrowBackIosIcon />
-                  </IconButton>
-                </NavLink>
-              ) : (
-                <IconButton>
-                  <NavLink to={`/home`}>
-                    <ArrowBackIosIcon />
-                  </NavLink>{" "}
-                </IconButton>
-              )}
+              <IconButton
+                onClick={() => {
+                  window.location.href = `#/home/${
+                    nas.currentFolder?.parent ?? ""
+                  }`;
+                }}
+              >
+                <ArrowBackIosIcon />
+              </IconButton>
             </Grid.Column>
             <Grid.Column width={11}>
               <div style={{ color: "black" }}>

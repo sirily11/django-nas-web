@@ -15,7 +15,7 @@ import {
   MenuItem,
   Chip,
 } from "@material-ui/core";
-import { ThemeProvider } from "@material-ui/core";
+import { ThemeProvider, IconButton } from "@material-ui/core";
 import AutosizeInput from "react-input-autosize";
 import * as path from "path";
 import DoneIcon from "@material-ui/icons/Done";
@@ -82,6 +82,13 @@ export default function CodeViewer(props: {
   const [language, setLanguage] = React.useState("text");
   const { file, codeMapping } = props;
   const [fileName, setFileName] = React.useState(file.filename);
+
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      onClose();
+    });
+  }, []);
+
   React.useEffect(() => {
     setFileName(file.filename);
     let lang = codeMapping[path.extname(file.filename)] ?? "text";
@@ -107,8 +114,15 @@ export default function CodeViewer(props: {
     } catch (err) {
       window.alert(`Cannot save file: ${err}`);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), 400);
     }
+  };
+
+  const onClose = () => {
+    const customEvent = new CustomEvent("closed-plugin", {
+      detail: {},
+    });
+    window.opener.dispatchEvent(customEvent);
   };
 
   const updateFileContentAPI = AwesomeDebouncePromise(updateFileContent, 500);
@@ -118,13 +132,18 @@ export default function CodeViewer(props: {
       <div style={{ width: "100%" }}>
         <AppBar elevation={0} className={classes.appbar} color="secondary">
           <Toolbar>
-            <NavLink to={`/home/${file?.parent ?? ""}`}>
+            <IconButton
+              onClick={() => {
+                onClose();
+                window.close();
+              }}
+            >
               <DescriptionIcon
                 className={classes.largeIcon}
                 fontSize="large"
                 color="primary"
               />
-            </NavLink>
+            </IconButton>
             <Grid style={{ marginLeft: 10 }}>
               <Grid
                 style={{ padding: 0 }}

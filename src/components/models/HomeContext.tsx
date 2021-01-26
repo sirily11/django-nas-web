@@ -1,7 +1,13 @@
+/** @format */
+
 import React, { Component } from "react";
 import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
-import { Folder, Document as NasDocument, File as NasFile } from "./interfaces/Folder";
+import {
+  Folder,
+  Document as NasDocument,
+  File as NasFile,
+} from "./interfaces/Folder";
 import { UploadInfo } from "../pages/home/components/files/UploadDialog";
 import Axios from "axios";
 import { updateDescriptionURL } from "./urls";
@@ -19,6 +25,7 @@ interface HomePageContext {
   uploadedFiles: File[];
   setUploadInfo(files?: File[]): void;
   update(): void;
+  fetch(id: any): Promise<void>;
   selectDocument(doc?: NasDocument): void;
   setUploadedFiles(files: File[]): void;
   updateDescription(): Promise<void>;
@@ -40,9 +47,10 @@ export class HomePageProvider extends Component<
       setUploadInfo: this.setUploadInfo,
       update: this.update,
       uploadedFiles: [],
+      fetch: this.fetch,
       setUploadedFiles: this.setUploadedFile,
       updateDescription: this.updateDescription,
-      isLoading: false
+      isLoading: false,
     };
   }
 
@@ -96,7 +104,7 @@ export class HomePageProvider extends Component<
 
   update = () => {
     this.setState({
-      nas: this.state.nas
+      nas: this.state.nas,
     });
   };
 
@@ -118,7 +126,7 @@ const context: HomePageContext = {
   selectDocument: () => {},
   updateUploadInfo: (info: UploadInfo) => {},
   setUploadInfo: (files: File[]) => {},
-  isLoading: false
+  isLoading: false,
 };
 
 export const HomePageContext = React.createContext(context);

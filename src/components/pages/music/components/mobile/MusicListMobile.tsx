@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import {
   List,
@@ -6,7 +8,7 @@ import {
   ListItemIcon,
   Typography,
   Divider,
-  CardMedia
+  CardMedia,
 } from "@material-ui/core";
 import { MusicContext } from "../../../../models/MusicContext";
 import { TableBody, TableFooter } from "semantic-ui-react";
@@ -30,7 +32,7 @@ export default function MusicListMobile() {
     stop,
     fetch,
     paginationURL,
-    presslike
+    presslike,
   } = React.useContext(MusicContext);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setheight] = React.useState(window.innerHeight);
@@ -44,7 +46,7 @@ export default function MusicListMobile() {
 
   return (
     <div style={{ marginTop: 10 }}>
-      <List>
+      <List style={{ backgroundColor: "white", overflowY: "auto" }}>
         {musicResponse &&
           musicResponse.results.map((m, i) => (
             <div>
@@ -85,7 +87,7 @@ export default function MusicListMobile() {
                   >
                     <FavoriteIcon
                       style={{
-                        color: m.music_metadata?.like ? "pink" : undefined
+                        color: m.music_metadata?.like ? "pink" : undefined,
                       }}
                     />
                   </IconButton>

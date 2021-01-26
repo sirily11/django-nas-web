@@ -5,7 +5,7 @@ import { File as NasFile } from "../../interfaces/Folder";
 
 export interface Render {
   file: NasFile;
-  onClose(): void;
+  onClose(promise?: Promise<any>): void;
 }
 
 export abstract class BaseFilePlugin {
@@ -25,7 +25,10 @@ export abstract class BaseFilePlugin {
     if (this.shouldShow(arg.file)) {
       if (this.shouldOpenNewPage(arg.file)) {
         window.open(`#/plugin/${this.getPluginName()}/${arg.file.id}`);
-        arg.onClose();
+        let promise = new Promise((resolve) =>
+          window.addEventListener("closed-plugin", resolve)
+        );
+        arg.onClose(promise);
         return undefined;
       } else {
         return this.render(arg);
