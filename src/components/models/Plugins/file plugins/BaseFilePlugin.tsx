@@ -9,6 +9,10 @@ export interface Render {
 }
 
 export abstract class BaseFilePlugin {
+  shouldGetFileContent(): boolean {
+    return false;
+  }
+
   /**
    * Get plugin's name. Used for plugin path mapping
    */

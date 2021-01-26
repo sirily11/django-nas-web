@@ -62,6 +62,10 @@ const codeExt = [
 ];
 
 export class CodeFilePlugin extends BaseFilePlugin {
+  shouldGetFileContent(): boolean {
+    return true;
+  }
+
   getPluginName(): string {
     return "coder";
   }

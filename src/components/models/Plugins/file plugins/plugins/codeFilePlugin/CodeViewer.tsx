@@ -14,6 +14,9 @@ import {
   Menu,
   MenuItem,
   Chip,
+  Divider,
+  Card,
+  Typography,
 } from "@material-ui/core";
 import { ThemeProvider, IconButton } from "@material-ui/core";
 import AutosizeInput from "react-input-autosize";
@@ -65,10 +68,18 @@ const useStyles = makeStyles((theme) => ({
     background: "transparent",
     fontSize: "18px",
     paddingTop: 5,
+    paddingBottom: 5,
+    marginRight: 10,
   },
   largeIcon: {
     width: 40,
     height: 40,
+  },
+
+  tag: {
+    paddingLeft: 6,
+    paddingRight: 6,
+    backgroundColor: "#fbbc04",
   },
 }));
 
@@ -149,7 +160,6 @@ export default function CodeViewer(props: {
                 style={{ padding: 0 }}
                 container
                 alignContent="center"
-                justify="center"
                 alignItems="center"
               >
                 <AutosizeInput
@@ -167,22 +177,18 @@ export default function CodeViewer(props: {
                   value={fileName}
                 />
                 <Tooltip title="Current language">
-                  <Chip label={language} />
+                  <Card elevation={0} className={classes.tag}>
+                    <Typography
+                      variant="button"
+                      style={{ fontWeight: "normal" }}
+                    >
+                      {language}
+                    </Typography>
+                  </Card>
                 </Tooltip>
-
-                <span
-                  style={{
-                    textDecoration: "underline",
-                    color: "grey",
-                    marginLeft: 20,
-                  }}
-                >
-                  {isLoading
-                    ? "Commnucating with server"
-                    : "All changes saved in Drive"}
-                </span>
               </Grid>
-              <Grid container>
+
+              <Grid container alignItems="baseline">
                 <Button
                   className={classes.button}
                   size="small"
@@ -190,9 +196,23 @@ export default function CodeViewer(props: {
                 >
                   Languages
                 </Button>
+                <Typography
+                  variant="subtitle1"
+                  style={{
+                    textDecoration: "underline",
+                    color: "grey",
+                    marginLeft: 20,
+                    fontSize: 15,
+                  }}
+                >
+                  {isLoading
+                    ? "Commnucating with server"
+                    : "All changes saved in Drive"}
+                </Typography>
               </Grid>
             </Grid>
             <Menu
+              style={{ marginLeft: 20 }}
               anchorEl={fileEl}
               keepMounted
               open={Boolean(fileEl)}

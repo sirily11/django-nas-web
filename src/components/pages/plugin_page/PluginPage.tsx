@@ -25,7 +25,7 @@ interface Props {
 const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
-    color: "#fff",
+    color: "white",
   },
 }));
 
@@ -39,19 +39,35 @@ export default function PluginPage(props: Props) {
   React.useEffect(() => {
     try {
       let plugin = pluginsMapping[pluginName];
-      FileContentManager.getContentById(fileId)
-        .then(async (file) => {
+      if (plugin) {
+        window.document.title = plugin.getPluginName();
+        setTimeout(() => {
+          setSelectedPlugin(plugin);
           setTimeout(() => {
-            setFile(file);
-            setSelectedPlugin(plugin);
+            if (plugin.shouldGetFileContent()) {
+              FileContentManager.getContentById(fileId)
+                .then(async (file) => {
+                  setFile(file);
+                })
+                .catch((err) => {
+                  window.alert("Cannot fetch file with this id");
+                  window.close();
+                });
+            } else {
+              FileContentManager.getFile(fileId)
+                .then((file) => {
+                  setFile(file);
+                })
+                .catch((err) => {
+                  window.alert("Cannot fetch file with this id\n" + err);
+                  window.close();
+                });
+            }
           }, 500);
-
-          window.document.title = plugin.getPluginName();
-        })
-        .catch((err) => {
-          window.alert("Cannot fetch file with this id");
-          window.close();
-        });
+        }, 500);
+      } else {
+        window.alert("Cannot find this plugin");
+      }
     } catch (err) {
       window.alert("Cannot find plugin with this name");
       window.close();
@@ -61,18 +77,22 @@ export default function PluginPage(props: Props) {
   return (
     <div style={{ height: "100vh", display: "flex" }}>
       {selectedPlugin &&
+        file &&
         selectedPlugin.render({ file: file!, onClose: () => {} })}
 
-      <Backdrop
-        className={classes.backdrop}
-        open={selectedPlugin === undefined}
-      >
+      <Backdrop className={classes.backdrop} open={file === undefined}>
         <CircularProgress
           variant="indeterminate"
           color="secondary"
           style={{ margin: 10 }}
         />
-        <Typography variant="h5"> Loading Plugin...</Typography>
+        {selectedPlugin ? (
+          <Typography variant="h5">
+            {selectedPlugin.getPluginName()} Loading File...
+          </Typography>
+        ) : (
+          <Typography variant="h5"> Loading Plugin...</Typography>
+        )}
       </Backdrop>
     </div>
   );

@@ -20,7 +20,7 @@ export class ImageFilePlugin extends BaseFilePlugin {
     return "image";
   }
   shouldOpenNewPage(file: NasFile): boolean {
-    return true;
+    return false;
   }
   shouldShow(file: NasFile): boolean {
     return imageExt.includes(path.extname(file.filename));
