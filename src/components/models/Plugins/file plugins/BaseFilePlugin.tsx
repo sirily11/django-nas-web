@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { File as NasFile } from "../../interfaces/Folder";
+import DescriptionIcon from "@material-ui/icons/Description";
 
 export interface Render {
   file: NasFile;
@@ -17,6 +18,12 @@ export abstract class BaseFilePlugin {
    * Get plugin's name. Used for plugin path mapping
    */
   abstract getPluginName(): string;
+
+  getIcon(size?: number): JSX.Element {
+    let height = size ?? 40;
+    let width = size ?? 40;
+    return <DescriptionIcon style={{ height: height, width: width }} />;
+  }
 
   /**
    * Whether the plugin should open

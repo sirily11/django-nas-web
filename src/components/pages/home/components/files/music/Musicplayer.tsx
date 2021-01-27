@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import {
   Dialog,
@@ -6,7 +8,7 @@ import {
   makeStyles,
   CardContent,
   Typography,
-  CardMedia
+  CardMedia,
 } from "@material-ui/core";
 import * as path from "path";
 import AudioPlayer from "react-h5-audio-player";
@@ -63,7 +65,7 @@ export default class Musicplayer extends React.Component<Props, State> {
       <Dialog
         fullWidth
         open={musicSrc !== undefined}
-        onClose={onClose}
+        onClose={() => onClose()}
         style={{ overflowX: "hidden" }}
       >
         <CardMedia

@@ -40,6 +40,7 @@ import { CodeFilePlugin } from "./components/models/Plugins/file plugins/plugins
 import { PoFilePlugin } from "./components/models/Plugins/file plugins/plugins/poFilePlugin/PoFilePlugin";
 import PluginPage from "./components/pages/plugin_page/PluginPage";
 import { BaseFilePlugin } from "./components/models/Plugins/file plugins/BaseFilePlugin";
+import { CsvFilePlugin } from "./components/models/Plugins/file plugins/plugins/csvFilePlugin/CsvFilePlugin";
 
 const theme = createMuiTheme({
   palette: {
@@ -57,6 +58,7 @@ const plugins = [
   new JSONFilePlugin(),
   new CodeFilePlugin(),
   new PoFilePlugin(),
+  new CsvFilePlugin(),
 ];
 
 const pluginsMapping: { [key: string]: BaseFilePlugin } = {};

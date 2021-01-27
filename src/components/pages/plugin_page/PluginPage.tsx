@@ -8,10 +8,12 @@ import { File as NasFile } from "../../models/interfaces/Folder";
 import { Skeleton } from "@material-ui/lab";
 import {
   Backdrop,
+  Box,
   CircularProgress,
   Collapse,
   Fade,
   Grid,
+  Icon,
   Typography,
 } from "@material-ui/core";
 import { LinearProgress } from "@material-ui/core";
@@ -25,7 +27,8 @@ interface Props {
 const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
-    color: "white",
+    color: "#42c8f5",
+    background: "wheat",
   },
 }));
 
@@ -81,18 +84,37 @@ export default function PluginPage(props: Props) {
         selectedPlugin.render({ file: file!, onClose: () => {} })}
 
       <Backdrop className={classes.backdrop} open={file === undefined}>
-        <CircularProgress
-          variant="indeterminate"
-          color="secondary"
-          style={{ margin: 10 }}
-        />
-        {selectedPlugin ? (
-          <Typography variant="h5">
-            {selectedPlugin.getPluginName()} Loading File...
-          </Typography>
-        ) : (
-          <Typography variant="h5"> Loading Plugin...</Typography>
-        )}
+        <Box>
+          <Fade in={selectedPlugin !== undefined}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {selectedPlugin?.getIcon(100)}
+            </div>
+          </Fade>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress
+              variant="indeterminate"
+              color="secondary"
+              style={{ margin: 10 }}
+            />
+            {selectedPlugin ? (
+              <Typography variant="h5">
+                {selectedPlugin.getPluginName()} Loading File...
+              </Typography>
+            ) : (
+              <Typography variant="h5"> Loading Plugin...</Typography>
+            )}
+          </div>
+        </Box>
       </Backdrop>
     </div>
   );

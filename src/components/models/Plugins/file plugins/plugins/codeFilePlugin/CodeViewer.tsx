@@ -181,6 +181,7 @@ export default function CodeViewer(props: {
           menus={menus}
           buttons={buttons}
           onClose={onClose}
+          tag={tag}
           isLoading={isLoading}
           onUpdateFileName={async (fileName) => {
             await updateFileName(fileName);
