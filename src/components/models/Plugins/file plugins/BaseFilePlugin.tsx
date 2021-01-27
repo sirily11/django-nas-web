@@ -25,6 +25,13 @@ export abstract class BaseFilePlugin {
 
   abstract shouldOpenNewPage(file: NasFile): boolean;
 
+  onPageClose = () => {
+    const customEvent = new CustomEvent("closed-plugin", {
+      detail: {},
+    });
+    window.opener.dispatchEvent(customEvent);
+  };
+
   openFile(arg: Render): JSX.Element | undefined {
     if (this.shouldShow(arg.file)) {
       if (this.shouldOpenNewPage(arg.file)) {

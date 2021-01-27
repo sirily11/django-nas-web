@@ -31,6 +31,7 @@ import NestedMenuItem from "material-ui-nested-menu-item";
 import { languages } from "./languages";
 import { NavLink } from "react-router-dom";
 import DescriptionIcon from "@material-ui/icons/Description";
+import MenuBar from "../../views/MenuBar";
 
 const theme = createMuiTheme({
   palette: {
@@ -86,27 +87,20 @@ const useStyles = makeStyles((theme) => ({
 export default function CodeViewer(props: {
   file: NasFile;
   codeMapping: { [key: string]: string };
+  onClose(): void;
 }) {
   const classes = useStyles();
   const [fileEl, setfileEl] = React.useState<null | HTMLElement>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [language, setLanguage] = React.useState("text");
-  const { file, codeMapping } = props;
-  const [fileName, setFileName] = React.useState(file.filename);
+  const { file, codeMapping, onClose } = props;
 
   React.useEffect(() => {
-    window.addEventListener("beforeunload", () => {
-      onClose();
-    });
-  }, []);
-
-  React.useEffect(() => {
-    setFileName(file.filename);
     let lang = codeMapping[path.extname(file.filename)] ?? "text";
     setLanguage(lang);
   }, [file]);
 
-  const updateFileName = async () => {
+  const updateFileName = async (fileName: string) => {
     try {
       setIsLoading(true);
       let url = `${fileURL}${file.id}/`;
@@ -129,115 +123,69 @@ export default function CodeViewer(props: {
     }
   };
 
-  const onClose = () => {
-    const customEvent = new CustomEvent("closed-plugin", {
-      detail: {},
-    });
-    window.opener.dispatchEvent(customEvent);
-  };
-
   const updateFileContentAPI = AwesomeDebouncePromise(updateFileContent, 500);
+
+  const tag = (
+    <Tooltip title="Current language">
+      <Card elevation={0} className={classes.tag}>
+        <Typography variant="button" style={{ fontWeight: "normal" }}>
+          {language}
+        </Typography>
+      </Card>
+    </Tooltip>
+  );
+
+  const buttons = [
+    <Button
+      className={classes.button}
+      size="small"
+      onClick={(e) => setfileEl(e.currentTarget)}
+    >
+      Languages
+    </Button>,
+  ];
+
+  const menus = [
+    <Menu
+      style={{ marginLeft: 20 }}
+      anchorEl={fileEl}
+      keepMounted
+      open={Boolean(fileEl)}
+      getContentAnchorEl={null}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      transformOrigin={{ vertical: "top", horizontal: "left" }}
+      onClose={() => {
+        setfileEl(null);
+      }}
+    >
+      {languages.map((l, i) => (
+        <MenuItem
+          key={l}
+          className={classes.menuItem}
+          onClick={async () => {
+            setfileEl(null);
+            setLanguage(l);
+          }}
+        >
+          {l} {l === language && <DoneIcon />}
+        </MenuItem>
+      ))}
+    </Menu>,
+  ];
 
   return (
     <ThemeProvider theme={theme}>
       <div style={{ width: "100%" }}>
-        <AppBar elevation={0} className={classes.appbar} color="secondary">
-          <Toolbar>
-            <IconButton
-              onClick={() => {
-                onClose();
-                window.close();
-              }}
-            >
-              <DescriptionIcon
-                className={classes.largeIcon}
-                fontSize="large"
-                color="primary"
-              />
-            </IconButton>
-            <Grid style={{ marginLeft: 10 }}>
-              <Grid
-                style={{ padding: 0 }}
-                container
-                alignContent="center"
-                alignItems="center"
-              >
-                <AutosizeInput
-                  id="test-input"
-                  className={classes.notchedOutline}
-                  onChange={(e) => {
-                    setFileName(e.target.value);
-                  }}
-                  onBlur={async () => {
-                    updateFileName();
-                  }}
-                  style={{
-                    maxWidth: window.innerWidth * 0.8,
-                  }}
-                  value={fileName}
-                />
-                <Tooltip title="Current language">
-                  <Card elevation={0} className={classes.tag}>
-                    <Typography
-                      variant="button"
-                      style={{ fontWeight: "normal" }}
-                    >
-                      {language}
-                    </Typography>
-                  </Card>
-                </Tooltip>
-              </Grid>
-
-              <Grid container alignItems="baseline">
-                <Button
-                  className={classes.button}
-                  size="small"
-                  onClick={(e) => setfileEl(e.currentTarget)}
-                >
-                  Languages
-                </Button>
-                <Typography
-                  variant="subtitle1"
-                  style={{
-                    textDecoration: "underline",
-                    color: "grey",
-                    marginLeft: 20,
-                    fontSize: 15,
-                  }}
-                >
-                  {isLoading
-                    ? "Commnucating with server"
-                    : "All changes saved in Drive"}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Menu
-              style={{ marginLeft: 20 }}
-              anchorEl={fileEl}
-              keepMounted
-              open={Boolean(fileEl)}
-              getContentAnchorEl={null}
-              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-              transformOrigin={{ vertical: "top", horizontal: "left" }}
-              onClose={() => {
-                setfileEl(null);
-              }}
-            >
-              {languages.map((l, i) => (
-                <MenuItem
-                  key={l}
-                  className={classes.menuItem}
-                  onClick={async () => {
-                    setfileEl(null);
-                    setLanguage(l);
-                  }}
-                >
-                  {l} {l === language && <DoneIcon />}
-                </MenuItem>
-              ))}
-            </Menu>
-          </Toolbar>
-        </AppBar>
+        <MenuBar
+          file={file}
+          menus={menus}
+          buttons={buttons}
+          onClose={onClose}
+          isLoading={isLoading}
+          onUpdateFileName={async (fileName) => {
+            await updateFileName(fileName);
+          }}
+        />
         <Container className={classes.container}>
           <Editor
             height="85vh"

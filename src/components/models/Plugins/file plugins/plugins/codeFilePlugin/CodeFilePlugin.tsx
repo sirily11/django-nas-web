@@ -82,6 +82,12 @@ export class CodeFilePlugin extends BaseFilePlugin {
 
   render(arg: Render): JSX.Element {
     const { file, onClose } = arg;
-    return <CodeViewr file={arg.file} codeMapping={codeMapping} />;
+    return (
+      <CodeViewr
+        file={arg.file}
+        codeMapping={codeMapping}
+        onClose={this.onPageClose}
+      />
+    );
   }
 }

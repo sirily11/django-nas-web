@@ -12,7 +12,7 @@ export class FileContentManager {
      * Get file content by id
      * @param file File id
      */
-    static async getContentById(fileId: string): Promise<NasFile> {
+    static async getContentById(fileId: string | number): Promise<NasFile> {
         let response = await Axios.get(`${fileContentURL}${fileId}`);
         return response.data;
     }
