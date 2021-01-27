@@ -88,12 +88,13 @@ export default function CodeViewer(props: {
   file: NasFile;
   codeMapping: { [key: string]: string };
   onClose(): void;
+  leadingIcon: JSX.Element;
 }) {
   const classes = useStyles();
   const [fileEl, setfileEl] = React.useState<null | HTMLElement>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [language, setLanguage] = React.useState("text");
-  const { file, codeMapping, onClose } = props;
+  const { file, codeMapping, onClose, leadingIcon } = props;
 
   React.useEffect(() => {
     let lang = codeMapping[path.extname(file.filename)] ?? "text";
@@ -177,6 +178,7 @@ export default function CodeViewer(props: {
     <ThemeProvider theme={theme}>
       <div style={{ width: "100%" }}>
         <MenuBar
+          leadingIcon={leadingIcon}
           file={file}
           menus={menus}
           buttons={buttons}

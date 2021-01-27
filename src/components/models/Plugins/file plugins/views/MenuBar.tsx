@@ -64,6 +64,7 @@ export default function MenuBar(props: {
   buttons: JSX.Element[];
   isLoading: boolean;
   tag?: JSX.Element;
+  leadingIcon: JSX.Element;
   onUpdateFileName(name: string): void;
   onClose(): void;
 }) {
@@ -76,6 +77,7 @@ export default function MenuBar(props: {
     onUpdateFileName,
     onClose,
     tag,
+    leadingIcon,
   } = props;
   const [fileName, setFileName] = React.useState(file.filename);
 
@@ -98,11 +100,7 @@ export default function MenuBar(props: {
             window.close();
           }}
         >
-          <DescriptionIcon
-            className={classes.largeIcon}
-            fontSize="large"
-            color="primary"
-          />
+          {leadingIcon}
         </IconButton>
         <Grid style={{ marginLeft: 10 }}>
           <Grid

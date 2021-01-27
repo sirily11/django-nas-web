@@ -106,11 +106,12 @@ const useStyles = makeStyles((theme) => ({
 export default function PoFileViewer(props: {
   file: NasFile;
   onClose(): void;
+  leadingIcon: JSX.Element;
 }) {
   const classes = useStyles();
   const [content, setContent] = React.useState<Item[]>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { file, onClose } = props;
+  const { file, onClose, leadingIcon } = props;
   const { nas, update } = React.useContext(HomePageContext);
   const [fileEl, setfileEl] = React.useState<null | HTMLElement>(null);
 
@@ -147,6 +148,7 @@ export default function PoFileViewer(props: {
       <CssBaseline />
       <div style={{ height: "100%", overflow: "hidden", width: "100%" }}>
         <MenuBar
+          leadingIcon={leadingIcon}
           file={file}
           isLoading={isLoading}
           tag={tag}

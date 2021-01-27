@@ -20,7 +20,12 @@ export class CsvFilePlugin extends BaseFilePlugin {
   getIcon(size?: number): JSX.Element {
     let height = size ?? 40;
     let width = size ?? 40;
-    return <TableChartIcon style={{ height: height, width: width }} />;
+    return (
+      <TableChartIcon
+        style={{ height: height, width: width }}
+        color="primary"
+      />
+    );
   }
 
   shouldOpenNewPage(file: NasFile): boolean {
@@ -32,6 +37,12 @@ export class CsvFilePlugin extends BaseFilePlugin {
 
   render(arg: Render): JSX.Element {
     const { file, onClose } = arg;
-    return <CsvFileViewer file={file} onClose={this.onPageClose} />;
+    return (
+      <CsvFileViewer
+        file={file}
+        onClose={this.onPageClose}
+        leadingIcon={this.getIcon()}
+      />
+    );
   }
 }

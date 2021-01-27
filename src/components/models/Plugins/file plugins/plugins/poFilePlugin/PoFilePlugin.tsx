@@ -26,6 +26,12 @@ export class PoFilePlugin extends BaseFilePlugin {
 
   render(arg: Render): JSX.Element {
     const { file, onClose } = arg;
-    return <PoFileViewer file={file} onClose={this.onPageClose} />;
+    return (
+      <PoFileViewer
+        file={file}
+        onClose={this.onPageClose}
+        leadingIcon={this.getIcon()}
+      />
+    );
   }
 }

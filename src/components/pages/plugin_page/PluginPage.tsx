@@ -14,15 +14,23 @@ import {
   Fade,
   Grid,
   Icon,
+  ThemeProvider,
   Typography,
 } from "@material-ui/core";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, createMuiTheme } from "@material-ui/core";
 import { select } from "@lingui/macro";
 import { makeStyles } from "@material-ui/core";
+import blue from "@material-ui/core/colors/blue";
 
 interface Props {
   pluginsMapping: { [key: string]: BaseFilePlugin };
 }
+
+const theme = createMuiTheme({
+  palette: {
+    primary: blue,
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -78,44 +86,46 @@ export default function PluginPage(props: Props) {
   }, [pluginName, fileId]);
 
   return (
-    <div style={{ height: "100vh", display: "flex" }}>
-      {selectedPlugin &&
-        file &&
-        selectedPlugin.render({ file: file!, onClose: () => {} })}
+    <ThemeProvider theme={theme}>
+      <div style={{ height: "100vh", display: "flex" }}>
+        {selectedPlugin &&
+          file &&
+          selectedPlugin.render({ file: file!, onClose: () => {} })}
 
-      <Backdrop className={classes.backdrop} open={file === undefined}>
-        <Box>
-          <Fade in={selectedPlugin !== undefined}>
+        <Backdrop className={classes.backdrop} open={file === undefined}>
+          <Box>
+            <Fade in={selectedPlugin !== undefined}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                {selectedPlugin?.getIcon(100)}
+              </div>
+            </Fade>
             <div
               style={{
                 display: "flex",
-                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {selectedPlugin?.getIcon(100)}
+              <CircularProgress
+                variant="indeterminate"
+                color="secondary"
+                style={{ margin: 10 }}
+              />
+              {selectedPlugin ? (
+                <Typography variant="h5">
+                  {selectedPlugin.getPluginName()} Loading File...
+                </Typography>
+              ) : (
+                <Typography variant="h5"> Loading Plugin...</Typography>
+              )}
             </div>
-          </Fade>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <CircularProgress
-              variant="indeterminate"
-              color="secondary"
-              style={{ margin: 10 }}
-            />
-            {selectedPlugin ? (
-              <Typography variant="h5">
-                {selectedPlugin.getPluginName()} Loading File...
-              </Typography>
-            ) : (
-              <Typography variant="h5"> Loading Plugin...</Typography>
-            )}
-          </div>
-        </Box>
-      </Backdrop>
-    </div>
+          </Box>
+        </Backdrop>
+      </div>
+    </ThemeProvider>
   );
 }

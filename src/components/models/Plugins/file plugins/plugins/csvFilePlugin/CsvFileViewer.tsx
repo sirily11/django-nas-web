@@ -4,16 +4,8 @@ import React from "react";
 import Axios from "axios";
 import PO from "pofile";
 import {
-  LinearProgress,
-  Grid,
   Typography,
-  TextField,
-  Box,
-  CircularProgress,
-  Collapse,
   makeStyles,
-  Theme,
-  createStyles,
   Backdrop,
   Tooltip,
   Card,
@@ -23,10 +15,8 @@ import {
   ThemeProvider,
   CssBaseline,
   MenuItem,
+  Box,
 } from "@material-ui/core";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { VariableSizeList as List } from "react-window";
-import { HomePageContext } from "../../../../HomeContext";
 import { FileContentManager } from "../../../../FileContentManager";
 import { File as NasFile } from "../../../../interfaces/Folder";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
@@ -34,6 +24,11 @@ import MenuBar from "../../views/MenuBar";
 import { createMuiTheme } from "@material-ui/core";
 import { fileURL } from "../../../../urls";
 import { Divider } from "semantic-ui-react";
+import Papa from "papaparse";
+import DoneIcon from "@material-ui/icons/Done";
+import { HotTable } from "@handsontable/react";
+import AutoSizer from "react-virtualized-auto-sizer";
+import "handsontable/dist/handsontable.full.css";
 
 interface Item {
   msgid: string;
@@ -108,20 +103,30 @@ const useStyles = makeStyles((theme) => ({
 export default function CsvFileViewer(props: {
   file: NasFile;
   onClose(): void;
+  leadingIcon: JSX.Element;
 }) {
   const classes = useStyles();
-  const [content, setContent] = React.useState<Item[]>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { file, onClose } = props;
-  const { nas, update } = React.useContext(HomePageContext);
-  const [editEl, setfileEl] = React.useState<null | HTMLElement>(null);
+  const { file, onClose, leadingIcon } = props;
+  const [editEl, setEditEl] = React.useState<null | HTMLElement>(null);
+  const [settingsEl, setSettingsEl] = React.useState<null | HTMLElement>(null);
+  const [data, setData] = React.useState<any[]>([[]]);
+
+  const [seperator, setSeperator] = React.useState(",");
+  const [firstRowHeader, setFirstRowHeader] = React.useState(true);
+  const [firstColumnHeader, setFirstColumnHeader] = React.useState(false);
+
+  const editor = React.createRef<HotTable>();
 
   React.useEffect(() => {
-    try {
-      let parsedContent = PO.parse(file.file_content!);
-      //@ts-ignore
-      setContent(parsedContent.items);
-    } catch (err) {}
+    if (file.file_content) {
+      try {
+        let parsed = Papa.parse(file.file_content);
+        setData(parsed.data as any);
+      } catch (err) {
+        window.alert("Cannot parse data." + err);
+      }
+    }
   }, []);
 
   // const updateFileContentAPI = AwesomeDebouncePromise(updateFileContent, 500);
@@ -140,14 +145,24 @@ export default function CsvFileViewer(props: {
     <Button
       className={classes.button}
       size="small"
-      onClick={(e) => setfileEl(e.currentTarget)}
+      onClick={(e) => setEditEl(e.currentTarget)}
+      key="edit"
     >
       Edit
+    </Button>,
+    <Button
+      className={classes.button}
+      size="small"
+      onClick={(e) => setSettingsEl(e.currentTarget)}
+      key="settings"
+    >
+      Settings
     </Button>,
   ];
 
   const menus = [
     <Menu
+      key="Edit-menu"
       style={{ marginLeft: 20 }}
       anchorEl={editEl}
       keepMounted
@@ -156,7 +171,7 @@ export default function CsvFileViewer(props: {
       anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       transformOrigin={{ vertical: "top", horizontal: "left" }}
       onClose={() => {
-        setfileEl(null);
+        setEditEl(null);
       }}
     >
       <MenuItem>Insert Column left</MenuItem>
@@ -165,17 +180,78 @@ export default function CsvFileViewer(props: {
       <MenuItem>Insert Row above</MenuItem>
       <MenuItem>Insert Row below</MenuItem>
     </Menu>,
+    <Menu
+      key="ESettings-menu"
+      style={{ marginLeft: 20 }}
+      anchorEl={settingsEl}
+      keepMounted
+      open={Boolean(settingsEl)}
+      getContentAnchorEl={null}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      transformOrigin={{ vertical: "top", horizontal: "left" }}
+      onClose={() => {
+        setSettingsEl(null);
+      }}
+    >
+      <MenuItem onClick={() => setFirstRowHeader((value) => !value)}>
+        First row is header {firstRowHeader && <DoneIcon color="primary" />}
+      </MenuItem>
+      {/* <MenuItem onClick={() => setFirstColumnHeader((value) => !value)}>
+        First column is header{" "}
+        {firstColumnHeader && <DoneIcon color="primary" />}
+      </MenuItem> */}
+      <Divider />
+      <MenuItem onClick={() => setSeperator("\t")}>
+        Use tab as seperator{" "}
+        {"\t" === seperator && <DoneIcon color="primary" />}{" "}
+      </MenuItem>
+      <MenuItem onClick={() => setSeperator(",")}>
+        Use comma as seperator{" "}
+        {"," === seperator && <DoneIcon color="primary" />}{" "}
+      </MenuItem>
+    </Menu>,
   ];
 
-  if (content === undefined) {
-    return <Backdrop open={true}></Backdrop>;
-  }
+  const getData = () => {
+    let retData = data!;
+    if (firstRowHeader) {
+      if (firstColumnHeader) {
+        retData = [retData[0].map((d: any) => ""), ...retData.slice(1)];
+      } else {
+        retData = retData.slice(1);
+      }
+    }
+    if (firstColumnHeader) {
+      retData = retData.map((d) => d.slice(1));
+    }
+    return retData;
+  };
+
+  const updateData = async (plugin: any) => {
+    setIsLoading(true);
+    try {
+      let data = plugin.exportAsString("csv", {
+        columnHeaders: firstRowHeader,
+        rowHeaders: firstColumnHeader,
+      });
+
+      let nasFile = await FileContentManager.updateFileContent(file.id, data);
+      return Papa.parse(nasFile.file_content as string).data;
+    } catch (err) {
+      window.alert("Cannot save csv data. " + err);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 400);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div style={{ height: "100%", overflow: "hidden", width: "100%" }}>
         <MenuBar
+          leadingIcon={leadingIcon}
           file={file}
           isLoading={isLoading}
           tag={tag}
@@ -194,7 +270,8 @@ export default function CsvFileViewer(props: {
           menus={menus}
           buttons={buttons}
         />
-        <Container
+        <Box
+          p={1}
           style={{
             height: "85vh",
 
@@ -202,8 +279,42 @@ export default function CsvFileViewer(props: {
             marginTop: 100,
           }}
         >
-          
-        </Container>
+          <AutoSizer>
+            {({ height, width }) => {
+              return (
+                <HotTable
+                  ref={editor}
+                  data={getData()}
+                  colHeaders={
+                    firstRowHeader
+                      ? (data[0] as []).map((d: string) =>
+                          d.replaceAll('"', "")
+                        )
+                      : false
+                  }
+                  rowHeaders={firstColumnHeader ? data.map((d) => d[0]) : false}
+                  width={width}
+                  height={height}
+                  contextMenu={true}
+                  licenseKey="non-commercial-and-evaluation"
+                  afterChange={async (change, source) => {
+                    console.log(change, source);
+                    let instance = editor.current?.hotInstance;
+                    if (instance && source !== "loadData") {
+                      let plugin = instance.getPlugin("exportFile");
+                      if (plugin) {
+                        let data = await updateData(plugin);
+                        if (data) {
+                          setData(data);
+                        }
+                      }
+                    }
+                  }}
+                />
+              );
+            }}
+          </AutoSizer>
+        </Box>
       </div>
     </ThemeProvider>
   );

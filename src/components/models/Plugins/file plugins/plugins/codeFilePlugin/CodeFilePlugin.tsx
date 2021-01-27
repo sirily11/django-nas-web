@@ -87,6 +87,7 @@ export class CodeFilePlugin extends BaseFilePlugin {
         file={arg.file}
         codeMapping={codeMapping}
         onClose={this.onPageClose}
+        leadingIcon={this.getIcon()}
       />
     );
   }

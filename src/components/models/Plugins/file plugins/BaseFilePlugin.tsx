@@ -22,7 +22,12 @@ export abstract class BaseFilePlugin {
   getIcon(size?: number): JSX.Element {
     let height = size ?? 40;
     let width = size ?? 40;
-    return <DescriptionIcon style={{ height: height, width: width }} />;
+    return (
+      <DescriptionIcon
+        style={{ height: height, width: width }}
+        color="primary"
+      />
+    );
   }
 
   /**
