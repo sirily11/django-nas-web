@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import {
   Paper,
@@ -10,7 +12,7 @@ import {
   CardMedia,
   Card,
   Typography,
-  CardActionArea
+  CardActionArea,
 } from "@material-ui/core";
 import { MusicContext } from "../../../../models/MusicContext";
 import { Container, CardContent } from "semantic-ui-react";
@@ -24,7 +26,7 @@ export default function ArtistPage() {
     artists,
     setTabIndex,
     getAlbumsByArtist,
-    artistDetail
+    artistDetail,
   } = React.useContext(MusicContext);
   const [showDialog, setShowDialog] = React.useState(false);
 
@@ -33,7 +35,7 @@ export default function ArtistPage() {
       <Paper>
         <List>
           {artists.map((a, i) => (
-            <div>
+            <div key={`artist-${i}`}>
               <ListItem
                 onClick={async () => {
                   await getAlbumsByArtist(a.artist);

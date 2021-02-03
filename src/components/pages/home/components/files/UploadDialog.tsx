@@ -41,7 +41,7 @@ export default function UploadDialog(props: Props) {
     let uploadFiles = e.target.files;
     if (uploadFiles) {
       let l: File[] = [];
-      for (var i = 0; i < uploadFiles.length; i++) {
+      for (let i = 0; i < uploadFiles.length; i++) {
         l.push(uploadFiles[i]);
       }
 

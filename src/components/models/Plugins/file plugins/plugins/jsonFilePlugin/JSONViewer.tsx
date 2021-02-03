@@ -6,7 +6,7 @@ import Axios from "axios";
 import { LinearProgress } from "@material-ui/core";
 
 export default function JSONViewer(props: { src: string }) {
-  const [content, setContent] = React.useState<Object>();
+  const [content, setContent] = React.useState<any>();
 
   const { src } = props;
 

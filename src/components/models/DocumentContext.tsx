@@ -1,7 +1,13 @@
+/** @format */
+
 import React, { Component } from "react";
 import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
-import { Folder, Document as NasDocument, File as NasFile } from "./interfaces/Folder";
+import {
+  Folder,
+  Document as NasDocument,
+  File as NasFile,
+} from "./interfaces/Folder";
 import { UploadInfo } from "../pages/home/components/files/UploadDialog";
 import * as path from "path";
 //@ts-ignore
@@ -42,7 +48,7 @@ export class DocumentProvider extends Component<
       saveDocument: this.saveDocument,
       saveToLocal: this.saveToLocal,
       oepnFromLocal: this.openFromLocal,
-      newDocument: this.newDocument
+      newDocument: this.newDocument,
     };
   }
 
@@ -83,8 +89,8 @@ export class DocumentProvider extends Component<
 
   readFile = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
-      var reader = new FileReader();
-      reader.onload = content => {
+      let reader = new FileReader();
+      reader.onload = (content) => {
         let text = reader.result;
 
         resolve(text as string);
@@ -104,10 +110,10 @@ export class DocumentProvider extends Component<
       input.accept = ".md,.html";
       input.multiple = false;
       input.click();
-      input.addEventListener("change", async e => {
+      input.addEventListener("change", async (e) => {
         this.setState({
           isLoading: true,
-          errorMsg: "Reading Local Document..."
+          errorMsg: "Reading Local Document...",
         });
         let files = input.files;
         if (files) {
@@ -124,7 +130,7 @@ export class DocumentProvider extends Component<
               currentDocument?.parent
             );
             this.setState({
-              errorMsg: "Document Created. Preparing for redirecting"
+              errorMsg: "Document Created. Preparing for redirecting",
             });
             setTimeout(() => {
               this.setState({ isLoading: false, errorMsg: undefined });
@@ -143,15 +149,16 @@ export class DocumentProvider extends Component<
     let doc = this.state.currentDocument;
     if (doc) {
       switch (savingType) {
-        case "html":
+        case "html": {
           let converter = new QuillDeltaToHtmlConverter(doc.content);
           let html = converter.convert();
           break;
+        }
       }
     }
   };
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     let id = this.props.match.params.id;
     if (id) {
       await this.fetch(id);
@@ -180,7 +187,7 @@ export class DocumentProvider extends Component<
 
   update = () => {
     this.setState({
-      nas: this.state.nas
+      nas: this.state.nas,
     });
   };
 
@@ -210,7 +217,7 @@ const context: DocumentContext = {
   saveToLocal: () => {
     return Promise.resolve();
   },
-  isLoading: false
+  isLoading: false,
 };
 
 export const DocumentContext = React.createContext(context);

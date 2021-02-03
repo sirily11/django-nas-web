@@ -32,6 +32,7 @@ import { languages } from "./languages";
 import { NavLink } from "react-router-dom";
 import DescriptionIcon from "@material-ui/icons/Description";
 import MenuBar from "../../views/MenuBar";
+import { DefaultPluginProps } from "../../BaseFilePlugin";
 
 const theme = createMuiTheme({
   palette: {
@@ -84,12 +85,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CodeViewer(props: {
-  file: NasFile;
+interface Props extends DefaultPluginProps {
   codeMapping: { [key: string]: string };
-  onClose(): void;
-  leadingIcon: JSX.Element;
-}) {
+}
+
+export default function CodeViewer(props: Props) {
   const classes = useStyles();
   const [fileEl, setfileEl] = React.useState<null | HTMLElement>(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -97,7 +97,7 @@ export default function CodeViewer(props: {
   const { file, codeMapping, onClose, leadingIcon } = props;
 
   React.useEffect(() => {
-    let lang = codeMapping[path.extname(file.filename)] ?? "text";
+    const lang = codeMapping[path.extname(file.filename)] ?? "text";
     setLanguage(lang);
   }, [file]);
 
@@ -138,6 +138,7 @@ export default function CodeViewer(props: {
 
   const buttons = [
     <Button
+      key={"Languages"}
       className={classes.button}
       size="small"
       onClick={(e) => setfileEl(e.currentTarget)}
@@ -148,6 +149,7 @@ export default function CodeViewer(props: {
 
   const menus = [
     <Menu
+      key="menus"
       style={{ marginLeft: 20 }}
       anchorEl={fileEl}
       keepMounted

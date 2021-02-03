@@ -38,7 +38,7 @@ export default class Musicplayer extends React.Component<Props, State> {
     this.state = {};
   }
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     const { musicSrc } = this.props;
     let data = await readMusicTag(musicSrc);
     this.setState({ tag: data });

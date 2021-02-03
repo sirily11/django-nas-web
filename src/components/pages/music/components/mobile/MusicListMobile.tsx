@@ -49,12 +49,13 @@ export default function MusicListMobile() {
       <List style={{ backgroundColor: "white", overflowY: "auto" }}>
         {musicResponse &&
           musicResponse.results.map((m, i) => (
-            <div>
+            <div key={`music-${i}`}>
               <ListItem
                 button
                 selected={isSelected(currentMusic, m)}
                 onClick={async () => {
                   if (isSelected(currentMusic, m)) {
+                    // pass
                   } else {
                     await play(m);
                   }

@@ -1,8 +1,10 @@
+/** @format */
+
 import React, { useContext, useState } from "react";
 import {
   Folder,
   File as NasFile,
-  Document as NasDocument
+  Document as NasDocument,
 } from "../../../../models/interfaces/Folder";
 import { HomePageContext } from "../../../../models/HomeContext";
 import * as path from "path";
@@ -16,7 +18,7 @@ import {
   MenuItem,
   InputLabel,
   Button,
-  DialogActions
+  DialogActions,
 } from "@material-ui/core";
 
 interface Props {
@@ -29,15 +31,16 @@ interface Props {
 export default function RenameDialog(props: Props) {
   const getDefaultName = () => {
     switch (props.type) {
-      case "file":
+      case "file": {
         let ext = path.extname((props.selectedFile as NasFile).filename);
         return path.basename((props.selectedFile as NasFile).filename, ext);
-
-      case "folder":
+      }
+      case "folder": {
         return (props.selectedFile as Folder).name;
-
-      default:
+      }
+      default: {
         return (props.selectedFile as NasDocument).name;
+      }
     }
   };
 
@@ -52,7 +55,7 @@ export default function RenameDialog(props: Props) {
           color="secondary"
           fullWidth
           value={name}
-          onChange={e => {
+          onChange={(e) => {
             setName(e.target.value);
           }}
         />
@@ -70,18 +73,21 @@ export default function RenameDialog(props: Props) {
           onClick={async () => {
             if (name) {
               switch (props.type) {
-                case "file":
+                case "file": {
                   let ext = path.extname(
                     (props.selectedFile as NasFile).filename
                   );
                   await nas.rename(props.selectedFile.id, `${name}${ext}`);
                   break;
-                case "folder":
+                }
+                case "folder": {
                   await nas.renameFolder(props.selectedFile.id, name);
                   break;
-                case "document":
+                }
+                case "document": {
                   await nas.renameDocument(props.selectedFile.id, name);
                   break;
+                }
               }
             }
             props.onClose();

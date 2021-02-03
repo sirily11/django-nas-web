@@ -97,7 +97,7 @@ export class Nas {
      * Search by keyword
      * @param keyword Keyword
      */
-    search = async (keyword: String) => {
+    search = async (keyword: string) => {
         try {
             let url = `${searchFileURL}${keyword}`;
             let response = await Axios.get<NasFile[]>(url);
@@ -350,7 +350,7 @@ export class Nas {
                 await this.getContent(this.currentFolder.id);
                 return Promise.resolve(res.data);
             } else {
-
+                //
             }
 
         } else {

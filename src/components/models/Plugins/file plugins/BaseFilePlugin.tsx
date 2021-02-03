@@ -9,6 +9,12 @@ export interface Render {
   onClose(promise?: Promise<any>): void;
 }
 
+export interface DefaultPluginProps {
+  file: NasFile;
+  onClose(): void;
+  leadingIcon: JSX.Element;
+}
+
 export abstract class BaseFilePlugin {
   shouldGetFileContent(): boolean {
     return false;

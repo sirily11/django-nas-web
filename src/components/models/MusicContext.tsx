@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component } from "react";
 import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
@@ -5,7 +7,7 @@ import {
   Folder,
   Document as NasDocument,
   File as NasFile,
-  PaginationResponse
+  PaginationResponse,
 } from "./interfaces/Folder";
 import Axios from "axios";
 import * as mm from "music-metadata-browser";
@@ -69,7 +71,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
       updateMetadata: this.updateMetadata,
       setTabIndex: this.setTabIndex,
       getAlbumsByArtist: this.getAlbumsByArtist,
-      presslike: this.presslike
+      presslike: this.presslike,
     };
   }
 
@@ -129,24 +131,26 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
     const prevIndex = this.state.currentTabIndex;
     this.setState({ currentTabIndex: index, isLoading: true });
     switch (index) {
-      case 1:
+      case 1: {
         let albumResponse = await Axios.get(`${musicURL}album/`);
         this.setState({ albums: albumResponse.data, isLoading: false });
         break;
-      case 2:
+      }
+      case 2: {
         let artistResonse = await Axios.get(`${musicURL}artist/`);
         this.setState({ artists: artistResonse.data, isLoading: false });
         break;
-
-      case 3:
+      }
+      case 3: {
         await this.fetch(`${musicURL}?like=true/`);
         break;
-
-      default:
+      }
+      default: {
         if (prevIndex === 3) {
           await this.init();
         }
         this.setState({ isLoading: false });
+      }
     }
   };
 
@@ -166,7 +170,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
   updateMetadata = async () => {
     this.setState({
       isLoading: true,
-      errorMsg: "Updating music metadata... This may take while"
+      errorMsg: "Updating music metadata... This may take while",
     });
     try {
       await Axios.patch(`${musicURL}`);
@@ -192,7 +196,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
         this.setState({
           musicResponse: musicList,
           isLoading: false,
-          paginationURL: musicURL
+          paginationURL: musicURL,
         });
       } else {
         this.setState({ errorMsg: "Searching " + keyword });
@@ -202,7 +206,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
           musicResponse: response.data,
           paginationURL: searchURL,
           isLoading: false,
-          filterField: undefined
+          filterField: undefined,
         });
         setTimeout(() => {
           this.setState({ errorMsg: undefined });
@@ -258,7 +262,7 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
 
   update = () => {
     this.setState({
-      nas: this.state.nas
+      nas: this.state.nas,
     });
   };
 
@@ -272,14 +276,6 @@ export class MusicProvider extends Component<MusicProps, MusicContext> {
 }
 
 //@ts-ignore
-const context: MusicContext = {
-  nas: new Nas(),
-  update: () => {},
-  stop: () => {},
-  play: (music: NasFile) => {
-    return Promise.resolve();
-  },
-  isLoading: false
-};
+const context: MusicContext = {};
 
 export const MusicContext = React.createContext(context);

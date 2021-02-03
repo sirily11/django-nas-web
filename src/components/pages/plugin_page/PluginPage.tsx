@@ -44,6 +44,7 @@ export default function PluginPage(props: Props) {
   const { pluginsMapping } = props;
   const { pluginName, fileId } = useParams() as any;
   const [selectedPlugin, setSelectedPlugin] = React.useState<BaseFilePlugin>();
+  const [downloadProgress, setDownloadProgress] = React.useState<number>();
   const [file, setFile] = React.useState<NasFile>();
   const classes = useStyles();
 
@@ -56,13 +57,17 @@ export default function PluginPage(props: Props) {
           setSelectedPlugin(plugin);
           setTimeout(() => {
             if (plugin.shouldGetFileContent()) {
-              FileContentManager.getContentById(fileId)
+              FileContentManager.getContentById(fileId, (e) =>
+                setDownloadProgress(e)
+              )
                 .then(async (file) => {
                   setFile(file);
+                  setDownloadProgress(undefined);
                 })
                 .catch((err) => {
-                  window.alert("Cannot fetch file with this id");
-                  window.close();
+                  setDownloadProgress(undefined);
+                  window.alert("Cannot fetch file with this id\n" + err);
+                  // window.close();
                 });
             } else {
               FileContentManager.getFile(fileId)
@@ -121,6 +126,15 @@ export default function PluginPage(props: Props) {
                 </Typography>
               ) : (
                 <Typography variant="h5"> Loading Plugin...</Typography>
+              )}
+            </div>
+            <div>
+              {selectedPlugin !== undefined && (
+                <LinearProgress
+                  value={downloadProgress ?? 1 * 100}
+                  color="secondary"
+                  variant="determinate"
+                />
               )}
             </div>
           </Box>

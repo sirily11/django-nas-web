@@ -29,6 +29,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { HotTable } from "@handsontable/react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import "handsontable/dist/handsontable.full.css";
+import { DefaultPluginProps } from "../../BaseFilePlugin";
 
 interface Item {
   msgid: string;
@@ -100,11 +101,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fbbc04",
   },
 }));
-export default function CsvFileViewer(props: {
-  file: NasFile;
-  onClose(): void;
-  leadingIcon: JSX.Element;
-}) {
+
+interface Props extends DefaultPluginProps {}
+
+export default function CsvFileViewer(props: Props) {
   const classes = useStyles();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { file, onClose, leadingIcon } = props;

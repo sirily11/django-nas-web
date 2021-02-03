@@ -90,7 +90,7 @@ export class HomePageProvider extends Component<
     }
   }
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     let id = this.props.match.params.id;
     await this.fetch(id);
   }

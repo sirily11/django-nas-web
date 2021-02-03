@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { Component } from "react";
 import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";

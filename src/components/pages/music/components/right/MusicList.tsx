@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import {
   Paper,
@@ -6,7 +8,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { MusicContext } from "../../../../models/MusicContext";
 import { TableBody, TableFooter } from "semantic-ui-react";
@@ -29,7 +31,7 @@ export default function MusicList() {
     stop,
     fetch,
     paginationURL,
-    presslike
+    presslike,
   } = React.useContext(MusicContext);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setheight] = React.useState(window.innerHeight);
@@ -47,7 +49,7 @@ export default function MusicList() {
         marginTop: "40px",
         marginLeft: 30,
         maxHeight: height - 180,
-        width: "100%"
+        width: "100%",
       }}
     >
       <Table stickyHeader>
@@ -62,7 +64,10 @@ export default function MusicList() {
         <TableBody>
           {musicResponse &&
             musicResponse.results.map((m, i) => (
-              <TableRow selected={isSelected(currentMusic, m)}>
+              <TableRow
+                selected={isSelected(currentMusic, m)}
+                key={`music-${i}`}
+              >
                 <TableCell style={{ maxWidth: 200 }}>
                   <Grid container>
                     <Grid item xs={3}>
@@ -73,7 +78,7 @@ export default function MusicList() {
                       >
                         <FavoriteIcon
                           style={{
-                            color: m.music_metadata?.like ? "pink" : undefined
+                            color: m.music_metadata?.like ? "pink" : undefined,
                           }}
                         />
                       </IconButton>

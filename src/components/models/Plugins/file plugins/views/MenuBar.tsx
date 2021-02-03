@@ -112,6 +112,12 @@ export default function MenuBar(props: {
             <AutosizeInput
               id="test-input"
               className={classes.notchedOutline}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  //@ts-ignore
+                  e.target.blur();
+                }
+              }}
               onChange={(e) => {
                 setFileName(e.target.value);
               }}
@@ -132,7 +138,6 @@ export default function MenuBar(props: {
               variant="subtitle1"
               style={{
                 textDecoration: "underline",
-                color: "grey",
                 marginLeft: buttons.length > 0 ? 20 : 0,
                 fontSize: 15,
               }}
