@@ -191,16 +191,16 @@ export default function CodeViewer(props: Props) {
             await updateFileName(fileName);
           }}
         />
-        <Container className={classes.container}>
+        <div className={classes.container}>
           <Editor
-            height="85vh"
+            height="87vh"
             language={language}
             defaultValue={file.file_content}
             onChange={async (newValue, e) => {
               await updateFileContentAPI(newValue ?? "");
             }}
           />
-        </Container>
+        </div>
       </div>
     </ThemeProvider>
   );

@@ -7,7 +7,7 @@ import {
   File as NasFile,
   BookCollection
 } from "./interfaces/Folder";
-import { UploadInfo } from "../pages/home/components/files/UploadDialog";
+import { UploadInfo } from "../pages/home/components/files/dialog/UploadDialog";
 import * as path from "path";
 import Axios from "axios";
 import { bookCollectionURL, documentURL } from "./urls";

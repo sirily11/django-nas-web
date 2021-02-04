@@ -5,10 +5,13 @@ import { BaseFilePlugin, Render } from "../BaseFilePlugin";
 import * as path from "path";
 import { Dialog, CardMedia } from "@material-ui/core";
 import Musicplayer from "../../../../pages/home/components/files/music/Musicplayer";
-import PDFViewer from "../../../../pages/home/components/files/pdf/PDFViewer";
+import PDFViewer from "./pdf/PDFViewer";
 
 const pdfExt = [".pdf"];
 export class PDFFIlePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return false;
+  }
   getPluginName(): string {
     return "pdf-file";
   }

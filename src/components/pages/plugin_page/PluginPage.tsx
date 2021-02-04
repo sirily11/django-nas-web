@@ -26,6 +26,14 @@ interface Props {
   pluginsMapping: { [key: string]: BaseFilePlugin };
 }
 
+interface Params {
+  create?: any;
+  fileId?: string;
+  pluginName?: string;
+  fileName?: string;
+  folder?: string;
+}
+
 const theme = createMuiTheme({
   palette: {
     primary: blue,
@@ -40,9 +48,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function sleep(time: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+}
+
 export default function PluginPage(props: Props) {
   const { pluginsMapping } = props;
-  const { pluginName, fileId } = useParams() as any;
+  const { pluginName, fileId, create, fileName, folder } = useParams<Params>();
   const [selectedPlugin, setSelectedPlugin] = React.useState<BaseFilePlugin>();
   const [downloadProgress, setDownloadProgress] = React.useState<number>();
   const [file, setFile] = React.useState<NasFile>();
@@ -50,37 +64,48 @@ export default function PluginPage(props: Props) {
 
   React.useEffect(() => {
     try {
-      let plugin = pluginsMapping[pluginName];
+      let plugin = pluginsMapping[pluginName!];
+
       if (plugin) {
         window.document.title = plugin.getPluginName();
-        setTimeout(() => {
+        const fetch = async () => {
+          await sleep(500);
           setSelectedPlugin(plugin);
-          setTimeout(() => {
-            if (plugin.shouldGetFileContent()) {
-              FileContentManager.getContentById(fileId, (e) =>
-                setDownloadProgress(e)
-              )
-                .then(async (file) => {
-                  setFile(file);
-                  setDownloadProgress(undefined);
-                })
-                .catch((err) => {
-                  setDownloadProgress(undefined);
-                  window.alert("Cannot fetch file with this id\n" + err);
-                  // window.close();
-                });
-            } else {
-              FileContentManager.getFile(fileId)
-                .then((file) => {
-                  setFile(file);
-                })
-                .catch((err) => {
-                  window.alert("Cannot fetch file with this id\n" + err);
-                  window.close();
-                });
-            }
-          }, 500);
-        }, 500);
+          await sleep(500);
+          if (plugin.shouldGetFileContent()) {
+            FileContentManager.getContentById(fileId!, (e) => {
+              setDownloadProgress(e);
+            })
+              .then(async (file) => {
+                setFile(file);
+                setDownloadProgress(undefined);
+              })
+              .catch((err) => {
+                setDownloadProgress(undefined);
+                window.alert("Cannot fetch file with this id\n" + err);
+                // window.close();
+              });
+          } else {
+            FileContentManager.getFile(fileId!)
+              .then((file) => {
+                setFile(file);
+              })
+              .catch((err) => {
+                window.alert("Cannot fetch file with this id\n" + err);
+                window.close();
+              });
+          }
+        };
+
+        const createFile = async () => {
+          await sleep(500);
+          setSelectedPlugin(plugin);
+        };
+        if (create) {
+          console.log("create");
+        } else {
+          fetch();
+        }
       } else {
         window.alert("Cannot find this plugin");
       }
@@ -122,7 +147,8 @@ export default function PluginPage(props: Props) {
               />
               {selectedPlugin ? (
                 <Typography variant="h5">
-                  {selectedPlugin.getPluginName()} Loading File...
+                  {selectedPlugin.getPluginName()}{" "}
+                  {create ? "Creating" : "Loading"} File...
                 </Typography>
               ) : (
                 <Typography variant="h5"> Loading Plugin...</Typography>

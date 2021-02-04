@@ -9,6 +9,9 @@ import CsvFileViewer from "./CsvFileViewer";
 const csvExt = [".csv"];
 
 export class CsvFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return true;
+  }
   getPluginName(): string {
     return "csv-editor";
   }

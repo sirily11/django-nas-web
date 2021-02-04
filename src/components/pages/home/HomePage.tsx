@@ -213,7 +213,7 @@ export function HomePage(props: { plugins: BaseFilePlugin[] }) {
           </Grid.Row>
         </Grid>
       </Segment>
-      <NasMenus />
+      <NasMenus plugins={plugins} />
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

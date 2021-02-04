@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { File as NasFile } from "../../interfaces/Folder";
 import DescriptionIcon from "@material-ui/icons/Description";
+import { FileContentManager } from "../../FileContentManager";
 
 export interface Render {
   file: NasFile;
@@ -24,6 +25,8 @@ export abstract class BaseFilePlugin {
    * Get plugin's name. Used for plugin path mapping
    */
   abstract getPluginName(): string;
+
+  abstract canCreateFile(): boolean;
 
   getIcon(size?: number): JSX.Element {
     let height = size ?? 40;
@@ -64,6 +67,20 @@ export abstract class BaseFilePlugin {
       }
     }
     return undefined;
+  }
+
+  /**
+   * If can create file, then will create file and redirect
+   * @param fileName File name
+   * @param folder Parent folder
+   */
+  async createFile(fileName: string, folder?: string | number): Promise<void> {
+    let file = await FileContentManager.createFileWithName(
+      fileName,
+      folder,
+      ""
+    );
+    window.location.href = `#/plugin/${this.getPluginName()}/${file.id}`;
   }
 
   abstract render(arg: Render): JSX.Element;

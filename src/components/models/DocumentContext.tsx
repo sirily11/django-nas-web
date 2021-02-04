@@ -8,7 +8,7 @@ import {
   Document as NasDocument,
   File as NasFile,
 } from "./interfaces/Folder";
-import { UploadInfo } from "../pages/home/components/files/UploadDialog";
+import { UploadInfo } from "../pages/home/components/files/dialog/UploadDialog";
 import * as path from "path";
 //@ts-ignore
 import { MarkdownToQuill } from "md-to-quill-delta";

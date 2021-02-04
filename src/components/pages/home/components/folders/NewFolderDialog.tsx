@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState, useContext } from "react";
 import {
   Modal,
@@ -5,7 +7,7 @@ import {
   Progress,
   Grid,
   Button,
-  Icon
+  Icon,
 } from "semantic-ui-react";
 import { HomePageContext } from "../../../../models/HomeContext";
 import { SchemaList, Schema, Widget } from "../../JSONSchema/model/Schema";
@@ -14,30 +16,13 @@ import {
   TextField,
   Dialog,
   DialogActions,
-  DialogTitle
+  DialogTitle,
 } from "@material-ui/core";
 
 interface Props {
   open: boolean;
   setOpen(open: boolean): void;
 }
-
-interface UploadInfo {
-  currentName: string;
-  progress: number;
-  total: number;
-  currentIndex: number;
-}
-
-const schema: Schema[] = [
-  {
-    name: "name",
-    label: "Folder Name",
-    readonly: false,
-    required: true,
-    widget: Widget.text
-  }
-];
 
 export default function NewFolderDialog(props: Props) {
   const { nas, update } = useContext(HomePageContext);
@@ -49,7 +34,7 @@ export default function NewFolderDialog(props: Props) {
       <DialogTitle>New Folder</DialogTitle>
       <DialogContent>
         <TextField
-          onChange={e => {
+          onChange={(e) => {
             setFolderName(e.target.value);
           }}
           value={folderName}
@@ -60,7 +45,14 @@ export default function NewFolderDialog(props: Props) {
         />
       </DialogContent>
       <DialogActions>
-        <Button basic color="red" onClick={() => props.setOpen(false)}>
+        <Button
+          basic
+          color="red"
+          onClick={() => {
+            props.setOpen(false);
+            setFolderName("");
+          }}
+        >
           <Icon name="remove" /> No
         </Button>
         <Button
@@ -71,6 +63,7 @@ export default function NewFolderDialog(props: Props) {
             await nas.createNewFolder(folderName);
             update();
             setIsLoading(false);
+            setFolderName("");
             props.setOpen(false);
           }}
           loading={isLoading}

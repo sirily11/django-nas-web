@@ -17,7 +17,7 @@ import {
   Folder,
   Document as NasDocument,
 } from "../../../../models/interfaces/Folder";
-import RenameDialog from "./RenameDialog";
+import RenameDialog from "./dialog/RenameDialog";
 import { NavLink } from "react-router-dom";
 
 export default function FilesActions() {

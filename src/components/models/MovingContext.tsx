@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Nas } from "./interfaces/nas";
 import { RouteComponentProps } from "react-router";
 import { Folder, Document as NasDocument, File as NasFile } from "./interfaces/Folder";
-import { UploadInfo } from "../pages/home/components/files/UploadDialog";
+import { UploadInfo } from "../pages/home/components/files/dialog/UploadDialog";
 //@ts-ignore
 
 interface MovingContext {

@@ -47,11 +47,6 @@ interface Item {
   toString(): string;
 }
 
-function getPercentage(items: Item[]) {
-  let translated = items.filter((i) => i.msgstr !== undefined);
-  return translated.length / items.length;
-}
-
 const theme = createMuiTheme({
   palette: {
     type: "dark",
@@ -112,11 +107,13 @@ export default function JupyterViewer(props: Props) {
   const classes = useStyles();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { file, onClose, leadingIcon } = props;
-  const [editEl, setEditEl] = React.useState<null | HTMLElement>(null);
+  const [editEl, setFileEl] = React.useState<null | HTMLElement>(null);
   const [data, setData] = React.useState<any>();
   const [hideIndexs, setHideIndexs] = React.useState<number[]>([]);
 
   React.useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    document.querySelector("html")!.style.overflow = "hidden";
     if (file.file_content) {
       try {
         // eslint-disable-next-line no-debugger
@@ -132,7 +129,7 @@ export default function JupyterViewer(props: Props) {
   // const updateFileContentAPI = AwesomeDebouncePromise(updateFileContent, 500);
 
   const tag = (
-    <Tooltip title="Current language">
+    <Tooltip title="Jupyter Notebook">
       <Card elevation={0} className={classes.tag}>
         <Typography variant="button" style={{ fontWeight: "normal" }}>
           ipynb
@@ -145,16 +142,16 @@ export default function JupyterViewer(props: Props) {
     <Button
       className={classes.button}
       size="small"
-      onClick={(e) => setEditEl(e.currentTarget)}
-      key="edit"
+      onClick={(e) => setFileEl(e.currentTarget)}
+      key="file"
     >
-      Edit
+      File
     </Button>,
   ];
 
   const menus = [
     <Menu
-      key="Edit-menu"
+      key="File-menu"
       style={{ marginLeft: 20 }}
       anchorEl={editEl}
       keepMounted
@@ -163,18 +160,23 @@ export default function JupyterViewer(props: Props) {
       anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       transformOrigin={{ vertical: "top", horizontal: "left" }}
       onClose={() => {
-        setEditEl(null);
+        setFileEl(null);
       }}
     >
-      <MenuItem>Insert Column left</MenuItem>
-      <MenuItem>Insert Column right</MenuItem>
-      <Divider />
+      <MenuItem>Help</MenuItem>
     </Menu>,
   ];
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ height: "100%", overflow: "hidden", width: "100%" }}>
+      <div
+        style={{
+          height: "100%",
+          overflow: "hidden",
+          width: "100%",
+          maxHeight: "100vh",
+        }}
+      >
         <MenuBar
           leadingIcon={leadingIcon}
           file={file}
@@ -196,7 +198,7 @@ export default function JupyterViewer(props: Props) {
           buttons={buttons}
         />
 
-        <Box
+        <div
           style={{
             height: "100%",
             overflow: "auto",
@@ -204,7 +206,8 @@ export default function JupyterViewer(props: Props) {
             paddingBottom: 120,
           }}
         >
-          <Container>
+          <Container style={{ height: "100%" }}>
+            <div></div>
             {data &&
               (data.cells as any[]).map((cell, i) => {
                 for (let plugin of plugins) {
@@ -214,7 +217,7 @@ export default function JupyterViewer(props: Props) {
                 }
               })}
           </Container>
-        </Box>
+        </div>
       </div>
     </ThemeProvider>
   );

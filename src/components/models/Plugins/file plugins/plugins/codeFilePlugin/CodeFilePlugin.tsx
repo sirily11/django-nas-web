@@ -34,6 +34,7 @@ const codeMapping: { [key: string]: string } = {
   ".scss": "css",
   ".cpp": "cpp",
   ".xml": "xml",
+  ".ipynb": "json",
 };
 
 const codeExt = [
@@ -62,6 +63,9 @@ const codeExt = [
 ];
 
 export class CodeFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return true;
+  }
   shouldGetFileContent(): boolean {
     return true;
   }

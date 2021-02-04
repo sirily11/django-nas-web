@@ -50,9 +50,9 @@ import {
 } from "../../../../models/urls";
 import { Grid } from "semantic-ui-react";
 import FilesActions from "./FilesActions";
-import RenameDialog from "./RenameDialog";
+import RenameDialog from "./dialog/RenameDialog";
 import { formatBytes } from "./utils";
-import PDFViewer from "./pdf/PDFViewer";
+import PDFViewer from "../../../../models/Plugins/file plugins/plugins/pdf/PDFViewer";
 import { Dialog } from "@material-ui/core";
 import MoveDialog from "../../../document/components/MoveDialog";
 import FileCopyIcon from "@material-ui/icons/FileCopy";

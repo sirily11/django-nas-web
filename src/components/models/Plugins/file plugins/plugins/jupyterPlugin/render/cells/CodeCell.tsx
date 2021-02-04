@@ -26,16 +26,6 @@ type data = {
   [key: string]: any;
 };
 
-// interface PlainTextData {
-//   "text/plain": string[];
-//   [key: string]: any;
-// }
-
-// interface HTMLTextData {
-//   "text/html": string[];
-
-// }
-
 interface Output {
   output_type: OutputTypes;
   data: data;
@@ -56,21 +46,25 @@ export class CodeCell extends BaseCell {
     return type === "code";
   }
 
-  renderHTML(html: string[]): JSX.Element {
+  renderHTML(id: string, html: string[]): JSX.Element {
     let content = html.reduce((prev, curr) => prev + curr);
     let pure_content = sanitizeHtml(content);
     return (
-      <div dangerouslySetInnerHTML={{ __html: pure_content }} key={v4()}></div>
+      <div dangerouslySetInnerHTML={{ __html: pure_content }} key={id}></div>
     );
   }
 
-  renderImage(type: string, data: string): JSX.Element {
+  renderImage(id: string, type: string, data: string): JSX.Element {
     let imgSrc = `data:${type};base64,${data}`;
 
-    return <img src={imgSrc} key={v4()} />;
+    return <img src={imgSrc} key={id} />;
   }
 
-  renderCode(content: string[], execution_count: number): JSX.Element {
+  renderCode(
+    id: string,
+    content: string[],
+    execution_count: number
+  ): JSX.Element {
     let data = content.reduce((prev, curr) => prev + curr);
     return (
       <Grid container spacing={1}>
@@ -78,7 +72,7 @@ export class CodeCell extends BaseCell {
           <Typography>[{execution_count ?? "    "}]</Typography>
         </Grid>
         <Grid xs={11} item>
-          <SyntaxHighlighter language="python" style={vscDarkPlus} key={v4()}>
+          <SyntaxHighlighter language="python" style={vscDarkPlus} key={id}>
             {data}
           </SyntaxHighlighter>
         </Grid>
@@ -89,7 +83,7 @@ export class CodeCell extends BaseCell {
   renderCell(cell: CodeJupyterCell): JSX.Element {
     return (
       <CodeCellComponent
-        key={v4()}
+        key={cell.metadata.id}
         cell={cell}
         renderCode={this.renderCode}
         renderHTML={this.renderHTML}
@@ -101,20 +95,28 @@ export class CodeCell extends BaseCell {
 
 interface Props {
   cell: CodeJupyterCell;
-  renderHTML(html: string[]): JSX.Element;
-  renderImage(type: string, data: string): JSX.Element;
-  renderCode(content: string[], execution_count: number): JSX.Element;
+  renderHTML(id: string, html: string[]): JSX.Element;
+  renderImage(id: string, type: string, data: string): JSX.Element;
+  renderCode(
+    id: string,
+    content: string[],
+    execution_count: number
+  ): JSX.Element;
 }
 
 function CodeCellComponent(props: Props) {
   const { cell, renderHTML, renderCode, renderImage } = props;
   const [show, setShow] = React.useState(true);
   return (
-    <Box my={1}>
+    <Box my={1} key={`code-${cell.metadata.id}`}>
       <Card variant="outlined" style={{ backgroundColor: "transparent" }}>
         <Collapse in={show} mountOnEnter unmountOnExit>
           <Box p={1}>
-            {renderCode(cell.source, cell.execution_count)}
+            {renderCode(
+              cell.metadata.id + "code",
+              cell.source,
+              cell.execution_count
+            )}
             {cell.outputs.length > 0 && (
               <Typography style={{ fontWeight: "bold" }}>Output:</Typography>
             )}
@@ -127,32 +129,48 @@ function CodeCellComponent(props: Props) {
                 let streamData = output.text;
                 if (streamData) {
                   return (
-                    <div>
-                      {streamData.map((v) => (
-                        <Typography key={v4()}>{v}</Typography>
+                    <div key={`${cell.metadata.id}-stream-${index}`}>
+                      {streamData.map((v, streamIndex) => (
+                        <Typography
+                          key={`${cell.metadata.id}-stream-${index}-${streamIndex}`}
+                        >
+                          {v}
+                        </Typography>
                       ))}
                     </div>
                   );
                 } else {
-                  return <div key={v4()}></div>;
+                  return <div key={`${cell.metadata.id}-empty-${index}`}></div>;
                 }
               }
-              Object.keys(output.data).forEach((key) => {
+              Object.keys(output.data).forEach((key, keyIndex) => {
                 if (key.includes("image")) {
-                  let ele = renderImage(key, output.data[key]);
+                  let ele = renderImage(
+                    `${cell.metadata.id}-img-${index}-${keyIndex}`,
+                    key,
+                    output.data[key]
+                  );
                   elements.push(ele);
                 }
                 let htmlData = output.data["text/html"];
                 let textData = output.data["text/plain"];
 
                 if (htmlData !== undefined) {
-                  elements.push(renderHTML(htmlData));
+                  elements.push(
+                    renderHTML(
+                      `${cell.metadata.id}-html-${index}-${keyIndex}`,
+                      htmlData
+                    )
+                  );
                 }
 
                 if (textData !== undefined && htmlData === undefined) {
                   if (!texts.includes(textData)) {
                     elements.push(
-                      <Typography variant="subtitle1" key={v4()}>
+                      <Typography
+                        variant="subtitle1"
+                        key={`${cell.metadata.id}-puretext-${index}-${keyIndex}`}
+                      >
                         {textData}
                       </Typography>
                     );

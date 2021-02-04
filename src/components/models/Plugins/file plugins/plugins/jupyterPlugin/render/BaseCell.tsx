@@ -5,6 +5,9 @@ import React from "react";
 export interface JupyterCell {
   source: string[];
   cell_type: string;
+  metadata: {
+    id: string;
+  };
 }
 
 export abstract class BaseCell {

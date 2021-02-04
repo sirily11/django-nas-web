@@ -9,6 +9,9 @@ import PoFileViewer from "./PofileViewer";
 const poExt = [".po"];
 
 export class PoFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return false;
+  }
   getPluginName(): string {
     return "po-filer";
   }

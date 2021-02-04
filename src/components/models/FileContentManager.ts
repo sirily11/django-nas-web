@@ -19,7 +19,9 @@ export class FileContentManager {
     static async getContentById(fileId: string | number, onDownload?: (progress: number) => void): Promise<NasFile> {
         let response = await Axios.get(`${fileContentURL}${fileId}`, {
             onDownloadProgress: (e) => {
-                let percentCompleted = Math.round((e.loaded * 100) / e.total); if (onDownload) { onDownload(percentCompleted); }
+
+                let percentCompleted = Math.round((e.loaded) / e.total);
+                if (onDownload) { onDownload(percentCompleted); }
             }
         });
         return response.data;
@@ -35,8 +37,8 @@ export class FileContentManager {
     }
 
 
-    static async createFileWithName(name: string, parent: Folder): Promise<NasFile> {
-        let response = await Axios.post<NasFile>(`${fileContentURL}/`, { filename: name, parent: parent?.id, });
+    static async createFileWithName(name: string, parent?: string | number, content?: string): Promise<NasFile> {
+        let response = await Axios.post<NasFile>(`${fileContentURL}/`, { filename: name, parent: parent, file_content: content });
 
         return response.data;
     }

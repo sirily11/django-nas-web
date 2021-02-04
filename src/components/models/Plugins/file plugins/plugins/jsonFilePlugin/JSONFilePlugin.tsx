@@ -14,6 +14,9 @@ import {
 import JSONViewer from "./JSONViewer";
 
 export class JSONFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return true;
+  }
   getPluginName(): string {
     return "json_file_viewer";
   }

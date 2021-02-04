@@ -13,9 +13,11 @@ import {
 
 const { Player } = require("video-react");
 
-
 export const videoExt = [".mov", ".mp4", ".avi", ".m4v", ".MOV", ".MP4"];
 export class VideoFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return false;
+  }
   getPluginName(): string {
     return "video";
   }

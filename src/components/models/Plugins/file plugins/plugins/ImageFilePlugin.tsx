@@ -16,6 +16,9 @@ export const imageExt = [
   ".JPEG",
 ];
 export class ImageFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return false;
+  }
   getPluginName(): string {
     return "image";
   }

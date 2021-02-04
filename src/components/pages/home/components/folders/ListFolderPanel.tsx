@@ -40,7 +40,7 @@ import {
 
 import { NavLink } from "react-router-dom";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import RenameDialog from "../files/RenameDialog";
+import RenameDialog from "../files/dialog/RenameDialog";
 import { downloadURL } from "../../../../models/urls";
 import MoveDialog from "../../../document/components/MoveDialog";
 

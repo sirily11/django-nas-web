@@ -9,6 +9,9 @@ import JupyterViewer from "./JupyterViewer";
 const csvExt = [".ipynb"];
 
 export class JupyterPlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return false;
+  }
   getPluginName(): string {
     return "jupyter-notebook";
   }

@@ -8,7 +8,7 @@ import {
   Document as NasDocument,
   File as NasFile,
 } from "./interfaces/Folder";
-import { UploadInfo } from "../pages/home/components/files/UploadDialog";
+import { UploadInfo } from "../pages/home/components/files/dialog/UploadDialog";
 import Axios from "axios";
 import { updateDescriptionURL } from "./urls";
 

@@ -8,7 +8,7 @@ import {
   Button,
   Icon
 } from "semantic-ui-react";
-import { HomePageContext } from "../../../../models/HomeContext";
+import { HomePageContext } from "../../../../../models/HomeContext";
 
 interface Props {
   open: boolean;

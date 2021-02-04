@@ -80,7 +80,7 @@ export default function App() {
           <div style={{ height: "100%" }}>
             <Route exact path="/" component={() => <Redirect to="/home" />} />
             <Route
-              path={"/plugin/:pluginName/:fileId"}
+              path={"/plugin/:pluginName/:fileId?/:create?/:fileName?/:folder?"}
               component={(props: any) => (
                 <PluginPage pluginsMapping={pluginsMapping} />
               )}

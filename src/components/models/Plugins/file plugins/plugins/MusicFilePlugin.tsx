@@ -8,6 +8,9 @@ import Musicplayer from "../../../../pages/home/components/files/music/Musicplay
 
 const audioExt = [".mp3", ".m4a"];
 export class MusicFilePlugin extends BaseFilePlugin {
+  canCreateFile(): boolean {
+    return false;
+  }
   getPluginName(): string {
     return "music";
   }

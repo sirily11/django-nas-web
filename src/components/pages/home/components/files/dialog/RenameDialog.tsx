@@ -5,8 +5,8 @@ import {
   Folder,
   File as NasFile,
   Document as NasDocument,
-} from "../../../../models/interfaces/Folder";
-import { HomePageContext } from "../../../../models/HomeContext";
+} from "../../../../../models/interfaces/Folder";
+import { HomePageContext } from "../../../../../models/HomeContext";
 import * as path from "path";
 import {
   Dialog,
