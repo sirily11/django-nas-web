@@ -80,7 +80,6 @@ export abstract class BaseFilePlugin {
       folder,
       ""
     );
-    window.location.href = `#/plugin/${this.getPluginName()}/${file.id}`;
   }
 
   abstract render(arg: Render): JSX.Element;

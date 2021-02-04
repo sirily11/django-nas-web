@@ -4,7 +4,7 @@ import React, { useContext, useState } from "react";
 import UpdateIcon from "@material-ui/icons/Update";
 import { Container, Segment, Progress, Menu, TabPane } from "semantic-ui-react";
 import { HomePageContext } from "../../models/HomeContext";
-import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
+
 import {
   Grid,
   Hidden,

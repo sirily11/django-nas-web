@@ -42,6 +42,7 @@ import PluginPage from "./components/pages/plugin_page/PluginPage";
 import { BaseFilePlugin } from "./components/models/Plugins/file plugins/BaseFilePlugin";
 import { CsvFilePlugin } from "./components/models/Plugins/file plugins/plugins/csvFilePlugin/CsvFilePlugin";
 import { JupyterPlugin } from "./components/models/Plugins/file plugins/plugins/jupyterPlugin/JupyterPlugin";
+import { ContextMenuProvider } from "./components/models/contextMenu/ContextMenuContext";
 
 const theme = createMuiTheme({
   palette: {
@@ -80,7 +81,7 @@ export default function App() {
           <div style={{ height: "100%" }}>
             <Route exact path="/" component={() => <Redirect to="/home" />} />
             <Route
-              path={"/plugin/:pluginName/:fileId?/:create?/:fileName?/:folder?"}
+              path={"/plugin/:pluginName/:fileId/"}
               component={(props: any) => (
                 <PluginPage pluginsMapping={pluginsMapping} />
               )}
@@ -90,13 +91,15 @@ export default function App() {
               path="/home/:id?"
               component={(props: any) => {
                 return (
-                  <FileActionProvider>
-                    <MovingProvider>
-                      <HomePageProvider {...props}>
-                        <HomePage plugins={plugins} />
-                      </HomePageProvider>
-                    </MovingProvider>
-                  </FileActionProvider>
+                  <ContextMenuProvider>
+                    <FileActionProvider>
+                      <MovingProvider>
+                        <HomePageProvider {...props}>
+                          <HomePage plugins={plugins} />
+                        </HomePageProvider>
+                      </MovingProvider>
+                    </FileActionProvider>
+                  </ContextMenuProvider>
                 );
               }}
             />

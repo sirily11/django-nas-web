@@ -374,7 +374,7 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
       </Grid>
       {/** Preview */}
       <Popper open={Boolean(previewAnchor)} anchorEl={previewAnchor}>
-        {onHoverFile && (
+        {onHoverFile !== undefined ? (
           <Card style={{ padding: 10 }}>
             {isImage(onHoverFile.filename) && (
               <CardMedia
@@ -402,6 +402,8 @@ export default function ListFilesPanel(props: { plugins: BaseFilePlugin[] }) {
               </div>
             )}
           </Card>
+        ) : (
+          <div></div>
         )}
       </Popper>
       {/** end preview */}

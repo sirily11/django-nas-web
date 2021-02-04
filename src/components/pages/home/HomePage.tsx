@@ -9,7 +9,7 @@ import NasMenus from "./components/others/NasMenu";
 import ComputerStatus from "./components/others/ComputerStatus";
 import ListFilesPanel from "./components/files/ListFilesPanel";
 import { HomePageContext } from "../../models/HomeContext";
-import { ContextMenuTrigger } from "react-contextmenu";
+
 import MenuIcon from "@material-ui/icons/Menu";
 import UploadFilesSideBar from "./components/files/UploadFilesSideBar";
 import RefreshIcon from "@material-ui/icons/Refresh";
@@ -38,6 +38,8 @@ import SearchField from "./components/files/SearchField";
 import { NavLink } from "react-router-dom";
 
 import { BaseFilePlugin } from "../../models/Plugins/file plugins/BaseFilePlugin";
+import ContextMenuTrigger from "../../models/contextMenu/ContextMenuTrigger";
+import { ContextMenuType } from "../../models/contextMenu/ContextMenuContext";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -176,7 +178,7 @@ export function HomePage(props: { plugins: BaseFilePlugin[] }) {
                 computer={3}
                 style={{ height: "100%", backgroundColor: "#fcfcfc" }}
               >
-                <ContextMenuTrigger id="folder">
+                <ContextMenuTrigger contextMenuType={ContextMenuType.folder}>
                   <Grid.Row style={{ height: "92%" }}>
                     <ListPanel />
                   </Grid.Row>
@@ -193,7 +195,7 @@ export function HomePage(props: { plugins: BaseFilePlugin[] }) {
               tablet={16}
               style={{ height: "100%" }}
             >
-              <ContextMenuTrigger id="files">
+              <ContextMenuTrigger contextMenuType={ContextMenuType.file}>
                 <ListFilesPanel plugins={plugins} />
               </ContextMenuTrigger>
             </Grid.Column>

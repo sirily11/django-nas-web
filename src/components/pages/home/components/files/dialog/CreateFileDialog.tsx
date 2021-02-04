@@ -56,24 +56,30 @@ export default function CreateFileDialog(props: Props) {
   const { open, onClose } = props;
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const close = React.useCallback(async (file: string) => {
-    setFileName("");
-    if (file.length > 0) {
-      await onClose(file);
-    } else {
-      await onClose();
-    }
-  }, []);
+  const close = React.useCallback(
+    async (file: string) => {
+      setFileName("");
+      if (file.length > 0) {
+        setIsLoading(true);
+        await onClose(file);
+      } else {
+        await onClose();
+      }
+      setIsLoading(false);
+    },
+    [open]
+  );
 
   return (
-    <Dialog open={open} onClose={close}>
+    <Dialog open={open} onClose={close} fullWidth>
       <DialogTitle>Create File</DialogTitle>
       <DialogContent>
         <TextField
           fullWidth
+          color="secondary"
           value={fileName}
           label={"File Name"}
-          helperText="File name should not include extension"
+          helperText="Your filename goes here"
           onChange={(e) => setFileName(e.target.value)}
         />
       </DialogContent>
@@ -81,7 +87,7 @@ export default function CreateFileDialog(props: Props) {
         <div className={classes.wrapper}>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             disabled={isLoading}
             onClick={async () => {
               close(fileName);
@@ -90,7 +96,11 @@ export default function CreateFileDialog(props: Props) {
             Create
           </Button>
           {isLoading && (
-            <CircularProgress size={24} className={classes.buttonProgress} />
+            <CircularProgress
+              size={24}
+              className={classes.buttonProgress}
+              color="secondary"
+            />
           )}
         </div>
         <Button

@@ -27,11 +27,8 @@ interface Props {
 }
 
 interface Params {
-  create?: any;
   fileId?: string;
   pluginName?: string;
-  fileName?: string;
-  folder?: string;
 }
 
 const theme = createMuiTheme({
@@ -56,7 +53,7 @@ function sleep(time: number): Promise<void> {
 
 export default function PluginPage(props: Props) {
   const { pluginsMapping } = props;
-  const { pluginName, fileId, create, fileName, folder } = useParams<Params>();
+  const { pluginName, fileId } = useParams<Params>();
   const [selectedPlugin, setSelectedPlugin] = React.useState<BaseFilePlugin>();
   const [downloadProgress, setDownloadProgress] = React.useState<number>();
   const [file, setFile] = React.useState<NasFile>();
@@ -97,15 +94,7 @@ export default function PluginPage(props: Props) {
           }
         };
 
-        const createFile = async () => {
-          await sleep(500);
-          setSelectedPlugin(plugin);
-        };
-        if (create) {
-          console.log("create");
-        } else {
-          fetch();
-        }
+        fetch();
       } else {
         window.alert("Cannot find this plugin");
       }
@@ -147,8 +136,8 @@ export default function PluginPage(props: Props) {
               />
               {selectedPlugin ? (
                 <Typography variant="h5">
-                  {selectedPlugin.getPluginName()}{" "}
-                  {create ? "Creating" : "Loading"} File...
+                  {selectedPlugin.getPluginName()}
+                  Loading File...
                 </Typography>
               ) : (
                 <Typography variant="h5"> Loading Plugin...</Typography>

@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 
 import JSONViewer from "./JSONViewer";
+import { FileContentManager } from "../../../../FileContentManager";
 
 export class JSONFilePlugin extends BaseFilePlugin {
   canCreateFile(): boolean {
@@ -25,6 +26,15 @@ export class JSONFilePlugin extends BaseFilePlugin {
   }
   shouldShow(file: NasFile): boolean {
     return [".json"].includes(path.extname(file.filename));
+  }
+
+  async createFile(fileName: string, folder?: string | number): Promise<void> {
+    let name = path.basename(fileName);
+    let file = await FileContentManager.createFileWithName(
+      `${name}.json`,
+      folder,
+      `{"hello world": "hello world"}`
+    );
   }
 
   render(arg: Render): JSX.Element {

@@ -5,6 +5,7 @@ import { BaseFilePlugin, Render } from "../../BaseFilePlugin";
 import * as path from "path";
 import TableChartIcon from "@material-ui/icons/TableChart";
 import CsvFileViewer from "./CsvFileViewer";
+import { FileContentManager } from "../../../../FileContentManager";
 
 const csvExt = [".csv"];
 
@@ -36,6 +37,15 @@ export class CsvFilePlugin extends BaseFilePlugin {
   }
   shouldShow(file: NasFile): boolean {
     return csvExt.includes(path.extname(file.filename));
+  }
+
+  async createFile(fileName: string, folder?: string | number): Promise<void> {
+    let name = path.basename(fileName);
+    let file = await FileContentManager.createFileWithName(
+      `${name}.csv`,
+      folder,
+      `Name\nHello`
+    );
   }
 
   render(arg: Render): JSX.Element {
